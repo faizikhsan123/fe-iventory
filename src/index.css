@@ -1,9 +1,11 @@
 @import "tailwindcss";
+@import "flowbite-react/plugin/tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
+@source "../.flowbite-react/class-list.json";
 
 @theme inline {
     --font-heading: var(--font-sans);

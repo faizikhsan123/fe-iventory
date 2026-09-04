@@ -1,9 +1,26 @@
-import React from 'react'
+import CardComponent from "@/components/cardCompoentn";
+import Navbar from "@/components/Navbar";
+import SambutanCoomponent from "@/components/SambutanCoomponent";
+import TableLayout from "@/components/TableSupplier";
+import React from "react";
 
 const Supplier = () => {
   return (
-    <div>Supplier</div>
-  )
-}
+    <div>
 
-export default Supplier
+      <Navbar title="Supplier" />
+
+      <SambutanCoomponent
+        paragraf1="Master Supplier"
+        paragraf2="Kelola daftar mitra supplier barang APD & Tools"
+        button="+ Tambah Supplier"
+      />
+
+      <CardComponent />
+      <TableLayout />
+
+    </div>
+  );
+};
+
+export default Supplier;
