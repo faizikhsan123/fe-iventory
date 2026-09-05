@@ -1,14 +1,24 @@
-import React from 'react'
+import TableEmployes from "@/components/employes/TableEmployes";
+import Navbar from "@/components/Navbar";
+import SambutanCoomponent from "@/components/SambutanCoomponent";
+import React from "react";
 
 const Employes = () => {
+  //  const [isDialogOpen, setIsDialogOpen] = useState(false);
   return (
     <div>
-      <h1 className='text-center text-black text-2xl'>
-        aahahahhaha
+      <Navbar title="Employes"></Navbar>
 
-      </h1>
+      <SambutanCoomponent
+        paragraf1="Master Employes"
+        paragraf2="Data karyawan yang dapat mengakses inventaris"
+        button="+ Tambah Karyawan"
+        // onclick={() => setIsDialogOpen(true)}
+      />
+
+      <TableEmployes />
     </div>
-  )
-}
+  );
+};
 
-export default Employes
+export default Employes;

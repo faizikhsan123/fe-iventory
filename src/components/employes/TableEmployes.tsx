@@ -1,27 +1,22 @@
 import { Search, SquarePen, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { useSupplier } from "@/hooks/suppliers/getSupplier";
-import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
-import { EditSupplier } from "./UpdateSupplier";
+// import { useSupplier } from "@/hooks/suppliers/getSupplier";
+// import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
+import useGetEmployes from "@/hooks/employes/getEmployes";
 
-
-const TableSupplier = () => {
-  const { error, loading, data, getSupplier } = useSupplier();
-  const { errorDelete, handleDelete, loadingDelete } = useDeleteSupplier();
-
-  // simpan supplier yang lagi diedit, null berarti dialog tertutup
-  const [editSupplier, setEditSupplier] = useState<null | (typeof data)[number]>(null);
+const TableEmployes = () => {
+  const { error, loading, data, getEmployesButton } = useGetEmployes();
+  //   const { errorDelete, handleDelete, loadingDelete } = useDeleteSupplier();
 
   useEffect(() => {
     // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
     const controller = new AbortController();
-    getSupplier(controller.signal);
-
+    getEmployesButton(controller.signal);
     return () => {
       controller.abort();
     };
@@ -43,17 +38,17 @@ const TableSupplier = () => {
         </div>
       </div>
 
-      {errorDelete && <p className="px-4 pt-3 text-sm text-red-500">{errorDelete}</p>}
+      {/* {errorDelete && <p className="px-4 pt-3 text-sm text-red-500">{errorDelete}</p>} */}
 
       {/* Table */}
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50 hover:bg-slate-50">
             <TableHead className="w-12">No</TableHead>
-            <TableHead>NAMA SUPPLIER</TableHead>
-            <TableHead>TELEPON</TableHead>
-            <TableHead>EMAIL</TableHead>
-            <TableHead>ALAMAT</TableHead>
+            <TableHead>NAMA KARYAWAN</TableHead>
+            <TableHead>DIVISION</TableHead>
+            <TableHead>POSITION</TableHead>
+            <TableHead>STATUS</TableHead>
             <TableHead>AKSI</TableHead>
           </TableRow>
         </TableHeader>
@@ -61,58 +56,63 @@ const TableSupplier = () => {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-slate-500">
+              <TableCell
+                colSpan={7}
+                className="h-24 text-center text-slate-500"
+              >
                 Loading...
               </TableCell>
             </TableRow>
           ) : error ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-red-500">
-                Gagal mengambil data supplier.
+              <TableCell
+                colSpan={7}
+                className="h-24 text-center text-red-500"
+              >
+                Gagal mengambil data karyawan.
               </TableCell>
             </TableRow>
           ) : data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-slate-500">
-                Belum ada data supplier.
+              <TableCell
+                colSpan={7}
+                className="h-24 text-center text-slate-500"
+              >
+                Belum ada data karyawan.
               </TableCell>
             </TableRow>
           ) : (
-            data.map((supplier, index) => (
-              <TableRow key={supplier.id}>
+            data.map((employes, index) => (
+              <TableRow key={employes.id}>
                 <TableCell className="text-slate-500">{index + 1}</TableCell>
 
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div>
-                      <p className="font-semibold text-slate-900">{supplier.name}</p>
+                      <p className="font-semibold text-slate-900">{employes.user_id.name}</p>
                     </div>
                   </div>
                 </TableCell>
 
-                <TableCell className="text-slate-500">{supplier.phone}</TableCell>
-                <TableCell className="text-blue-600">{supplier.email}</TableCell>
-                <TableCell className="text-slate-500">{supplier.address}</TableCell>
+                <TableCell className="text-slate-500">{employes.division}</TableCell>
+                <TableCell className="text-blue-600">{employes.position}</TableCell>
+                <TableCell className="text-slate-500">{employes.status}</TableCell>
 
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Button
-                      // buka dialog edit dengan data supplier ini
-                      onClick={() => setEditSupplier(supplier)}
                       size="icon"
                       variant="outline"
                       className="h-8 w-8 text-slate-500"
-                      disabled={loadingDelete}
+                      //   disabled={loadingDelete}
                     >
                       <SquarePen className="h-4 w-4" />
                     </Button>
                     <Button
-                      // panggil handleDelete dengan parameter id supplier dan callback untuk refresh data setelah delete
-                      onClick={() => handleDelete(supplier.id, () => getSupplier())}
                       size="icon"
                       variant="outline"
                       className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"
-                      disabled={loadingDelete}
+                      //   disabled={loadingDelete}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -123,18 +123,8 @@ const TableSupplier = () => {
           )}
         </TableBody>
       </Table>
-
-      {/* dialog edit, munculnya kalau editSupplier ada isinya */}
-      {editSupplier && (
-        <EditSupplier
-          open={!!editSupplier}
-          onOpenChange={(open) => !open && setEditSupplier(null)}
-          supplier={editSupplier}
-          onSuccess={() => getSupplier()}
-        />
-      )}
     </div>
   );
 };
 
-export default TableSupplier;
+export default TableEmployes;

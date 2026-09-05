@@ -87,13 +87,13 @@ const SidebarComponent = () => {
               </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+               to={"/employes"}
                 className="text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
               >
                 <UserStar />
                 <span className="flex-1 ms-3 whitespace-nowrap">Employes</span>
-              </a>
+              </Link>
             </li>
           </ul>
 

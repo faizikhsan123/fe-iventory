@@ -2,7 +2,7 @@
 import Navbar from "@/components/Navbar";
 import SambutanCoomponent from "@/components/SambutanCoomponent";
 import { CreateSupplier } from "@/components/supplier/CreateSupplier";
-import TableLayout from "@/components/supplier/TableSupplier";
+import TableSupplier from "@/components/supplier/TableSupplier";
 import { useState } from "react";
 
 const Supplier = () => {
@@ -25,7 +25,7 @@ const Supplier = () => {
       />
 
       {/* <CardComponent /> */}
-      <TableLayout />
+      <TableSupplier />
     </div>
   );
 };

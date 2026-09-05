@@ -5,6 +5,7 @@ import Supplier from "./pages/Supplier";
 import NotFound from "./components/NotFound";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Employes from "./pages/Employes";
 
 function App() {
   return (
@@ -27,6 +28,14 @@ function App() {
             path="/supplier"
             element={<Supplier />}
           />
+
+          {/* employes */}
+          <Route
+            path="/employes"
+            element={<Employes />}
+          />
+
+
         </Route>
       </Route>
 
