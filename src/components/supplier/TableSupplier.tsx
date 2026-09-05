@@ -1,18 +1,21 @@
 import { Search, SquarePen, Trash2 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { useSupplier } from "@/hooks/suppliers/getSupplier";
-
 import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
+import { EditSupplier } from "./UpdateSupplier";
+
 
 const TableLayout = () => {
   const { error, loading, data, getSupplier } = useSupplier();
-
   const { errorDelete, handleDelete, loadingDelete } = useDeleteSupplier();
+
+  // simpan supplier yang lagi diedit, null berarti dialog tertutup
+  const [editSupplier, setEditSupplier] = useState<null | (typeof data)[number]>(null);
 
   useEffect(() => {
     // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
@@ -38,20 +41,9 @@ const TableLayout = () => {
             className="pl-9"
           />
         </div>
-
-        {/* Filter */}
-        {/* <Select defaultValue="all">
-          <SelectTrigger className="w-44">
-            <SelectValue placeholder="Semua Status" />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="all">Semua Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select> */}
       </div>
+
+      {errorDelete && <p className="px-4 pt-3 text-sm text-red-500">{errorDelete}</p>}
 
       {/* Table */}
       <Table>
@@ -69,38 +61,27 @@ const TableLayout = () => {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell
-                colSpan={7}
-                className="h-24 text-center text-slate-500"
-              >
+              <TableCell colSpan={7} className="h-24 text-center text-slate-500">
                 Loading...
               </TableCell>
             </TableRow>
           ) : error ? (
             <TableRow>
-              <TableCell
-                colSpan={7}
-                className="h-24 text-center text-red-500"
-              >
+              <TableCell colSpan={7} className="h-24 text-center text-red-500">
                 Gagal mengambil data supplier.
               </TableCell>
             </TableRow>
           ) : data.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={7}
-                className="h-24 text-center text-slate-500"
-              >
+              <TableCell colSpan={7} className="h-24 text-center text-slate-500">
                 Belum ada data supplier.
               </TableCell>
             </TableRow>
           ) : (
             data.map((supplier, index) => (
               <TableRow key={supplier.id}>
-                {/* No */}
                 <TableCell className="text-slate-500">{index + 1}</TableCell>
 
-                {/* Supplier */}
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div>
@@ -109,25 +90,19 @@ const TableLayout = () => {
                   </div>
                 </TableCell>
 
-                {/* Kontak */}
-                {/* <TableCell>{supplier.kontak}</TableCell> */}
-
-                {/* Telepon */}
                 <TableCell className="text-slate-500">{supplier.phone}</TableCell>
-
-                {/* Email */}
                 <TableCell className="text-blue-600">{supplier.email}</TableCell>
-
-                {/* Alamat */}
                 <TableCell className="text-slate-500">{supplier.address}</TableCell>
 
-                {/* Aksi */}
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Button
+                      // buka dialog edit dengan data supplier ini
+                      onClick={() => setEditSupplier(supplier)}
                       size="icon"
                       variant="outline"
                       className="h-8 w-8 text-slate-500"
+                      disabled={loadingDelete}
                     >
                       <SquarePen className="h-4 w-4" />
                     </Button>
@@ -137,6 +112,7 @@ const TableLayout = () => {
                       size="icon"
                       variant="outline"
                       className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"
+                      disabled={loadingDelete}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -147,6 +123,16 @@ const TableLayout = () => {
           )}
         </TableBody>
       </Table>
+
+      {/* dialog edit, munculnya kalau editSupplier ada isinya */}
+      {editSupplier && (
+        <EditSupplier
+          open={!!editSupplier}
+          onOpenChange={(open) => !open && setEditSupplier(null)}
+          supplier={editSupplier}
+          onSuccess={() => getSupplier()}
+        />
+      )}
     </div>
   );
 };

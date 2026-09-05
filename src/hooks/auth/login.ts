@@ -19,9 +19,7 @@ export const UseLogin = () => {
         password: payload2,
       });
 
-      console.log("RESPONSE LOGIN:", response.data);
       const token = response.data.data.token;
-      console.log("TOKEN YANG DISIMPAN:", token);
       localStorage.setItem("token", token);
       // redirect ke halaman dashboard
       navigate("/");
@@ -29,9 +27,9 @@ export const UseLogin = () => {
       SetEmail("");
       SetPassword("");
     } catch (error: any) {
-      if (error.response.status === 401) {
+      if (error.response?.status === 401) {
         SetError("email atau password salah");
-      } else if (error.response.status === 403) {
+      } else if (error.response?.status === 403) {
         SetError("anda tidak memiliki akses");
       } else {
         SetError(error.message);

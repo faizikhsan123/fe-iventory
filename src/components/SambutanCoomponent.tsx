@@ -11,10 +11,14 @@ const SambutanCoomponent = (props: Sambutan) => {
       </div>
       <div>
         <button
+          onClick={props.onclick}
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 px-4 py-2.5 text-white text-sm font-semibold rounded-lg cursor-pointer transition-colors"
         >
-          <Plus size={16} strokeWidth={3} />
+          <Plus
+            size={16}
+            strokeWidth={3}
+          />
           {props.button?.replace(/^\+\s*/, "")}
         </button>
       </div>
