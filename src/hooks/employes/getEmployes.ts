@@ -7,12 +7,13 @@ const useGetEmployes = () => {
   const [error, SetError] = useState("");
   const [data, setData] = useState<employes[]>([]);
 
-  const getEmployesButton = async (signal?: AbortSignal) => {
+  const getEmployesButton = async () => {
     try {
       SetLoading(true);
       SetError("");
-      const response = await AxiosInstance.get("/employes", { signal });
+      const response = await AxiosInstance.get("/employes");
       setData(response.data.data);
+    
     } catch (err) {
       SetError((err as Error).message);
     } finally {

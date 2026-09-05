@@ -8,11 +8,11 @@ export const useSupplier = () => {
   const [error, setError] = useState("");
 
   // tiap get pasang signal untuk bisa di cancel kalau user pindah halaman sebelum request selesai
-  const getSupplier = async (signal?: AbortSignal) => {
+  const getSupplier = async () => {
     try {
       setLoading(true);
       setError("");
-      const response = await AxiosInstance.get("suppliers", { signal });
+      const response = await AxiosInstance.get("suppliers");
       setData(response.data.data);
     } catch (error: any) {
       // request yang dibatalkan (misal karena StrictMode atau user pindah halaman)

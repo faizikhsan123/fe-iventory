@@ -15,11 +15,11 @@ const TableEmployes = () => {
 
   useEffect(() => {
     // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
-    const controller = new AbortController();
-    getEmployesButton(controller.signal);
-    return () => {
-      controller.abort();
-    };
+    // const controller = new AbortController();
+    getEmployesButton()
+    // return () => {
+    //   controller.abort();
+    // };
   }, []);
 
   return (

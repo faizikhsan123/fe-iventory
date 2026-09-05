@@ -19,12 +19,12 @@ const TableSupplier = () => {
 
   useEffect(() => {
     // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
-    const controller = new AbortController();
-    getSupplier(controller.signal);
+  
+    getSupplier();
 
-    return () => {
-      controller.abort();
-    };
+    // return () => {
+    //   controller.abort();
+    // };
   }, []);
 
   return (
