@@ -80,7 +80,7 @@ const SidebarComponent = () => {
             <li>
               <Link
                 to={"/supplier"}
-                className="bg-blue-600 text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-blue-600 hover:text-white group"
+                className=" text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-blue-600 hover:text-white group"
               >
                 <BookUser />
                 <span className="flex-1 ms-3 whitespace-nowrap">Master Supplier</span>

@@ -3,17 +3,26 @@ import { useEffect } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { useSupplier } from "@/hooks/suppliers/supplier";
+import { useSupplier } from "@/hooks/suppliers/getSupplier";
+
+import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
 
 const TableLayout = () => {
   const { error, loading, data, getSupplier } = useSupplier();
 
+  const { errorDelete, handleDelete, loadingDelete } = useDeleteSupplier();
+
   useEffect(() => {
-    getSupplier();
-  }, [data]);
+    // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
+    const controller = new AbortController();
+    getSupplier(controller.signal);
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
 
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
@@ -25,13 +34,13 @@ const TableLayout = () => {
 
           <Input
             type="text"
-            placeholder="Cari nama supplier, kontak, alamat..."
+            placeholder="Cari nama Supplier, Telepon, Alamat..."
             className="pl-9"
           />
         </div>
 
         {/* Filter */}
-        <Select defaultValue="all">
+        {/* <Select defaultValue="all">
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Semua Status" />
           </SelectTrigger>
@@ -41,7 +50,7 @@ const TableLayout = () => {
             <SelectItem value="active">Active</SelectItem>
             <SelectItem value="inactive">Inactive</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
       </div>
 
       {/* Table */}
@@ -50,7 +59,6 @@ const TableLayout = () => {
           <TableRow className="bg-slate-50 hover:bg-slate-50">
             <TableHead className="w-12">No</TableHead>
             <TableHead>NAMA SUPPLIER</TableHead>
-            <TableHead>NAMA KONTAK</TableHead>
             <TableHead>TELEPON</TableHead>
             <TableHead>EMAIL</TableHead>
             <TableHead>ALAMAT</TableHead>
@@ -123,8 +131,9 @@ const TableLayout = () => {
                     >
                       <SquarePen className="h-4 w-4" />
                     </Button>
-
                     <Button
+                      // panggil handleDelete dengan parameter id supplier dan callback untuk refresh data setelah delete
+                      onClick={() => handleDelete(supplier.id, () => getSupplier())}
                       size="icon"
                       variant="outline"
                       className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"

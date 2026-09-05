@@ -20,7 +20,7 @@ export const UseLogin = () => {
       });
 
       console.log("RESPONSE LOGIN:", response.data);
-      const token = response.data.token;
+      const token = response.data.data.token;
       console.log("TOKEN YANG DISIMPAN:", token);
       localStorage.setItem("token", token);
       // redirect ke halaman dashboard

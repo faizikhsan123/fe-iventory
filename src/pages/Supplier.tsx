@@ -1,8 +1,8 @@
-import CardComponent from "@/components/cardCompoentn";
+// import CardComponent from "@/components/cardCompoentn";
 import Navbar from "@/components/Navbar";
 import SambutanCoomponent from "@/components/SambutanCoomponent";
 import TableLayout from "@/components/TableSupplier";
-import React from "react";
+
 
 const Supplier = () => {
   return (
@@ -16,7 +16,7 @@ const Supplier = () => {
         button="+ Tambah Supplier"
       />
 
-      <CardComponent />
+      {/* <CardComponent /> */}
       <TableLayout />
 
     </div>
