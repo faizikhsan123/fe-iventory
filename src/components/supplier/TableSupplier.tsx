@@ -9,7 +9,6 @@ import { useSupplier } from "@/hooks/suppliers/getSupplier";
 import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
 import { EditSupplier } from "./UpdateSupplier";
 
-
 const TableSupplier = () => {
   const { error, loading, data, getSupplier } = useSupplier();
   const { errorDelete, handleDelete, loadingDelete } = useDeleteSupplier();
@@ -19,7 +18,7 @@ const TableSupplier = () => {
 
   useEffect(() => {
     // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
-  
+
     getSupplier();
 
     // return () => {
@@ -61,19 +60,28 @@ const TableSupplier = () => {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-slate-500">
+              <TableCell
+                colSpan={7}
+                className="h-24 text-center text-slate-500"
+              >
                 Loading...
               </TableCell>
             </TableRow>
           ) : error ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-red-500">
+              <TableCell
+                colSpan={7}
+                className="h-24 text-center text-red-500"
+              >
                 Gagal mengambil data supplier.
               </TableCell>
             </TableRow>
           ) : data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-slate-500">
+              <TableCell
+                colSpan={7}
+                className="h-24 text-center text-slate-500"
+              >
                 Belum ada data supplier.
               </TableCell>
             </TableRow>
