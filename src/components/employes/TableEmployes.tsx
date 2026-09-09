@@ -1,4 +1,4 @@
-import { Search, SquarePen, Trash2 } from "lucide-react";
+import { Eye, Search, SquarePen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -57,6 +57,7 @@ const TableEmployes = () => {
             <TableHead>DIVISION</TableHead>
             <TableHead>POSITION</TableHead>
             <TableHead>STATUS</TableHead>
+            <TableHead>Barang Diberikan</TableHead>
             <TableHead>AKSI</TableHead>
           </TableRow>
         </TableHeader>
@@ -112,6 +113,7 @@ const TableEmployes = () => {
                 <TableCell className="text-slate-500">{employes.division}</TableCell>
                 <TableCell className="text-blue-600">{employes.position}</TableCell>
                 <TableCell className="text-slate-500">{employes.status}</TableCell>
+                  <TableCell className="text-slate-500">{employes.given_items_count < 1 ? "-" : `${employes.given_items_count} Diberikan `}</TableCell>
 
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -122,8 +124,20 @@ const TableEmployes = () => {
                       className="h-8 w-8 text-slate-500"
                       disabled={loadingDelete}
                     >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      onClick={() => SetUpdate(employes)}
+                      size="icon"
+                      variant="outline"
+                      className="h-8 w-8 text-slate-500"
+                      disabled={loadingDelete}
+                    >
                       <SquarePen className="h-4 w-4" />
                     </Button>
+
+
                     <Button
                       onClick={() => handleDelete(employes.id, () => getEmployesButton())}
                       size="icon"

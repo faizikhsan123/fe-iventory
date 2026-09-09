@@ -14,20 +14,8 @@ export const useSupplier = () => {
       setError("");
       const response = await AxiosInstance.get("suppliers");
       setData(response.data.data);
-    } catch (error: any) {
-      // request yang dibatalkan (misal karena StrictMode atau user pindah halaman)
-      // bukan error beneran, jadi diabaikan aja, jangan ditampilkan ke user
-      if (error.name === "CanceledError" || error.code === "ERR_CANCELED") {
-        return;
-      }
-
-      if (error.response?.status === 404) {
-        setError("Data not found");
-      } else if (error.response?.status === 403) {
-        setError("Access denied");
-      } else {
-        setError(error.message);
-      }
+    } catch (err) {
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }

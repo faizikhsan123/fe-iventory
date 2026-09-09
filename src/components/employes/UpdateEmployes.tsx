@@ -225,7 +225,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
             className="bg-blue-600 hover:bg-blue-700"
             disabled={loadingupdate}
           >
-            {loadingupdate ? "Menyimpan..." : "Tambah Karyawan"}
+            {loadingupdate ? "Menyimpan..." : "Update Karyawan"}
           </Button>
         </DialogFooter>
       </DialogContent>

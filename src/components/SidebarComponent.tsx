@@ -69,13 +69,13 @@ const SidebarComponent = () => {
               </a>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to={"/items"}
                 className="text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
               >
                 <BoxIcon></BoxIcon>
                 <span className="flex-1 ms-3 whitespace-nowrap">Master Barang</span>
-              </a>
+              </Link>
             </li>
             <li>
               <Link
@@ -88,7 +88,7 @@ const SidebarComponent = () => {
             </li>
             <li>
               <Link
-               to={"/employes"}
+                to={"/employes"}
                 className="text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
               >
                 <UserStar />

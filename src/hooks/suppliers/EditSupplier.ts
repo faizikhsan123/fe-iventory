@@ -1,5 +1,6 @@
 import { AxiosInstance } from "@/lib/axios";
-import type { SupplierForm } from "@/schemas/supplier";
+import type { SupplierFormEdit } from "@/schemas/supplier";
+import { isAxiosError } from "axios";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -10,7 +11,7 @@ export const useEditSupplier = () => {
   const [loadingUpdate, SetLoadingUpdate] = useState(false);
   const [errorUpdate, SetErrorUpdate] = useState("");
 
-  const handleUpdate = async (id: number, payload: SupplierForm, onSuccess?: () => void) => {
+  const handleUpdate = async (id: number, payload: SupplierFormEdit, onSuccess?: () => void) => {
     try {
       SetLoadingUpdate(true);
       SetErrorUpdate("");
@@ -20,13 +21,47 @@ export const useEditSupplier = () => {
         phone: payload.phone,
         email: payload.email,
         address: payload.address,
+        status: payload.status
       });
 
       MySwal.fire("Berhasil!", "Data supplier berhasil dirubah.", "success");
       onSuccess?.();
     } catch (error) {
-      SetErrorUpdate((error as Error).message);
-      MySwal.fire("Gagal!", "Data supplier gagal dirubah.", "error");
+         // kita kasi error generic dulu
+                 let message = "Terjadi kesalahan, coba lagi.";
+           
+                 if (isAxiosError(error)) {
+                   // eh error ini beneran gara-gara request ke server
+                   // log biar kamu bisa lihat struktur asli error dari backend
+                   console.log("Validation error response:", error.response?.data);
+           
+                   // ambil data error
+                   const data = error.response?.data;
+                   //Nah data itu ya ini semua isinya, kita simpen ke satu variabel biar gampang dipake.
+           
+                   // banyak backend Laravel/Express kirim format
+                   //         {
+                   //   "message": "Data tidak valid",
+                   //   "errors": {
+                   //     "email": ["Email sudah dipakai"],
+                   //     "password": ["Password kurang panjang"]
+                   //   }
+                   // }
+           
+                   if (data?.errors) {
+                     //Kalau ada errors (yang isinya per-field kayak contoh di atas), kita gabungin SEMUA pesan errornya jadi satu kalimat panjang dipisah koma. // { email: ["Email sudah dipakai"], password: ["Password kurang panjang"] }
+                     message = Object.values(data.errors).flat().join(", ");
+                     //// "Email sudah dipakai, Password kurang panjang"
+                     // digabung jadi satu string, dipisah koma
+                   } else if (data?.message) {
+                     //Kadang server nggak kirim error per-field, cuma kirim satu pesan doang, misal:
+                     message = data.message;
+                     //Kalau kayak gini, ya langsung pake message itu aja.
+                   }
+                 }
+           
+                 SetErrorUpdate(message);
+                 MySwal.fire("Gagal!", message, "error");
     } finally {
       SetLoadingUpdate(false);
     }

@@ -1,4 +1,3 @@
-import { Search, SquarePen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -8,13 +7,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useSupplier } from "@/hooks/suppliers/getSupplier";
 import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
 import { EditSupplier } from "./UpdateSupplier";
+import type { Supplier } from "@/types/supplier";
+import { Search, SquarePen, Trash2 } from "lucide-react";
 
 const TableSupplier = () => {
   const { error, loading, data, getSupplier } = useSupplier();
   const { errorDelete, handleDelete, loadingDelete } = useDeleteSupplier();
 
   // simpan supplier yang lagi diedit, null berarti dialog tertutup
-  const [editSupplier, setEditSupplier] = useState<null | (typeof data)[number]>(null);
+  const [editSupplier, setEditSupplier] = useState<Supplier | null>(null);
 
   useEffect(() => {
     // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
@@ -53,6 +54,7 @@ const TableSupplier = () => {
             <TableHead>TELEPON</TableHead>
             <TableHead>EMAIL</TableHead>
             <TableHead>ALAMAT</TableHead>
+            <TableHead>STATUS</TableHead>
             <TableHead>AKSI</TableHead>
           </TableRow>
         </TableHeader>
@@ -101,12 +103,13 @@ const TableSupplier = () => {
                 <TableCell className="text-slate-500">{supplier.phone}</TableCell>
                 <TableCell className="text-blue-600">{supplier.email}</TableCell>
                 <TableCell className="text-slate-500">{supplier.address}</TableCell>
+                <TableCell className="text-slate-500">{supplier.status}</TableCell>
 
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Button
                       // buka dialog edit dengan data supplier ini
-                      onClick={() => setEditSupplier(supplier)}
+                      onClick={() => setEditSupplier(supplier,)}
                       size="icon"
                       variant="outline"
                       className="h-8 w-8 text-slate-500"
@@ -133,14 +136,12 @@ const TableSupplier = () => {
       </Table>
 
       {/* dialog edit, munculnya kalau editSupplier ada isinya */}
-      {editSupplier && (
-        <EditSupplier
-          open={!!editSupplier}
-          onOpenChange={(open) => !open && setEditSupplier(null)}
-          supplier={editSupplier}
-          onSuccess={() => getSupplier()}
-        />
-      )}
+      <EditSupplier
+        onSuccess={() => getSupplier()} //ketika sukses jalankan get
+        open={!!editSupplier} //open ketika nilainya ada
+        supplier={editSupplier}
+        onOpenChange={(open) => !open && setEditSupplier(null)}
+      />
     </div>
   );
 };

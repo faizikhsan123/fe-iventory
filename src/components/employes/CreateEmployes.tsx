@@ -25,8 +25,6 @@ type CreateEmployesProps = {
 
 const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) => {
   const { errorCreate, handeCreate, loadingCreate } = UseCreateEmployes();
-  
-
 
   const form = useForm<EmployeeCreateForm>({
     resolver: zodResolver(employeeCreateSchema),
@@ -172,7 +170,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
             }
           />
           <Button
-            onClick={form.handleSubmit(handleButton, )}
+            onClick={form.handleSubmit(handleButton)}
             type="button"
             className="bg-blue-600 hover:bg-blue-700"
             disabled={loadingCreate}

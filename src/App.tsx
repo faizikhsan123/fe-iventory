@@ -6,6 +6,7 @@ import NotFound from "./components/NotFound";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Employes from "./pages/Employes";
+import Items from "./pages/Items";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
 
       {/* Semua route di bawah ini WAJIB diarahkan ke protected route untuk pengecekan token */}
       <Route element={<ProtectedRoute />}>
-      {/* in */}
+        {/* in */}
         <Route element={<DashboardLayout />}>
           <Route
             path="/"
@@ -35,7 +36,10 @@ function App() {
             element={<Employes />}
           />
 
-
+          <Route
+            path="/items"
+            element={<Items></Items>}
+          />
         </Route>
       </Route>
 

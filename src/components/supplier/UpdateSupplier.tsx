@@ -12,39 +12,48 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supplierSchema, type SupplierForm } from "@/schemas/supplier";
+import { supplierSchemaEdit,  type SupplierFormEdit } from "@/schemas/supplier";
 import { useEditSupplier } from "@/hooks/suppliers/EditSupplier";
 import type { Supplier } from "@/types/supplier";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type EditSupplierProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  supplier: Supplier; // data supplier yang lagi diedit, diambil dari sini bukan dari form
+  supplier: Supplier | null; // data supplier yang lagi diedit, diambil dari sini bukan dari form
   onSuccess?: () => void;
 };
 
 export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSupplierProps) {
   const { errorUpdate, handleUpdate, loadingUpdate } = useEditSupplier();
-  const form = useForm<SupplierForm>({
-    resolver: zodResolver(supplierSchema),
+
+  const form = useForm<SupplierFormEdit>({
+    resolver: zodResolver(supplierSchemaEdit),
   });
 
   // ambil value lama
   useEffect(() => {
+    if (!supplier) {
+      return;
+    }
     form.reset({
       nama: supplier.name,
       phone: supplier.phone,
       email: supplier.email,
       address: supplier.address,
+      status: supplier.status
     });
   }, [supplier]);
 
   //   data ini diambil dari validasi zod
-  const onSubmit = async (data: SupplierForm) => {
+  const onSubmit = async (data: SupplierFormEdit) => {
     // terus jalankan handleUpdate dari hooks yg menerima param dari zod
-    handleUpdate(supplier.id, data, () => {
+    handleUpdate(supplier!.id, data, () => {
+      if (!supplier) {
+        return;
+      }
       form.reset();
       onOpenChange(false);
       onSuccess?.();
@@ -87,6 +96,36 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
               disabled={loadingUpdate}
             />
             <span className="text-red-500 text-sm">{form.formState.errors.phone?.message}</span>
+          </Field>
+
+          <Field>
+            <Label htmlFor="status">
+              Position <span className="text-red-500">*</span>
+            </Label>
+            <Controller
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  disabled={loadingUpdate}
+                >
+                  <SelectTrigger
+                    id="position"
+                    className="w-full"
+                  >
+                    <SelectValue placeholder="-- Select Position --" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">active</SelectItem>
+                    <SelectItem value="inactive">inactive</SelectItem>
+                    
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <span className="text-red-500 text-sm">{form.formState.errors.status?.message}</span>
           </Field>
 
           <Field>
