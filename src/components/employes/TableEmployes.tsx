@@ -118,7 +118,7 @@ const TableEmployes = () => {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Button
-                      onClick={() => SetUpdate(employes)}
+                      // onClick={() => SetUpdate(employes)}
                       size="icon"
                       variant="outline"
                       className="h-8 w-8 text-slate-500"

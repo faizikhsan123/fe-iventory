@@ -3,4 +3,5 @@ export type Sambutan = {
     paragraf2 : string,
     button: string,
     onclick?: () => void
+   
 }

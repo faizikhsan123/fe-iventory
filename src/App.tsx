@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Employes from "./pages/Employes";
 import Items from "./pages/Items";
+import CreateItems from "./components/items/CreateItems";
 
 function App() {
   return (
@@ -39,6 +40,11 @@ function App() {
           <Route
             path="/items"
             element={<Items></Items>}
+          />
+
+          <Route
+            path="/create-items"
+            element={<CreateItems />}
           />
         </Route>
       </Route>
