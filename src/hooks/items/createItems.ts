@@ -6,7 +6,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
-const usecreateItems = () => {
+const UsecreateItems = () => {
   const Myswal = withReactContent(Swal);
   const [loadingCreate, Setloadingcreate] = useState(false);
   const [errorCreate, Seterrorcreate] = useState("");
@@ -67,4 +67,4 @@ const usecreateItems = () => {
   };
 };
 
-export default usecreateItems;
+export default UsecreateItems;

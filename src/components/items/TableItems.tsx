@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import UsegetItems from "@/hooks/items/getItems";
 import { useEffect } from "react";
 import UseDelete from "@/hooks/items/DeleteItems";
+import { STORAGE_URL } from "@/lib/axios";
 
 const TableItems = () => {
   const { error, loading, data, getItems } = UsegetItems();
@@ -18,7 +19,7 @@ const TableItems = () => {
     <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-4 border-b border-slate-200 p-4">
-        {/* Search */}  
+        {/* Search */}
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
@@ -90,7 +91,17 @@ const TableItems = () => {
                   <div className="flex items-center gap-3">
                     {/* gambar */}
                     <div>
-                      <img className="font-semibold text-slate-900">{items.file}</img>
+                      {items.file ? (
+                        <img
+                          className="h-full w-full object-cover"
+                          src={`${STORAGE_URL}${items.file}`}
+                          alt={items.name ?? "Item image"}
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-sm text-slate-400">
+                          No Image
+                        </div>
+                      )}
                     </div>
                   </div>
                 </TableCell>
