@@ -1,18 +1,19 @@
 import { AxiosInstance } from "@/lib/axios";
-import type { Supplier } from "@/types/supplier";
+import type { StockIN } from "@/types/StockIN";
+
 import { useState } from "react";
 
-export const useSupplier = () => {
-  const [dataSUpplier, setData] = useState<Supplier[]>([]);
-  const [loadingSupplier, setLoading] = useState(false);
+export const useStockhistory = () => {
+  const [dataStockHistory, setData] = useState<StockIN[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   // tiap get pasang signal untuk bisa di cancel kalau user pindah halaman sebelum request selesai
-  const getSupplier = async () => {
+  const getStockHistory = async () => {
     try {
       setLoading(true);
       setError("");
-      const response = await AxiosInstance.get("suppliers");
+      const response = await AxiosInstance.get("stock-history");
       setData(response.data.data);
     } catch (err) {
       setError((err as Error).message);
@@ -22,9 +23,9 @@ export const useSupplier = () => {
   };
 
   return {
-    dataSUpplier,
-    loadingSupplier,
+    dataStockHistory,
+    loading,
     error,
-    getSupplier,
+    getStockHistory,
   };
 };

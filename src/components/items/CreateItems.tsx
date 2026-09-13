@@ -1,5 +1,5 @@
 "use client";
-import { ChevronLeft, Check, Upload, X } from "lucide-react";
+import { ChevronLeft, Check, X } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Label } from "../ui/label";
@@ -75,9 +75,9 @@ const CreateItems = () => {
                   </>
                 ) : (
                   <div className="flex flex-col items-center gap-2 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+                    {/* <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                       <Upload className="h-5 w-5 text-blue-600" />
-                    </div>
+                    </div> */}
                     <p className="text-xs text-slate-400">Belum ada gambar dipilih</p>
                   </div>
                 )}
@@ -155,7 +155,10 @@ const CreateItems = () => {
                         onValueChange={field.onChange}
                         disabled={loadingCreate}
                       >
-                        <SelectTrigger id="division" className="w-full">
+                        <SelectTrigger
+                          id="division"
+                          className="w-full"
+                        >
                           <SelectValue placeholder="-- Select Category --" />
                         </SelectTrigger>
                         <SelectContent>
@@ -214,7 +217,10 @@ const CreateItems = () => {
                           onValueChange={field.onChange}
                           disabled={loadingCreate}
                         >
-                          <SelectTrigger id="size" className="w-full">
+                          <SelectTrigger
+                            id="size"
+                            className="w-full"
+                          >
                             <SelectValue placeholder="-- Select Size --" />
                           </SelectTrigger>
                           <SelectContent>
@@ -249,7 +255,10 @@ const CreateItems = () => {
                           onValueChange={field.onChange}
                           disabled={loadingCreate}
                         >
-                          <SelectTrigger id="unit" className="w-full">
+                          <SelectTrigger
+                            id="unit"
+                            className="w-full"
+                          >
                             <SelectValue placeholder="-- Select Unit --" />
                           </SelectTrigger>
                           <SelectContent>

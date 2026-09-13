@@ -6,10 +6,12 @@ import UsegetItems from "@/hooks/items/getItems";
 import { useEffect } from "react";
 import UseDelete from "@/hooks/items/DeleteItems";
 import { STORAGE_URL } from "@/lib/axios";
+import { useNavigate } from "react-router";
 
 const TableItems = () => {
   const { error, loading, data, getItems } = UsegetItems();
   const { deleteloading, errodelete, handleDelete } = UseDelete();
+  const navigate = useNavigate()
 
   useEffect(() => {
     getItems();
@@ -134,11 +136,11 @@ const TableItems = () => {
                     </Button>
 
                     <Button
-                    //   onClick={() => SetUpdate(employes)}
-                    //   size="icon"
-                    //   variant="outline"
-                    //   className="h-8 w-8 text-slate-500"
-                    //   disabled={loadingDelete}
+                      onClick={() => navigate(`/update-items/${items.id}`,) }
+                      size="icon"
+                      variant="outline"
+                      className="h-8 w-8 text-slate-500"
+                      disabled={deleteloading}
                     >
                       <SquarePen className="h-4 w-4" />
                     </Button>

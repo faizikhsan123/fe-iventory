@@ -8,6 +8,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Employes from "./pages/Employes";
 import Items from "./pages/Items";
 import CreateItems from "./components/items/CreateItems";
+import UpdateItems from "./components/items/updateItems";
+import StockIN from "./pages/StockMasuk";
+import StockMasuk from "./pages/StockMasuk";
 
 function App() {
   return (
@@ -45,6 +48,16 @@ function App() {
           <Route
             path="/create-items"
             element={<CreateItems />}
+          />
+
+          <Route
+            path="/update-items/:id"
+            element={<UpdateItems />}
+          />
+
+          <Route
+            path="/stock-masuk"
+            element={<StockMasuk />}
           />
         </Route>
       </Route>

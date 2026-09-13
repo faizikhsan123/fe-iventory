@@ -102,13 +102,13 @@ const SidebarComponent = () => {
           </ul>
           <ul className="space-y-2 font-medium">
             <li>
-              <a
-                href="#"
+              <Link
+              to={"/stock-masuk"}
                 className=" text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
               >
                 <ArrowUp />
                 <span className="ms-3">Tambah Stock</span>
-              </a>
+              </Link>
             </li>
             <li>
               <a

@@ -7,14 +7,22 @@ import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
-const UsecreateItems = () => {
+const UseUpdateItems = () => {
   const Myswal = withReactContent(Swal);
-  const [loadingCreate, Setloadingcreate] = useState(false);
-  const [errorCreate, Seterrorcreate] = useState("");
-  const [data, setData] = useState<Items[]>([]);
+  const [updateloading, Setloadingcreate] = useState(false);
+  const [updateerror, Seterrorcreate] = useState("");
+  const [data, setData] = useState<Items | null>(null); // ✅ satu object karena dia update 
+
+  //getbyid
+   const [items, SetItems] = useState<Items | null>(null); 
   const navigate = useNavigate();
 
-  const handleCreate = async (payload: ItemsCreate) => {
+  const getById = async (id : number) => {
+    await AxiosInstance.get(`/items/${id}`)
+    SetItems(items)
+  }
+
+  const HandleUpdate = async (id: number, payload: ItemsCreate) => {
     try {
       Setloadingcreate(true);
       Seterrorcreate("");
@@ -33,13 +41,13 @@ const UsecreateItems = () => {
       formData.append("unit", payload.unit);
       if (payload.description) formData.append("description", payload.description);
 
-      const response = await AxiosInstance.post("/items", formData, {
+      const response = await AxiosInstance.patch(`/items/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       setData(response.data.data);
-      Myswal.fire("Berhasil!", "Data items berhasil ditambahkan.", "success");
+      Myswal.fire("Berhasil!", "Data items berhasil Dirubah.", "success");
       navigate("/items");
     } catch (error) {
       let message = "Terjadi kesalahan coba lagi";
@@ -63,11 +71,13 @@ const UsecreateItems = () => {
   };
 
   return {
-    loadingCreate,
-    errorCreate,
+    updateloading,
+    updateerror,
     data,
-    handleCreate,
+    HandleUpdate,
+    items,
+    getById
   };
 };
 
-export default UsecreateItems;
+export default UseUpdateItems;
