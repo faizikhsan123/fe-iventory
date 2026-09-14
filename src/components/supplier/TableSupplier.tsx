@@ -11,7 +11,7 @@ import type { Supplier } from "@/types/supplier";
 import { Search, SquarePen, Trash2 } from "lucide-react";
 
 const TableSupplier = () => {
-  const { error, loading, data, getSupplier } = useSupplier();
+  const { error, loadingSupplier, dataSUpplier, getSupplier } = useSupplier();
   const { errorDelete, handleDelete, loadingDelete } = useDeleteSupplier();
 
   // simpan supplier yang lagi diedit, null berarti dialog tertutup
@@ -60,7 +60,7 @@ const TableSupplier = () => {
         </TableHeader>
 
         <TableBody>
-          {loading ? (
+          {loadingSupplier ? (
             <TableRow>
               <TableCell
                 colSpan={7}
@@ -78,7 +78,7 @@ const TableSupplier = () => {
                 Gagal mengambil data supplier.
               </TableCell>
             </TableRow>
-          ) : data.length === 0 ? (
+          ) : dataSUpplier.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={7}
@@ -88,7 +88,7 @@ const TableSupplier = () => {
               </TableCell>
             </TableRow>
           ) : (
-            data.map((supplier, index) => (
+            dataSUpplier.map((supplier, index) => (
               <TableRow key={supplier.id}>
                 <TableCell className="text-slate-500">{index + 1}</TableCell>
 

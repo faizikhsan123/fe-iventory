@@ -9,6 +9,7 @@ export type StockIN = {
   id: number;
   type: string;
   note: string;
+  date: string;
   user_id: {
     id: number;
     name: string;
