@@ -103,7 +103,7 @@ const SidebarComponent = () => {
           <ul className="space-y-2 font-medium">
             <li>
               <Link
-              to={"/stock-masuk"}
+                to={"/stock-masuk"}
                 className=" text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
               >
                 <ArrowUp />
@@ -111,13 +111,13 @@ const SidebarComponent = () => {
               </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to={"/stock-keluar"}
                 className="text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
               >
                 <ArrowDown />
                 <span className="flex-1 ms-3 whitespace-nowrap">Barang Keluar</span>
-              </a>
+              </Link>
             </li>
           </ul>
           <ul className="text-center mx-2 my-2 ">

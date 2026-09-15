@@ -5,11 +5,11 @@ import TambahStock from "@/components/StockMasuk/StockMasuk";
 
 
 
-const Items = () => {
+const StockMasuk = () => {
 
   return (
     <div>
-      <Navbar title="Tambah Barang"/>
+      <Navbar title="Stock IN Barang"/>
 
       <TambahStock/>
 
@@ -26,4 +26,4 @@ const Items = () => {
   );
 };
 
-export default Items;
+export default StockMasuk;

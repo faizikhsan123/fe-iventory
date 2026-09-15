@@ -9,8 +9,8 @@ import Employes from "./pages/Employes";
 import Items from "./pages/Items";
 import CreateItems from "./components/items/CreateItems";
 import UpdateItems from "./components/items/updateItems";
-import StockIN from "./pages/StockMasuk";
 import StockMasuk from "./pages/StockMasuk";
+import StockKeluarPage from "./pages/StockKeluar";
 
 function App() {
   return (
@@ -58,6 +58,11 @@ function App() {
           <Route
             path="/stock-masuk"
             element={<StockMasuk />}
+          />
+
+          <Route
+            path="/stock-keluar"
+            element={<StockKeluarPage />}
           />
         </Route>
       </Route>

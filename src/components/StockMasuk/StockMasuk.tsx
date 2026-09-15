@@ -30,7 +30,7 @@ const TambahStock = () => {
         unit: undefined,
         date: "",
         note: "",
-      });
+      }); 
     } catch (error) {
       console.log(error);
     }
@@ -70,11 +70,11 @@ const TambahStock = () => {
   const watchedItemId = form.watch("item_id");
   const watchedQty = form.watch("qty");
   const watchedDate = form.watch("date");
-  const watchedSupplier = form.watch("supplier_id");
+  const  watchedSupplier =  form.watch("supplier_id")
 
   const selectedItem = data.find((item) => item.id.toString() === watchedItemId);
 
-  const selectedSupplier = data.find((supplier) => supplier.id.toString() === watchedSupplier);
+  const selectedSupplier = data.find((supplier)  => supplier.id.toString() === watchedSupplier )
 
   const formattedDate = watchedDate
     ? new Date(watchedDate).toLocaleDateString("id-ID", {
@@ -236,7 +236,7 @@ const TambahStock = () => {
                   {...form.register("date")}
                 />
                 <span className="text-red-500 text-sm">{form.formState.errors.date?.message}</span>
-                <span className="text-red-500 text-sm">{form.formState.errors.date?.message}</span>
+
               </div>
               <div className="space-y-2">
                 <Label>Catatan</Label>

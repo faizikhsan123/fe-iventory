@@ -13,7 +13,6 @@ const useGetEmployes = () => {
       SetError("");
       const response = await AxiosInstance.get("/employes");
       setData(response.data.data);
-    
     } catch (err) {
       SetError((err as Error).message);
     } finally {
