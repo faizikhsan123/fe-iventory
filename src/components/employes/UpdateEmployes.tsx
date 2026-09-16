@@ -49,12 +49,12 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
     if (!employes) return; // jaga-jaga kalau employes masih null, jangan lanjut
 
     form.reset({
-      name: employes.user_id.name,
-      email: employes.user_id.email,
-      password: employes.user_id.password,
+      name: employes.user.name,
+      email: employes.user.email,
+
       division: employes.division,
       position: employes.position, // fix typo
-      status : employes.status
+      status: employes.status,
     });
   }, [employes]); // koma di sini, bukan kurung siku nempel
 
@@ -98,7 +98,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
             <span className="text-red-500 text-sm">{form.formState.errors.email?.message}</span>
           </Field>
 
-          <Field>
+          {/* <Field>
             <Label htmlFor="password">
               Password <span className="text-red-500">*</span>
             </Label>
@@ -110,7 +110,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               disabled={loadingupdate}
             />
             <span className="text-red-500 text-sm">{form.formState.errors.password?.message}</span>
-          </Field>
+          </Field> */}
 
           <div className="grid grid-cols-2 gap-4">
             <Field>
@@ -172,7 +172,6 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               />
               <span className="text-red-500 text-sm">{form.formState.errors.position?.message}</span>
             </Field>
-
 
             <Field>
               <Label htmlFor="status">
