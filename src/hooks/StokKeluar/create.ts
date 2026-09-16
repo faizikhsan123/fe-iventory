@@ -26,7 +26,7 @@ const useCreateTransaction = () => {
         }
       }
       setError(message);
-      return null;
+      throw new Error(message);
     } finally {
       setLoading(false);
     }

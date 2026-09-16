@@ -98,14 +98,14 @@ const TableEmployes = () => {
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div>
-                      <p className="font-semibold text-slate-900">{employes.user_id.name}</p>
+                      <p className="font-semibold text-slate-900">{employes.user.name}</p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div>
-                      <p className="font-semibold text-slate-900">{employes.user_id.email}</p>
+                      <p className="font-semibold text-slate-900">{employes.user.email}</p>
                     </div>
                   </div>
                 </TableCell>
@@ -113,7 +113,9 @@ const TableEmployes = () => {
                 <TableCell className="text-slate-500">{employes.division}</TableCell>
                 <TableCell className="text-blue-600">{employes.position}</TableCell>
                 <TableCell className="text-slate-500">{employes.status}</TableCell>
-                  <TableCell className="text-slate-500">{employes.given_items_count < 1 ? "-" : `${employes.given_items_count} Diberikan `}</TableCell>
+                <TableCell className="text-slate-500">
+                  {Number(employes.given_items_count) < 1 ? "-" : `${employes.given_items_count} Diberikan`}
+                </TableCell>
 
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -137,7 +139,6 @@ const TableEmployes = () => {
                       <SquarePen className="h-4 w-4" />
                     </Button>
 
-
                     <Button
                       onClick={() => handleDelete(employes.id, () => getEmployesButton())}
                       size="icon"
@@ -157,7 +158,6 @@ const TableEmployes = () => {
 
       {/* modal edit karyawan, kebuka kalau ada data yang lagi dipilih */}
       <UpdateEmployes
-      
         onSuccess={() => getEmployesButton()}
         open={!!stateUpdate} // true kalau stateUpdate ada isinya
         employes={stateUpdate} // data yang mau ditampilin di form

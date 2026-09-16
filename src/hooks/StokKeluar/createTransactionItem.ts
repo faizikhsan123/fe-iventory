@@ -1,29 +1,27 @@
 import { AxiosInstance } from "@/lib/axios";
-import { isAxiosError } from "axios";
 import { useState } from "react";
+
+type CreateTransactionItemPayload = {
+  transactions_id: number;
+  items_id: number;
+  qty: number;
+  date: string;
+};
 
 const useCreateTransactionItem = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, SetError] = useState("");
 
-  const postTransactionItem = async (payload: { transactions_id: number; items_id: string; qty: number; date : string }) => {
+  const postTransactionItem = async (payload: CreateTransactionItemPayload) => {
     try {
       setLoading(true);
-      setError("");
+      SetError("");
       const response = await AxiosInstance.post("/transaction-items", payload);
       return response.data.data;
     } catch (err) {
-      let message = "Terjadi kesalahan, coba lagi";
-      if (isAxiosError(err)) {
-        const resData = err.response?.data;
-        if (resData?.errors) {
-          message = Object.values(resData.errors).flat().join(", ");
-        } else if (resData?.message) {
-          message = resData.message;
-        }
-      }
-      setError(message);
-      return null;
+      const message = (err as any)?.response?.data?.message || "Gagal menyimpan barang";
+      SetError(message);
+      throw new Error(message); // lempar, bawa message asli
     } finally {
       setLoading(false);
     }

@@ -100,7 +100,7 @@ const StockKeluar = () => {
                             key={employee.id}
                             value={employee.id.toString()}
                           >
-                            {employee.user_id.name} — {employee.division}
+                            {employee.user.name} — {employee.division}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -124,7 +124,7 @@ const StockKeluar = () => {
 
             {selectedEmployee && (
               <div className="self-end rounded-lg border border-blue-100 bg-blue-50 p-4">
-                <p className="font-semibold text-slate-900">{selectedEmployee.user_id.name}</p>
+                <p className="font-semibold text-slate-900">{selectedEmployee.user.name}</p>
                 <p className="text-sm text-slate-500">
                   {selectedEmployee.division} · {selectedEmployee.position}
                 </p>
@@ -231,7 +231,7 @@ const StockKeluar = () => {
           <div className="space-y-2">
             <Label>Catatan</Label>
             <Textarea
-            cols={3}
+              cols={3}
               {...form.register("note")}
               placeholder="Keperluan peminjaman / pemberian barang..."
               rows={4}
@@ -252,7 +252,7 @@ const StockKeluar = () => {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-500">Karyawan</span>
-              <span className="font-semibold text-slate-900">{selectedEmployee?.user_id.name ?? "—"}</span>
+              <span className="font-semibold text-slate-900">{selectedEmployee?.user.name ?? "—"}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-500">Total Item</span>

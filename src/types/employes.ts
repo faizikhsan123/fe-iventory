@@ -8,10 +8,18 @@ export type employes = {
   position: Position;
   status: Status;
   given_items_count: number;
-  user_id: {
+  items?: {
+    item_name: string;
+    qty: number;
+    date: string;
+    note: string | null;
+  }[];
+  user: {
     id: number;
     name: string;
     email: string;
-    password: string;
+    email_verified_at?: string;
+    created_at?: string;
+    updated_at?: string;
   };
 };
