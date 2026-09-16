@@ -7,10 +7,23 @@ import {
   ChartNoAxesColumn,
   CircleUser,
   LayoutDashboard,
+  Settings,
+  Shield,
+  Undo2,
+  UserCog,
   UserStar,
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
+
 const SidebarComponent = () => {
+  const { pathname } = useLocation();
+
+  // helper kecil biar gak nulis ternary panjang di tiap <Link>
+  const linkClass = (path: string) =>
+    `flex items-center px-2 py-1.5 text-body rounded-base group ${
+      pathname === path ? "bg-blue-600 text-white" : "text-white hover:bg-neutral-tertiary hover:text-fg-brand"
+    }`;
+
   return (
     <div>
       <button
@@ -45,42 +58,50 @@ const SidebarComponent = () => {
         aria-label="Sidebar"
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default bg-[#000042] flex flex-col">
-          <a
-            href="https://flowbite.com/"
+          <Link
+            to={"/dashboard"}
             className="flex items-center ps-2.5 mb-5"
           >
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="h-6 me-3"
-              alt="Flowbite Logo"
-            />
-            <span className="self-center text-lg text-heading font-semibold whitespace-nowrap text-white">
-              Iventory Controller
+            <div className="w-9 h-9 rounded-base bg-blue-600 flex items-center justify-center me-3 shrink-0">
+              <Shield
+                size={18}
+                className="text-white"
+              />
+            </div>
+            <span className="min-w-0">
+              <span className="block text-lg text-heading font-semibold leading-tight whitespace-nowrap text-white">
+                PT. Industri
+              </span>
+              <span className="block text-xs text-gray-400 leading-tight whitespace-nowrap">Inventory System</span>
             </span>
-          </a>
+          </Link>
+
+          <ul className="mx-2 mb-1">
+            <h1 className="text-xs text-gray-500 uppercase tracking-wider">Menu Utama</h1>
+          </ul>
           <ul className="space-y-2 font-medium">
             <li>
-              <a
-                href="#"
-                className=" text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+              <Link
+                to={"/dashboard"}
+                className={linkClass("/dashboard")}
               >
                 <LayoutDashboard />
                 <span className="ms-3">Dashboard</span>
-              </a>
+              </Link>
             </li>
             <li>
               <Link
                 to={"/items"}
-                className="text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                className={linkClass("/items")}
               >
-                <BoxIcon></BoxIcon>
+                <BoxIcon />
                 <span className="flex-1 ms-3 whitespace-nowrap">Master Barang</span>
               </Link>
             </li>
             <li>
               <Link
                 to={"/supplier"}
-                className=" text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-blue-600 hover:text-white group"
+                className={linkClass("/supplier")}
               >
                 <BookUser />
                 <span className="flex-1 ms-3 whitespace-nowrap">Master Supplier</span>
@@ -89,22 +110,22 @@ const SidebarComponent = () => {
             <li>
               <Link
                 to={"/employes"}
-                className="text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                className={linkClass("/employes")}
               >
                 <UserStar />
-                <span className="flex-1 ms-3 whitespace-nowrap">Employes</span>
+                <span className="flex-1 ms-3 whitespace-nowrap">Master Karyawan</span>
               </Link>
             </li>
           </ul>
 
-          <ul className="text-center mx-2 my-2">
-            <h1 className="text-1xl text-gray-300">Transaksi</h1>
+          <ul className="mx-2 mt-5 mb-1">
+            <h1 className="text-xs text-gray-500 uppercase tracking-wider">Transaksi</h1>
           </ul>
           <ul className="space-y-2 font-medium">
             <li>
               <Link
                 to={"/stock-masuk"}
-                className=" text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                className={linkClass("/stock-masuk")}
               >
                 <ArrowUp />
                 <span className="ms-3">Tambah Stock</span>
@@ -113,34 +134,62 @@ const SidebarComponent = () => {
             <li>
               <Link
                 to={"/stock-keluar"}
-                className="text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                className={linkClass("/stock-keluar")}
               >
                 <ArrowDown />
                 <span className="flex-1 ms-3 whitespace-nowrap">Barang Keluar</span>
               </Link>
             </li>
+            <li>
+              <Link
+                to={"/return-barang"}
+                className={linkClass("/return-barang")}
+              >
+                <Undo2 />
+                <span className="flex-1 ms-3 whitespace-nowrap">Return Barang</span>
+              </Link>
+            </li>
           </ul>
-          <ul className="text-center mx-2 my-2 ">
-            <h1 className="text-1xl text-gray-300">Laporan & Admin</h1>
+
+          <ul className="mx-2 mt-5 mb-1">
+            <h1 className="text-xs text-gray-500 uppercase tracking-wider">Laporan & Admin</h1>
           </ul>
           <ul className="space-y-2 font-medium">
             <li>
-              <a
-                href="#"
-                className=" text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+              <Link
+                to={"/laporan"}
+                className={linkClass("/laporan")}
               >
                 <ChartNoAxesColumn />
                 <span className="ms-3">Laporan</span>
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
-                className="text-white flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+              <Link
+                to={"/activity-log"}
+                className={linkClass("/activity-log")}
               >
                 <ActivityIcon />
-                <span className="flex-1 ms-3 whitespace-nowrap">Actity Log</span>
-              </a>
+                <span className="flex-1 ms-3 whitespace-nowrap">Activity Log</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={"/user-management"}
+                className={linkClass("/user-management")}
+              >
+                <UserCog />
+                <span className="flex-1 ms-3 whitespace-nowrap">User Management</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={"/settings"}
+                className={linkClass("/settings")}
+              >
+                <Settings />
+                <span className="flex-1 ms-3 whitespace-nowrap">Settings</span>
+              </Link>
             </li>
           </ul>
 

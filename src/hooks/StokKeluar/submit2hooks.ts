@@ -45,7 +45,7 @@ const useSubmitStockKeluar = () => {
           items_id: item.items_id,
           qty: item.qty,
           date: transaction.date,
-        });
+        }); 
       }
     } catch (err) {
       const message = (err as Error).message || "Gagal menyimpan salah satu barang";
