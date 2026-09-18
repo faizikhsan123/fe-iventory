@@ -18,9 +18,9 @@ export const useEditSupplier = () => {
 
       await AxiosInstance.patch(`/suppliers/${id}`, {
         name: payload.nama,
-        phone: payload.phone,
-        email: payload.email,
-        address: payload.address,
+        phone: payload.phone ?? "",
+        email: payload.email ?? "",
+        address: payload.address ?? "",
         status: payload.status
       });
 

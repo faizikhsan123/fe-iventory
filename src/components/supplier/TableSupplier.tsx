@@ -1,244 +1,300 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useSupplier } from "@/hooks/suppliers/getSupplier";
-import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
-import { EditSupplier } from "./UpdateSupplier";
-import type { Supplier } from "@/types/supplier";
-import { Truck, CheckCircle2, XCircle, Search, SquarePen, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 
-const isActive = (status: string) => status?.toLowerCase() === "active";
+import { Button } from "@/components/ui/button";
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+import { Search, SquarePen, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+
+import { useSupplier } from "@/hooks/suppliers/getSupplier";
+
+import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
+
+import { EditSupplier } from "./UpdateSupplier";
+
+import type { Supplier } from "@/types/supplier";
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const TableSupplier = () => {
-  const { error, loadingSupplier, dataSUpplier, getSupplier } = useSupplier();
-  const { errorDelete, handleDelete, loadingDelete } = useDeleteSupplier();
+  const { dataSUpplier, meta, loadingSupplier, error, getSupplier } = useSupplier();
 
-  // simpan supplier yang lagi diedit, null berarti dialog tertutup
+  const { handleDelete, loadingDelete } = useDeleteSupplier();
+
   const [editSupplier, setEditSupplier] = useState<Supplier | null>(null);
 
+  // state keyword untuk menampung nilai dari si inputan user
+  const [keyword, setKeyword] = useState("");
+
+  //State search menyimpan keyword yang sudah dikonfirmasi untuk dikirim ke API.
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
 
+  // state utuk halaman nilai default 1
+  const [page, setPage] = useState(1);
+
+  // state utuk halaman status
+  const [status, setStatus] = useState("all");
+
+  // satu halaman 10 item
+  const perPage = 10;
+
+  // use effct dijalankan dengan ebebrapa parameter
   useEffect(() => {
-    // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
+    getSupplier({
+      search,
 
-    getSupplier();
+      status: status === "all" ? "" : status,
 
-    // return () => {
-    //   controller.abort();
-    // };
-  }, []);
+      page,
 
-  // TODO: kalau BE udah support query search, pindahin filter ini ke getSupplier(params)
-  // biar gak filter di client. Untuk sekarang masih local filter dulu.
-  const filteredSupplier = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return dataSUpplier;
-    return dataSUpplier.filter(
-      (supplier) =>
-        supplier.name.toLowerCase().includes(q) ||
-        supplier.phone.toLowerCase().includes(q) ||
-        (supplier.address ?? "").toLowerCase().includes(q),
-    );
-  }, [dataSUpplier, search]);
+      per_page: perPage,
+    });
+  }, [search, status, page, getSupplier]);
 
-  // "Kota" di sini numpang dari field address yang udah ada, bukan field kota terpisah
-  const summary = useMemo(() => {
-    const aktif = dataSUpplier.filter((s) => isActive(s.status)).length;
+  //Mengambil ulang data supplier setelah aksi tertentu seperti delete atau update.
+  const refresh = () => {
+    getSupplier({
+      search,
 
-    return {
-      total: dataSUpplier.length,
-      aktif,
-      tidakAktif: dataSUpplier.length - aktif,
-    };
-  }, [dataSUpplier]);
+      status: status === "all" ? "" : status,
 
-  const stats = [
-    { icon: Truck, iconClass: "bg-blue-50 text-blue-600", value: summary.total, label: "Total Supplier" },
-    { icon: CheckCircle2, iconClass: "bg-emerald-50 text-emerald-600", value: summary.aktif, label: "Aktif" },
-    { icon: XCircle, iconClass: "bg-red-50 text-red-600", value: summary.tidakAktif, label: "Tidak Aktif" },
-  ];
+      page,
+
+      per_page: perPage,
+    });
+  };
+
+  //loading ketika loading get dan delete
+  const loading = loadingSupplier || loadingDelete;
+
+  //Mengambil ulang data supplier setelah aksi tertentu seperti delete atau update.
+  const lastPage = meta?.last_page ?? 1;
 
   return (
-    <div className="space-y-4">
-      {/* Stat cards */}
-      <div className="flex flex-wrap gap-4 my-5">
-        {stats.map(({ icon: Icon, iconClass, value, label }) => (
-          <div
-            key={label}
-            className="flex flex-1 min-w-[220px] items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
-          >
-            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${iconClass}`}>
-              <Icon className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-2xl font-bold leading-none text-slate-900">{value}</p>
-              <p className="mt-1.5 text-sm text-slate-500">{label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* SEARCH + FILTER */}
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white my-5">
-        {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+      <div className="flex flex-col gap-3 border-b border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
+        {/* Search */}
+
+        <form
+          className="flex w-full max-w-lg gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            setPage(1);
+
+            setSearch(keyword);
+          }}
+        >
+          <div className="relative flex-1">
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              size={17}
+            />
+
             <Input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Cari nama supplier, telepon, kota..."
-              className="pl-9"
+              className="pl-10"
+              placeholder="Cari supplier..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
             />
           </div>
-        </div>
 
-        {errorDelete && <p className="px-4 pt-3 text-sm text-red-500">{errorDelete}</p>}
+          <Button disabled={loading}>Cari</Button>
+        </form>
 
-        {/* Table */}
+        {/* Filter Status */}
+
+        <Select
+          value={status}
+          onValueChange={(value) => {
+            if (value) {
+              setStatus(value);
+
+              setPage(1);
+            }
+          }}
+        >
+          <SelectTrigger className="w-full md:w-[180px]">
+            <SelectValue placeholder="Filter Status" />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="all">Semua Status</SelectItem>
+
+            <SelectItem value="active">Active</SelectItem>
+
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* TABLE */}
+
+      <div className="w-full overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-slate-50 hover:bg-slate-50">
-              <TableHead className="w-12">No</TableHead>
-              <TableHead>NAMA SUPPLIER</TableHead>
-              <TableHead>TELEPON</TableHead>
-              <TableHead>EMAIL</TableHead>
-              <TableHead>ALAMAT</TableHead>
-              <TableHead>STATUS</TableHead>
-              <TableHead>AKSI</TableHead>
+            <TableRow className="bg-slate-50">
+              <TableHead className="px-6">No</TableHead>
+
+              <TableHead className="px-6">Nama</TableHead>
+
+              <TableHead className="px-6">Telepon</TableHead>
+
+              <TableHead className="px-6">Email</TableHead>
+
+              <TableHead className="px-6">Status</TableHead>
+
+              <TableHead className="px-6">Aksi</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {loadingSupplier ? (
+            {loadingSupplier && (
               <TableRow>
                 <TableCell
-                  colSpan={7}
-                  className="h-24 text-center text-slate-500"
+                  colSpan={6}
+                  className="h-32 text-center text-gray-500"
                 >
-                  Loading...
+                  Memuat data supplier...
                 </TableCell>
               </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="h-24 text-center text-red-500"
-                >
-                  Gagal mengambil data supplier.
-                </TableCell>
-              </TableRow>
-            ) : filteredSupplier.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="h-24 text-center text-slate-500"
-                >
-                  Belum ada data supplier.
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredSupplier.map((supplier, index) => (
-                <TableRow key={supplier.id}>
-                  <TableCell className="text-slate-500">{index + 1}</TableCell>
+            )}
 
-                  <TableCell className="text-slate-500">{supplier.name}</TableCell>
-                  <TableCell className="text-slate-500">{supplier.phone}</TableCell>
-                  <TableCell className="text-blue-600">{supplier.email}</TableCell>
-                  <TableCell className="text-slate-500">
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
-                      {supplier.address}
-                    </span>
-                  </TableCell>
+            {error && !loadingSupplier && (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="h-32 text-center text-red-500"
+                >
+                  {error}
+                </TableCell>
+              </TableRow>
+            )}
 
-                  <TableCell>
+            {/* jika data supplier panjangnya 0 */}
+
+            {!loadingSupplier && !error && dataSUpplier.length === 0 && (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="h-32 text-center"
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Search
+                      size={32}
+                      className="text-gray-300"
+                    />
+
+                    <p className="font-medium text-gray-600">Supplier tidak ditemukan</p>
+
+                    <p className="text-sm text-gray-400">Coba gunakan kata kunci lain</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+
+            {/* jika data supplier lebih dari 0 maka dimapping */}
+
+            {!loadingSupplier &&
+              !error &&
+              dataSUpplier.length > 0 &&
+              dataSUpplier.map((supplier, index) => (
+                <TableRow
+                  key={supplier.id}
+                  className="hover:bg-slate-50"
+                >
+                  <TableCell className="px-6 py-4">{(page - 1) * perPage + index + 1}</TableCell>
+
+                  <TableCell className="px-6 py-4 font-medium">{supplier.name}</TableCell>
+
+                  <TableCell className="px-6 py-4">{supplier.phone ?? "-"}</TableCell>
+
+                  <TableCell className="px-6 py-4">{supplier.email ?? "-"}</TableCell>
+
+                  <TableCell className="px-6 py-4">
                     <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        isActive(supplier.status) ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"
-                      }`}
+                      className={
+                        supplier.status === "active"
+                          ? "inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700"
+                          : "inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
+                      }
                     >
-                      {isActive(supplier.status) ? "Active" : "Inactive"}
+                      {supplier.status}
                     </span>
                   </TableCell>
 
-                  <TableCell>
-                    <div className="flex items-center gap-2">
+                  <TableCell className="px-6 py-4">
+                    <div className="flex gap-2">
                       <Button
-                        // buka dialog edit dengan data supplier ini
+                        size="icon"
+                        variant="outline"
                         onClick={() => setEditSupplier(supplier)}
-                        size="icon"
-                        variant="outline"
-                        className="h-8 w-8 text-slate-500"
-                        disabled={loadingDelete}
                       >
-                        <SquarePen className="h-4 w-4" />
+                        <SquarePen size={16} />
                       </Button>
+
                       <Button
-                        // panggil handleDelete dengan parameter id supplier dan callback untuk refresh data setelah delete
-                        onClick={() => handleDelete(supplier.id, () => getSupplier())}
                         size="icon"
                         variant="outline"
-                        className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"
-                        disabled={loadingDelete}
+                        disabled={loading}
+                        onClick={() => handleDelete(supplier.id, refresh)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2
+                          size={16}
+                          className="text-red-500"
+                        />
                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
+              ))}
           </TableBody>
         </Table>
-
-        {/* Pagination — placeholder, nanti diganti dari response paginate() Laravel */}
-        <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-          <p className="text-sm text-slate-500">
-            Menampilkan {filteredSupplier.length} dari {dataSUpplier.length} supplier
-          </p>
-          <div className="flex items-center gap-1.5">
-            <button
-              disabled={currentPage <= 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            {[1, 2].map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium ${
-                  page === currentPage ? "bg-blue-600 text-white" : "text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-            <button
-              disabled={currentPage >= 2}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
       </div>
 
-      {/* dialog edit, munculnya kalau editSupplier ada isinya */}
+      {/* PAGINATION */}
+
+      {dataSUpplier.length > 0 && (
+        <div className="flex items-center justify-between border-t bg-slate-50 p-4">
+          <span className="text-sm text-gray-500">
+            Halaman {page} dari {lastPage}
+          </span>
+
+          <div className="flex gap-2">
+            <Button
+              size="icon"
+              variant="outline"
+              // disable ketika page kurang dari 1 sama dengan 1 dan loading
+
+              disabled={page <= 1 || loading}
+              onClick={() => setPage(page - 1)}
+            >
+              <ChevronLeft size={16} />
+            </Button>
+
+            <Button
+              size="icon"
+              variant="outline"
+              disabled={page >= lastPage || loading}
+              onClick={() => setPage(page + 1)}
+            >
+              <ChevronRight size={16} />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* kondnisi edit */}
+
       <EditSupplier
-        onSuccess={() => getSupplier()} //ketika sukses jalankan get
-        open={!!editSupplier} //open ketika nilainya ada
+        open={!!editSupplier}
         supplier={editSupplier}
-        onOpenChange={(open) => !open && setEditSupplier(null)}
+        onOpenChange={() => setEditSupplier(null)}
+        onSuccess={refresh}
       />
     </div>
   );

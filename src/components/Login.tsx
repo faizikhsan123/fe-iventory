@@ -1,4 +1,6 @@
 import { UseLogin } from "@/hooks/auth/login";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 export default function Login() {
   const { error, loading, HandleLogin, email, SetEmail, password, SetPassword } = UseLogin();
@@ -7,6 +9,8 @@ export default function Login() {
     e.preventDefault();
     await HandleLogin(email, password);
   };
+
+  const [hidepw, SethidePw] = useState(true);
 
   return (
     <>
@@ -57,17 +61,26 @@ export default function Login() {
                   Password
                 </label>
               </div>
-              <div className="mt-2">
+              <div className="mt-2 relative">
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={hidepw ? "password" : "text"}
                   required
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => SetPassword(e.target.value)}
-                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 pr-10 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                 />
+                <button
+                  type="button"
+                  // prev ni nilai sebelumnya
+                  onClick={() => SethidePw((prev) => !prev)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-200"
+                  tabIndex={-1}
+                >
+                  {hidepw ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                </button>
               </div>
             </div>
 

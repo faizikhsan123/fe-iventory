@@ -7,10 +7,10 @@ import {
   ChartNoAxesColumn,
   CircleUser,
   LayoutDashboard,
-  Settings,
+
   Shield,
-  Undo2,
-  UserCog,
+  // Undo2,
+
   UserStar,
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
@@ -21,7 +21,7 @@ const SidebarComponent = () => {
   // helper kecil biar gak nulis ternary panjang di tiap <Link>
   const linkClass = (path: string) =>
     `flex items-center px-2 py-1.5 text-body rounded-base group ${
-      pathname === path ? "bg-blue-600 text-white" : "text-white hover:bg-neutral-tertiary hover:text-fg-brand"
+      pathname === path ? "bg-blue-600 rounded-md text-white" : "text-white hover:bg-neutral-tertiary hover:text-fg-brand"
     }`;
 
   return (
@@ -140,7 +140,7 @@ const SidebarComponent = () => {
                 <span className="flex-1 ms-3 whitespace-nowrap">Barang Keluar</span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 to={"/return-barang"}
                 className={linkClass("/return-barang")}
@@ -148,7 +148,7 @@ const SidebarComponent = () => {
                 <Undo2 />
                 <span className="flex-1 ms-3 whitespace-nowrap">Return Barang</span>
               </Link>
-            </li>
+            </li> */}
           </ul>
 
           <ul className="mx-2 mt-5 mb-1">
@@ -173,7 +173,7 @@ const SidebarComponent = () => {
                 <span className="flex-1 ms-3 whitespace-nowrap">Activity Log</span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 to={"/user-management"}
                 className={linkClass("/user-management")}
@@ -181,8 +181,8 @@ const SidebarComponent = () => {
                 <UserCog />
                 <span className="flex-1 ms-3 whitespace-nowrap">User Management</span>
               </Link>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <Link
                 to={"/settings"}
                 className={linkClass("/settings")}
@@ -190,7 +190,7 @@ const SidebarComponent = () => {
                 <Settings />
                 <span className="flex-1 ms-3 whitespace-nowrap">Settings</span>
               </Link>
-            </li>
+            </li> */}
           </ul>
 
           <div className="mt-auto flex items-center gap-3 border-t border-white/10 pt-4 px-2">

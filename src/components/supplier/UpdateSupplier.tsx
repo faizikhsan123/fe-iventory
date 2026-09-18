@@ -40,9 +40,9 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
     }
     form.reset({
       nama: supplier.name,
-      phone: supplier.phone,
-      email: supplier.email,
-      address: supplier.address,
+      phone: supplier.phone ?? "",
+      email: supplier.email ?? "",
+      address: supplier.address ?? "",
       status: supplier.status
     });
   }, [supplier]);
@@ -98,35 +98,35 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
             <span className="text-red-500 text-sm">{form.formState.errors.phone?.message}</span>
           </Field>
 
-          <Field>
-            <Label htmlFor="status">
-              Position <span className="text-red-500">*</span>
-            </Label>
-            <Controller
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={loadingUpdate}
-                >
-                  <SelectTrigger
-                    id="position"
-                    className="w-full"
+            <Field>
+              <Label htmlFor="status">
+                Position <span className="text-red-500">*</span>
+              </Label>
+              <Controller
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={loadingUpdate}
                   >
-                    <SelectValue placeholder="-- Select Position --" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">active</SelectItem>
-                    <SelectItem value="inactive">inactive</SelectItem>
-                    
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            <span className="text-red-500 text-sm">{form.formState.errors.status?.message}</span>
-          </Field>
+                    <SelectTrigger
+                      id="position"
+                      className="w-full"
+                    >
+                      <SelectValue placeholder="-- Select Position --" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">active</SelectItem>
+                      <SelectItem value="inactive">inactive</SelectItem>
+                      
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <span className="text-red-500 text-sm">{form.formState.errors.status?.message}</span>
+            </Field>
 
           <Field>
             <Label htmlFor="email">Email</Label>

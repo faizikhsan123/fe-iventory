@@ -1,30 +1,50 @@
 import { AxiosInstance } from "@/lib/axios";
 import type { Supplier } from "@/types/supplier";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+
+type Params = {
+  search?: string;
+  page?: number;
+  per_page?: number;
+  status? : string
+};
+
+type Meta = {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+};
 
 export const useSupplier = () => {
   const [dataSUpplier, setData] = useState<Supplier[]>([]);
   const [loadingSupplier, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [meta, setMeta] = useState<Meta | null>(null);
 
-  // tiap get pasang signal untuk bisa di cancel kalau user pindah halaman sebelum request selesai
-  const getSupplier = async () => {
+  const getSupplier = useCallback(async (params: Params = {}) => {
     try {
       setLoading(true);
       setError("");
-      const response = await AxiosInstance.get("suppliers");
+
+      const response = await AxiosInstance.get("/suppliers", {
+        params,
+      });
+
       setData(response.data.data);
-    } catch (err) {
-      setError((err as Error).message);
+      setMeta(response.data.meta);
+    } catch {
+      setError("Gagal mengambil data supplier.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return {
     dataSUpplier,
     loadingSupplier,
     error,
+    meta,
     getSupplier,
   };
 };
