@@ -37,6 +37,8 @@ const TableSupplier = () => {
   // state utuk halaman status
   const [status, setStatus] = useState("all");
 
+
+
   // satu halaman 10 item
   const perPage = 10;
 

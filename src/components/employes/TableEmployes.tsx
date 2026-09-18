@@ -1,185 +1,281 @@
-import { Eye, Search, SquarePen, Trash2, Users, CheckCircle2,  PackageCheck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
+
 import { Button } from "@/components/ui/button";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-// import { useSupplier } from "@/hooks/suppliers/getSupplier";
-// import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
+import { Search, SquarePen, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+
 import useGetEmployes from "@/hooks/employes/getEmployes";
+
 import { useDeleteEmployes } from "@/hooks/employes/deleteEmployes";
-import type { employes } from "@/types/employes";
+
 import UpdateEmployes from "./UpdateEmployes";
 
-// ambil inisial 2 huruf dari nama karyawan buat avatar
-const getInitials = (name: string) =>
-  name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
+import type { employes } from "@/types/employes";
 
-const isActive = (status: string) => status?.toLowerCase() === "active";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const TableEmployes = () => {
-  const { error, loading, data, getEmployesButton } = useGetEmployes();
+  const { data, meta, loading, error, getEmployesButton } = useGetEmployes();
 
   const { errorDelete, handleDelete, loadingDelete } = useDeleteEmployes();
 
-  useEffect(() => {
-    // buat controller untuk cancel request kalau user pindah halaman sebelum request selesai
-    // const controller = new AbortController();
-    getEmployesButton();
-    // return () => {
-    //   controller.abort();
-    // };
-  }, []);
+  const [stateUpdate, setStateUpdate] = useState<employes | null>(null);
 
-  // artinya ini tuoenya  types employes atau null dana isi nilai awalnya null
-  const [stateUpdate, SetUpdate] = useState<employes | null>(null);
+  // state keyword untuk menampung nilai dari si inputan user
+  const [keyword, setKeyword] = useState("");
 
+  //State search menyimpan keyword yang sudah dikonfirmasi untuk dikirim ke API.
   const [search, setSearch] = useState("");
 
-  // TODO: kalau BE udah support query search, pindahin filter ini ke getEmployesButton(params)
-  const filteredData = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return data;
-    return data.filter(
-      (employes) =>
-        employes.user.name.toLowerCase().includes(q) ||
-        employes.division.toLowerCase().includes(q) ||
-        employes.position.toLowerCase().includes(q)
-    );
-  }, [data, search]);
+  // state utuk halaman nilai default 1
+  const [page, setPage] = useState(1);
 
-  const summary = useMemo(() => {
-    const active = data.filter((employes) => isActive(employes.status)).length;
-    const punyaPinjaman = data.filter((employes) => Number(employes.given_items_count) > 0).length;
-    return { total: data.length, active, punyaPinjaman };
-  }, [data]);
+  // state utuk filter divisi
+  const [division, setDivision] = useState("all");
 
-  const stats = [
-    { icon: Users, iconClass: "bg-blue-50 text-blue-600", value: summary.total, label: "Total Karyawan" },
-    { icon: CheckCircle2, iconClass: "bg-emerald-50 text-emerald-600", value: summary.active, label: "Active" },
-    { icon: PackageCheck, iconClass: "bg-violet-50 text-violet-600", value: summary.punyaPinjaman, label: "Memiliki Pinjaman" },
-  ];
+  // state utuk halaman status
+  const [position, setPosition] = useState("all");
+
+  // satu halaman 10 item
+  const perPage = 10;
+
+  // use effect dijalankan dengan beberapa parameter
+  useEffect(() => {
+    getEmployesButton({
+      search,
+
+      division: division === "all" ? "" : division,
+      position: position === "all" ? "" : position,
+
+      page,
+
+      per_page: perPage,
+    });
+  }, [search, division, page, getEmployesButton, position]);
+
+  //Mengambil ulang data employes setelah aksi tertentu seperti delete atau update.
+  const refresh = () => {
+    getEmployesButton({
+      search,
+
+      division: division === "all" ? "" : division,
+      position: position === "all" ? "" : position,
+
+      page,
+
+      per_page: perPage,
+    });
+  };
+
+  //loading ketika loading get dan delete
+  const isLoading = loading || loadingDelete;
+
+  const lastPage = meta?.last_page ?? 1;
 
   return (
-    <div className="space-y-4">
-      {/* Stat cards */}
-      <div className="flex flex-wrap gap-4 my-4">
-        {stats.map(({ icon: Icon, iconClass, value, label }) => (
-          <div
-            key={label}
-            className="flex flex-1 min-w-[220px] items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
-          >
-            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${iconClass}`}>
-              <Icon className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-2xl font-bold leading-none text-slate-900">{value}</p>
-              <p className="mt-1.5 text-sm text-slate-500">{label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* SEARCH + FILTER */}
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-        {/* Toolbar */}
-        <div className="flex items-center justify-between gap-4 border-b border-slate-200 p-4">
-          {/* Search */}
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+      <div className="flex flex-col gap-3 border-b border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
+        {/* Search */}
+
+        <form
+          className="flex w-full max-w-lg gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            setPage(1);
+
+            setSearch(keyword);
+          }}
+        >
+          <div className="relative flex-1">
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              size={17}
+            />
+
             <Input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
               placeholder="Cari nama, divisi, jabatan..."
-              className="pl-9"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
             />
           </div>
-        </div>
 
-        {errorDelete && <p className="px-4 pt-3 text-sm text-red-500">{errorDelete}</p>}
+          <Button disabled={isLoading}>Cari</Button>
+        </form>
 
-        {/* Table */}
+        {/* Filter Divisi */}
+
+        <Select
+          value={division}
+          onValueChange={(value) => {
+            if (value) {
+              setDivision(value);
+
+              setPage(1);
+            }
+          }}
+        >
+          <SelectTrigger className="w-full md:w-[180px]">
+            <SelectValue placeholder="Filter Divisi" />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="all">Semua Divisi</SelectItem>
+
+            {/* TODO: sesuaikan value dengan divisi yang ada di BE */}
+            <SelectItem value="GA">GA</SelectItem>
+
+            <SelectItem value="INC-PMR">INC - PMR</SelectItem>
+
+            <SelectItem value="INC-ER">INC - ER</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* posiition */}
+        <Select
+          value={position}
+          onValueChange={(value) => {
+            if (value) {
+              setPosition(value);
+
+              setPage(1);
+            }
+          }}
+        >
+          <SelectTrigger className="w-full md:w-[180px]">
+            <SelectValue placeholder="Filter Divisi" />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="all">Semua Position</SelectItem>
+
+            {/* TODO: sesuaikan value dengan divisi yang ada di BE */}
+            <SelectItem value="Supervisor">Supervisor</SelectItem>
+
+            <SelectItem value="Foreman">Foreman</SelectItem>
+
+            <SelectItem value="Technician">Technician</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* TABLE */}
+
+      <div className="w-full overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-slate-50 hover:bg-slate-50">
-              <TableHead>KARYAWAN</TableHead>
-              <TableHead>DIVISI</TableHead>
-              <TableHead>JABATAN</TableHead>
-              <TableHead>STATUS</TableHead>
-              <TableHead>BARANG DIPINJAM</TableHead>
-              <TableHead>AKSI</TableHead>
+            <TableRow className="bg-slate-50">
+              <TableHead className="px-6">No</TableHead>
+
+              <TableHead className="px-6">Karyawan</TableHead>
+
+              <TableHead className="px-6">Divisi</TableHead>
+
+              <TableHead className="px-6">Jabatan</TableHead>
+
+              <TableHead className="px-6">Status</TableHead>
+
+              <TableHead className="px-6">Barang Dipinjam</TableHead>
+
+              <TableHead className="px-6">Aksi</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {loading ? (
+            {loading && (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-slate-500">
-                  Loading...
+                <TableCell
+                  colSpan={7}
+                  className="h-32 text-center text-gray-500"
+                >
+                  Memuat data karyawan...
                 </TableCell>
               </TableRow>
-            ) : error ? (
+            )}
+
+            {error && !loading && (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-red-500">
-                  Gagal mengambil data karyawan.
+                <TableCell
+                  colSpan={7}
+                  className="h-32 text-center text-red-500"
+                >
+                  {error}
                 </TableCell>
               </TableRow>
-            ) : filteredData.length === 0 ? (
+            )}
+
+            {/* jika data employes panjangnya 0 */}
+
+            {!loading && !error && data.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-slate-500">
-                  Belum ada data karyawan.
+                <TableCell
+                  colSpan={7}
+                  className="h-32 text-center"
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Search
+                      size={32}
+                      className="text-gray-300"
+                    />
+
+                    <p className="font-medium text-gray-600">Karyawan tidak ditemukan</p>
+
+                    <p className="text-sm text-gray-400">Coba gunakan kata kunci lain</p>
+                  </div>
                 </TableCell>
               </TableRow>
-            ) : (
-              filteredData.map((employes) => {
+            )}
+
+            {/* jika data employes lebih dari 0 maka dimapping */}
+
+            {!loading &&
+              !error &&
+              data.length > 0 &&
+              data.map((employes, index) => {
                 const itemCount = Number(employes.given_items_count);
-                const active = isActive(employes.status);
-                const cuti = employes.status?.toLowerCase() === "cuti";
+                const isActive = employes.status?.toLowerCase() === "active";
+                const isCuti = employes.status?.toLowerCase() === "cuti";
 
                 return (
-                  <TableRow key={employes.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-700">
-                          {getInitials(employes.user.name)}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-slate-900">{employes.user.name}</p>
-                          <p className="truncate text-xs text-slate-400">{employes.user.email}</p>
-                        </div>
+                  <TableRow
+                    key={employes.id}
+                    className="hover:bg-slate-50"
+                  >
+                    <TableCell className="px-6 py-4">{(page - 1) * perPage + index + 1}</TableCell>
+
+                    <TableCell className="px-6 py-4 font-medium">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-slate-900">{employes.user.name}</p>
+                        <p className="truncate text-xs text-slate-400">{employes.user.email}</p>
                       </div>
                     </TableCell>
 
-                    <TableCell>
-                      <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
-                        {employes.division}
-                      </span>
-                    </TableCell>
+                    <TableCell className="px-6 py-4">{employes.division}</TableCell>
 
-                    <TableCell className="text-slate-700">{employes.position}</TableCell>
+                    <TableCell className="px-6 py-4">{employes.position}</TableCell>
 
-                    <TableCell>
+                    <TableCell className="px-6 py-4">
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                          active
-                            ? "bg-emerald-50 text-emerald-700"
-                            : cuti
-                            ? "bg-amber-50 text-amber-700"
-                            : "bg-slate-100 text-slate-600"
-                        }`}
+                        className={
+                          isActive
+                            ? "inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700"
+                            : isCuti
+                              ? "inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700"
+                              : "inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
+                        }
                       >
                         {employes.status}
                       </span>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="px-6 py-4">
                       {itemCount < 1 ? (
                         <span className="text-slate-400">—</span>
                       ) : (
@@ -187,53 +283,76 @@ const TableEmployes = () => {
                       )}
                     </TableCell>
 
-                    <TableCell>
-                      <div className="flex items-center gap-2">
+                    <TableCell className="px-6 py-4">
+                      <div className="flex gap-2">
                         <Button
-                          // onClick={() => SetUpdate(employes)}
                           size="icon"
                           variant="outline"
-                          className="h-8 w-8 text-slate-500"
-                          disabled={loadingDelete}
+                          onClick={() => setStateUpdate(employes)}
                         >
-                          <Eye className="h-4 w-4" />
+                          <SquarePen size={16} />
                         </Button>
 
                         <Button
-                          onClick={() => SetUpdate(employes)}
                           size="icon"
                           variant="outline"
-                          className="h-8 w-8 text-slate-500"
-                          disabled={loadingDelete}
+                          disabled={isLoading}
+                          onClick={() => handleDelete(employes.id, refresh)}
                         >
-                          <SquarePen className="h-4 w-4" />
-                        </Button>
-
-                        <Button
-                          onClick={() => handleDelete(employes.id, () => getEmployesButton())}
-                          size="icon"
-                          variant="outline"
-                          className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"
-                          disabled={loadingDelete}
-                        >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2
+                            size={16}
+                            className="text-red-500"
+                          />
                         </Button>
                       </div>
                     </TableCell>
                   </TableRow>
                 );
-              })
-            )}
+              })}
           </TableBody>
         </Table>
       </div>
 
-      {/* modal edit karyawan, kebuka kalau ada data yang lagi dipilih */}
+      {errorDelete && <p className="px-6 py-2 text-sm text-red-500">{errorDelete}</p>}
+
+      {/* PAGINATION */}
+
+      {data.length > 0 && (
+        <div className="flex items-center justify-between border-t bg-slate-50 p-4">
+          <span className="text-sm text-gray-500">
+            Halaman {page} dari {lastPage}
+          </span>
+
+          <div className="flex gap-2">
+            <Button
+              size="icon"
+              variant="outline"
+              // disable ketika page kurang dari sama dengan 1 dan loading
+              disabled={page <= 1 || isLoading}
+              onClick={() => setPage(page - 1)}
+            >
+              <ChevronLeft size={16} />
+            </Button>
+
+            <Button
+              size="icon"
+              variant="outline"
+              disabled={page >= lastPage || isLoading}
+              onClick={() => setPage(page + 1)}
+            >
+              <ChevronRight size={16} />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* kondisi edit */}
+
       <UpdateEmployes
-        onSuccess={() => getEmployesButton()}
-        open={!!stateUpdate} // true kalau stateUpdate ada isinya
-        employes={stateUpdate} // data yang mau ditampilin di form
-        onOpenChange={(open) => !open && SetUpdate(null)} // pas ditutup, reset ke null
+        open={!!stateUpdate}
+        employes={stateUpdate}
+        onOpenChange={(open) => !open && setStateUpdate(null)}
+        onSuccess={refresh}
       />
     </div>
   );
