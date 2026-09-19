@@ -6,7 +6,7 @@ type Params = {
   search?: string;
   page?: number;
   per_page?: number;
-  status? : string
+  status?: string;
 };
 
 type Meta = {

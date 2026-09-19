@@ -1,13 +1,26 @@
-import { Boxes, CheckCircle2, AlertTriangle, XCircle, Eye, Search, SquarePen, Trash2 } from "lucide-react";
+import {
+  // Boxes,
+  // CheckCircle2,
+  // AlertTriangle,
+  // XCircle,
+  Eye,
+  Search,
+  SquarePen,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import UsegetItems from "@/hooks/items/getItems";
-import { useEffect, useMemo, useState } from "react";
+// import { useEffect, useMemo, useState } from "react";
 import UseDelete from "@/hooks/items/DeleteItems";
 import { STORAGE_URL } from "@/lib/axios";
 import { useNavigate } from "react-router";
 import { cn } from "cn";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { useEffect, useState } from "react";
 
 const STATUS_STYLE: Record<string, string> = {
   available: "bg-emerald-50 text-emerald-700",
@@ -34,34 +47,67 @@ function getStockStatus(current: number, min: number): string {
 }
 
 const TableItems = () => {
-  const { error, loading, data, getItems } = UsegetItems();
+  const { error, loading, data, getItems, meta } = UsegetItems();
   const { deleteloading, errodelete, handleDelete } = UseDelete();
   const navigate = useNavigate();
 
-  const [search, setSearch] = useState("");
+  const [keyword, Setkeyword] = useState("");
+  const [search, Setsearch] = useState("");
+  const [page, Setpage] = useState(1);
+  const [status, Setstatus] = useState("all");
+
+  const $perPage = 10;
 
   useEffect(() => {
-    getItems();
-  }, []);
+    getItems({
+      per_page: $perPage,
+      page: page,
+      category: status === "all" ? "" : status,
+      search: search,
+    });
+    // berubah jika salah satu dari ini berubah
+  }, [status, search, page, getItems]);
 
-  const summary = useMemo(() => {
-    const available = data.filter((items) => items.status === "available").length;
-    const lowStock = data.filter((items) => items.status === "low_stock").length;
-    const outOfStock = data.filter((items) => items.status === "out_of_stock").length;
-    return { total: data.length, available, lowStock, outOfStock };
-  }, [data]);
+  // mengambil ulang setelah crud
+  const refresh = async () => {
+    getItems({
+      per_page: $perPage,
+      page: page,
+      category: status === "all" ? "" : status,
+      search: search,
+    });
+  };
 
-  const stats = [
-    { icon: Boxes, iconClass: "bg-blue-50 text-blue-600", value: summary.total, label: "Total Item" },
-    { icon: CheckCircle2, iconClass: "bg-emerald-50 text-emerald-600", value: summary.available, label: "Available" },
-    { icon: AlertTriangle, iconClass: "bg-amber-50 text-amber-600", value: summary.lowStock, label: "Low Stock" },
-    { icon: XCircle, iconClass: "bg-red-50 text-red-600", value: summary.outOfStock, label: "Out of Stock" },
-  ];
+  const onDelete = async (id: number) => {
+    await handleDelete(id);
+    refresh();
+  };
+
+  const lastPage = meta?.last_page ?? 1;
+
+  // untuk no dimulai dari halaman yg uda terlwati contoh lagi buka halamn 3 maka 2 halaman sebelumnya uda terlwati kan
+  // berarti 3 -1  = 2 kali 10  maka 20
+  // maka dibawah 20 + 1 sampai seterusnya 
+  const startNumber = (page - 1) * $perPage
+
+  //  const summary = useMemo(() => {
+  //   const available = data.filter((items) => items.status === "available").length;
+  //   const lowStock = data.filter((items) => items.status === "low_stock").length;
+  //   const outOfStock = meta.filter((items) => meta?.total.items.status === "out_of_stock").length;
+  //   return { total: meta?.total ?? data.length, available, lowStock, outOfStock };
+  // }, [data, meta]);
+
+  //   const stats = [
+  //     { icon: Boxes, iconClass: "bg-blue-50 text-blue-600", value: summary.total, label: "Total Item" },
+  //     { icon: CheckCircle2, iconClass: "bg-emerald-50 text-emerald-600", value: summary.available, label: "Available" },
+  //     { icon: AlertTriangle, iconClass: "bg-amber-50 text-amber-600", value: summary.lowStock, label: "Low Stock" },
+  //     { icon: XCircle, iconClass: "bg-red-50 text-red-600", value: summary.outOfStock, label: "Out of Stock" },
+  //   ];
 
   return (
     <div className="space-y-4">
       {/* Stat cards */}
-      <div className="flex flex-wrap gap-4 my-4">
+      {/* <div className="flex flex-wrap gap-4 my-4">
         {stats.map(({ icon: Icon, iconClass, value, label }) => (
           <div
             key={label}
@@ -76,27 +122,60 @@ const TableItems = () => {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
 
       <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
         {/* Toolbar */}
-        <div className="flex items-center justify-between gap-4 border-b border-slate-200 p-4">
-          {/* Search */}
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari part number, nama barang..."
-              className="pl-9"
-            />
-          </div>
 
-          {/* <Button variant="outline" className="gap-2 text-slate-600">
-            <Download className="h-4 w-4" />
-            Export
-          </Button> */}
+        <div className="flex flex-col gap-3 border-b border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
+          <form
+            className="flex w-full max-w-lg gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+
+              Setpage(1);
+              // masukkan ke search nilai dari keyword
+              Setsearch(keyword);
+            }}
+          >
+            <div className="relative flex-1">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                size={17}
+              />
+
+              <Input
+                className="pl-10"
+                placeholder="Cari supplier..."
+                value={keyword}
+                onChange={(e) => Setkeyword(e.target.value)}
+              />
+            </div>
+
+            <Button disabled={loading}>Cari</Button>
+          </form>
+
+          <Select
+            value={status}
+            onValueChange={(value) => {
+              if (value) {
+                Setstatus(value);
+                Setpage(1);
+              }
+            }}
+          >
+            <SelectTrigger className="w-full md:w-[180px]">
+              <SelectValue placeholder="Pilih Kategori" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="all">Semua Kategori</SelectItem>
+
+              <SelectItem value="apd">APD</SelectItem>
+
+              <SelectItem value="tools">TOOLS</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {errodelete && <p className="px-4 pt-3 text-sm text-red-500">{errodelete}</p>}
@@ -125,7 +204,7 @@ const TableItems = () => {
                   colSpan={9}
                   className="h-24 text-center text-slate-500"
                 >
-                  Loading...
+                  loading...
                 </TableCell>
               </TableRow>
             ) : error ? (
@@ -141,16 +220,25 @@ const TableItems = () => {
               <TableRow>
                 <TableCell
                   colSpan={9}
-                  className="h-24 text-center text-slate-500"
+                  className="h-32 text-center"
                 >
-                  Belum ada data barang.
+                  <div className="flex flex-col items-center gap-2">
+                    <Search
+                      size={32}
+                      className="text-gray-300"
+                    />
+
+                    <p className="font-medium text-gray-600">Barang tidak ditemukan</p>
+
+                    <p className="text-sm text-gray-400">Coba gunakan kata kunci lain</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
               data.map((items, index) => (
                 <TableRow key={items.id}>
-                  <TableCell className="text-slate-500">{index + 1}</TableCell>
-
+                 
+                  <TableCell className="px-6 py-4">{startNumber + index  + 1}</TableCell>
                   <TableCell>
                     <div className="h-9 w-9 overflow-hidden rounded-lg bg-slate-100">
                       {items.file ? (
@@ -166,25 +254,20 @@ const TableItems = () => {
                       )}
                     </div>
                   </TableCell>
-
                   <TableCell className="font-medium text-blue-600">{items.part_number}</TableCell>
                   <TableCell className="font-medium text-slate-900">{items.name}</TableCell>
-
                   <TableCell>
                     <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold text-transform: capitalize ${
+                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
                         CATEGORY_STYLE[items.category] ?? "bg-slate-100 text-slate-600"
                       }`}
                     >
                       {items.category}
                     </span>
                   </TableCell>
-
                   <TableCell className="text-slate-500">{items.brand}</TableCell>
-
                   <TableCell className="text-center text-slate-500">{items.min_stock} unit</TableCell>
                   <TableCell className="text-center font-semibold text-slate-800">{items.current_stock} unit</TableCell>
-
                   <TableCell>
                     {(() => {
                       const status = getStockStatus(items.current_stock, items.min_stock);
@@ -195,7 +278,6 @@ const TableItems = () => {
                       );
                     })()}
                   </TableCell>
-
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
                       <Button
@@ -217,7 +299,7 @@ const TableItems = () => {
                       </Button>
 
                       <Button
-                        onClick={() => handleDelete(items.id)}
+                        onClick={() => onDelete(items.id)}
                         size="icon"
                         variant="outline"
                         className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"
@@ -232,6 +314,36 @@ const TableItems = () => {
             )}
           </TableBody>
         </Table>
+
+        {data.length > 0 && (
+          <div className="flex items-center justify-between border-t bg-slate-50 p-4">
+            <span className="text-sm text-gray-500">
+              Halaman {page} dari {lastPage}
+            </span>
+
+            <div className="flex gap-2">
+              <Button
+                size="icon"
+                variant="outline"
+                // disable ketika page kurang dari 1 sama dengan 1 dan loading
+
+                disabled={page <= 1 || loading}
+                onClick={() => Setpage(page - 1)}
+              >
+                <ChevronLeft size={16} />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="outline"
+                disabled={page >= lastPage || loading}
+                onClick={() => Setpage(page + 1)}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
