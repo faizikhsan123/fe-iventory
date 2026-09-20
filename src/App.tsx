@@ -11,6 +11,7 @@ import CreateItems from "./components/items/CreateItems";
 import UpdateItems from "./components/items/updateItems";
 import StockMasuk from "./pages/StockMasuk";
 import StockKeluarPage from "./pages/StockKeluar";
+import Activityy from "./pages/Activity";
 
 function App() {
   return (
@@ -63,6 +64,10 @@ function App() {
           <Route
             path="/stock-keluar"
             element={<StockKeluarPage />}
+          />
+          <Route
+            path="/Activity-log"
+            element={<Activityy />}
           />
         </Route>
       </Route>
