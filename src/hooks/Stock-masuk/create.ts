@@ -9,7 +9,7 @@ import withReactContent from "sweetalert2-react-content";
 const Usecreate = () => {
   const [loadingStockMasuk, SetloadingStockMasuk] = useState(false);
   const [errorStockMasuk, SeterrorStockMasuk] = useState("");
-  const [StockIn, SetStockIn] = useState<StockIN | null>(null);
+  const [StockIn, SetStockIn] = useState<StockIN[] | null>(null);
 
   const MySwal = withReactContent(Swal);
 
@@ -18,17 +18,16 @@ const Usecreate = () => {
       SetloadingStockMasuk(true);
       SeterrorStockMasuk("");
 
-      const response = await AxiosInstance.post("/stock-history", {
-        item_id: payload.item_id,
+      const response = await AxiosInstance.post("/stock-history/in", {
         supplier_id: payload.supplier_id,
         date: payload.date,
-        qty: payload.qty, 
-        unit : payload.unit,
         note: payload.note ?? undefined,
+        items: payload.items,
       });
 
       SetStockIn(response.data.data);
       MySwal.fire("Berhasil!", "Data Barang  berhasil ditambahkan.", "success");
+      return response.data.data;
     } catch (error) {
       let message = "Terjadi Kesalahan Coba lagi";
 
@@ -44,9 +43,9 @@ const Usecreate = () => {
       }
       SeterrorStockMasuk(message);
       MySwal.fire("Gagal!", message, "error");
-     
-    }finally {
-      SetloadingStockMasuk(false)
+      return null;
+    } finally {
+      SetloadingStockMasuk(false);
     }
   };
   return {

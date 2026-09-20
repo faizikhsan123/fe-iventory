@@ -10,7 +10,6 @@ import { Textarea } from "../ui/textarea";
 import { itemsSchema, type ItemsCreate } from "@/schemas/items";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import UsecreateItems from "@/hooks/items/createItems";
 
 const CreateItems = () => {
@@ -146,28 +145,17 @@ const CreateItems = () => {
                   <Label htmlFor="category">
                     Kategori <span className="text-red-500">*</span>
                   </Label>
-                  <Controller
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        disabled={loadingCreate}
-                      >
-                        <SelectTrigger
-                          id="division"
-                          className="w-full"
-                        >
-                          <SelectValue placeholder="-- Select Category --" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="apd">apd</SelectItem>
-                          <SelectItem value="tools">tools</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
+
+                  <select
+                    id="category"
+                    disabled={loadingCreate}
+                    {...form.register("category")}
+                  >
+                    <option value=""> -- Pilih Kategori --</option>
+                    <option value="apd">APD</option>
+                    <option value="tools">Tools</option>
+                  </select>
+
                   <span className="text-red-500 text-sm">{form.formState.errors.category?.message}</span>
                 </Field>
 
@@ -208,32 +196,20 @@ const CreateItems = () => {
                     <Label htmlFor="size">
                       Size <span className="text-red-500">*</span>
                     </Label>
-                    <Controller
-                      control={form.control}
-                      name="size"
-                      render={({ field }) => (
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          disabled={loadingCreate}
-                        >
-                          <SelectTrigger
-                            id="size"
-                            className="w-full"
-                          >
-                            <SelectValue placeholder="-- Select Size --" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="s">s</SelectItem>
-                            <SelectItem value="m">m</SelectItem>
-                            <SelectItem value="l">l</SelectItem>
-                            <SelectItem value="xl">xl</SelectItem>
-                            <SelectItem value="xxl">xxl</SelectItem>
-                            <SelectItem value="universal">universal</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
+                    <select
+                      id="size"
+                      disabled={loadingCreate}
+                      {...form.register("size")}
+                    >
+                      <option value="">--Pilih Ukuran--</option>
+                      <option value="s">S</option>
+                      <option value="m">M</option>
+                      <option value="l">L</option>
+                      <option value="xl">XL</option>
+                      <option value="xxl">XXL</option>
+                      <option value="universal">Universal</option>
+                    </select>
+
                     <span className="text-red-500 text-sm">{form.formState.errors.size?.message}</span>
                   </Field>
                 </div>
@@ -246,30 +222,18 @@ const CreateItems = () => {
                     <Label htmlFor="unit">
                       Unit <span className="text-red-500">*</span>
                     </Label>
-                    <Controller
-                      control={form.control}
-                      name="unit"
-                      render={({ field }) => (
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          disabled={loadingCreate}
-                        >
-                          <SelectTrigger
-                            id="unit"
-                            className="w-full"
-                          >
-                            <SelectValue placeholder="-- Select Unit --" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pcs">pcs</SelectItem>
-                            <SelectItem value="set">set</SelectItem>
-                            <SelectItem value="unit">unit</SelectItem>
-                            <SelectItem value="pair">pair</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
+                    <select
+                      id="unit"
+                      disabled={loadingCreate}
+                      {...form.register("unit")}
+                    >
+                      <option value=""> -- Pilih Satuan --</option>
+                      <option value="pcs">PCS</option>
+                      <option value="set">SET</option>
+                      <option value="unit">UNIT</option>
+                      <option value="pair">PAIR</option>
+                    </select>
+              
                     <span className="text-red-500 text-sm">{form.formState.errors.unit?.message}</span>
                   </Field>
                 </div>

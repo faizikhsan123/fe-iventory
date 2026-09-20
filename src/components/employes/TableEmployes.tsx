@@ -16,7 +16,8 @@ import UpdateEmployes from "./UpdateEmployes";
 
 import type { employes } from "@/types/employes";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+const selectClassName =
+  "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
 
 const TableEmployes = () => {
   const { data, meta, loading, error, getEmployesButton } = useGetEmployes();
@@ -112,58 +113,42 @@ const TableEmployes = () => {
 
         {/* Filter Divisi */}
 
-        <Select
+        <select
+          className={selectClassName}
           value={division}
-          onValueChange={(value) => {
-            if (value) {
-              setDivision(value);
-
-              setPage(1);
-            }
+          onChange={(e) => {
+            setDivision(e.target.value);
+            setPage(1);
           }}
         >
-          <SelectTrigger className="w-full md:w-[180px]">
-            <SelectValue placeholder="Filter Divisi" />
-          </SelectTrigger>
+          <option value="all">Semua Divisi</option>
 
-          <SelectContent>
-            <SelectItem value="all">Semua Divisi</SelectItem>
+          {/* TODO: sesuaikan value dengan divisi yang ada di BE */}
+          <option value="GA">GA</option>
 
-            {/* TODO: sesuaikan value dengan divisi yang ada di BE */}
-            <SelectItem value="GA">GA</SelectItem>
+          <option value="INC-PMR">INC - PMR</option>
 
-            <SelectItem value="INC-PMR">INC - PMR</SelectItem>
-
-            <SelectItem value="INC-ER">INC - ER</SelectItem>
-          </SelectContent>
-        </Select>
+          <option value="INC-ER">INC - ER</option>
+        </select>
 
         {/* posiition */}
-        <Select
+        <select
+          className={selectClassName}
           value={position}
-          onValueChange={(value) => {
-            if (value) {
-              setPosition(value);
-
-              setPage(1);
-            }
+          onChange={(e) => {
+            setPosition(e.target.value);
+            setPage(1);
           }}
         >
-          <SelectTrigger className="w-full md:w-[180px]">
-            <SelectValue placeholder="Filter Divisi" />
-          </SelectTrigger>
+          <option value="all">Semua Position</option>
 
-          <SelectContent>
-            <SelectItem value="all">Semua Position</SelectItem>
+          {/* TODO: sesuaikan value dengan divisi yang ada di BE */}
+          <option value="Supervisor">Supervisor</option>
 
-            {/* TODO: sesuaikan value dengan divisi yang ada di BE */}
-            <SelectItem value="Supervisor">Supervisor</SelectItem>
+          <option value="Foreman">Foreman</option>
 
-            <SelectItem value="Foreman">Foreman</SelectItem>
-
-            <SelectItem value="Technician">Technician</SelectItem>
-          </SelectContent>
-        </Select>
+          <option value="Technician">Technician</option>
+        </select>
       </div>
 
       {/* TABLE */}

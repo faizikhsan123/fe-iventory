@@ -16,7 +16,8 @@ import { EditSupplier } from "./UpdateSupplier";
 
 import type { Supplier } from "@/types/supplier";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+const selectClassName =
+  "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
 
 const TableSupplier = () => {
   const { dataSUpplier, meta, loadingSupplier, error, getSupplier } = useSupplier();
@@ -110,28 +111,20 @@ const TableSupplier = () => {
 
         {/* Filter Status */}
 
-        <Select
+        <select
+          className={selectClassName}
           value={status}
-          onValueChange={(value) => {
-            if (value) {
-              setStatus(value);
-
-              setPage(1);
-            }
+          onChange={(e) => {
+            setStatus(e.target.value);
+            setPage(1);
           }}
         >
-          <SelectTrigger className="w-full md:w-[180px]">
-            <SelectValue placeholder="Filter Status" />
-          </SelectTrigger>
+          <option value="all">Semua Status</option>
 
-          <SelectContent>
-            <SelectItem value="all">Semua Status</SelectItem>
+          <option value="active">Active</option>
 
-            <SelectItem value="active">Active</SelectItem>
-
-            <SelectItem value="inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
+          <option value="inactive">Inactive</option>
+        </select>
       </div>
 
       {/* TABLE */}
@@ -147,6 +140,7 @@ const TableSupplier = () => {
               <TableHead className="px-6">Telepon</TableHead>
 
               <TableHead className="px-6">Email</TableHead>
+              <TableHead className="px-6">address</TableHead>
 
               <TableHead className="px-6">Status</TableHead>
 
@@ -216,6 +210,7 @@ const TableSupplier = () => {
                   <TableCell className="px-6 py-4">{supplier.phone ?? "-"}</TableCell>
 
                   <TableCell className="px-6 py-4">{supplier.email ?? "-"}</TableCell>
+                  <TableCell className="px-6 py-4">{supplier.address ?? "-"}</TableCell>
 
                   <TableCell className="px-6 py-4">
                     <span

@@ -11,16 +11,16 @@ import { Field, FieldGroup } from "../ui/field";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { employeeCreateSchema, type EmployeeCreateForm } from "@/schemas/employes";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+
 import UseCreateEmployes from "@/hooks/employes/createEmployes";
 
 type CreateEmployesProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess : () => void
+  onSuccess: () => void;
 };
 
 const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) => {
@@ -30,11 +30,11 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
     resolver: zodResolver(employeeCreateSchema),
   });
 
-  const handleButton = async (data: EmployeeCreateForm, ) => {
+  const handleButton = async (data: EmployeeCreateForm) => {
     handeCreate(data, () => {
       form.reset();
       onOpenChange(false);
-      onSuccess?.()
+      onSuccess?.();
     });
   };
 
@@ -97,29 +97,16 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
               <Label htmlFor="division">
                 Division <span className="text-red-500">*</span>
               </Label>
-              <Controller
-                control={form.control}
-                name="division"
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={loadingCreate}
-                  >
-                    <SelectTrigger
-                      id="division"
-                      className="w-full"
-                    >
-                      <SelectValue placeholder="-- Select Division --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="GA">GA</SelectItem>
-                      <SelectItem value="INC-PMR">INC-PMR</SelectItem>
-                      <SelectItem value="INC-ER">INC-ER</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              <select
+                id="division"
+                {...form.register("division")}
+              >
+                <option value="">-- Pilih Divisi --</option>
+                <option value="GA">GA</option>
+                <option value="INC-PMR">INC-PMR</option>
+                <option value="INC-ER">INC-ER</option>
+              </select>
+
               <span className="text-red-500 text-sm">{form.formState.errors.division?.message}</span>
             </Field>
 
@@ -127,29 +114,16 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
               <Label htmlFor="position">
                 Position <span className="text-red-500">*</span>
               </Label>
-              <Controller
-                control={form.control}
-                name="position"
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={loadingCreate}
-                  >
-                    <SelectTrigger
-                      id="position"
-                      className="w-full"
-                    >
-                      <SelectValue placeholder="-- Select Position --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Supervisor">Supervisor</SelectItem>
-                      <SelectItem value="Technician">Technician</SelectItem>
-                      <SelectItem value="Foreman">Foreman</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              <select
+                id="position"
+                {...form.register("position")}
+              >
+                <option value="">-- Pilih Posisi --</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="Technician">Technician</option>
+                <option value="Foreman">Foreman</option>
+              </select>
+
               <span className="text-red-500 text-sm">{form.formState.errors.position?.message}</span>
             </Field>
           </div>

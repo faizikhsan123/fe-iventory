@@ -12,12 +12,11 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supplierSchemaEdit,  type SupplierFormEdit } from "@/schemas/supplier";
+import { supplierSchemaEdit, type SupplierFormEdit } from "@/schemas/supplier";
 import { useEditSupplier } from "@/hooks/suppliers/EditSupplier";
 import type { Supplier } from "@/types/supplier";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type EditSupplierProps = {
   open: boolean;
@@ -43,7 +42,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
       phone: supplier.phone ?? "",
       email: supplier.email ?? "",
       address: supplier.address ?? "",
-      status: supplier.status
+      status: supplier.status,
     });
   }, [supplier]);
 
@@ -98,35 +97,21 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
             <span className="text-red-500 text-sm">{form.formState.errors.phone?.message}</span>
           </Field>
 
-            <Field>
-              <Label htmlFor="status">
-                Position <span className="text-red-500">*</span>
-              </Label>
-              <Controller
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={loadingUpdate}
-                  >
-                    <SelectTrigger
-                      id="position"
-                      className="w-full"
-                    >
-                      <SelectValue placeholder="-- Select Position --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">active</SelectItem>
-                      <SelectItem value="inactive">inactive</SelectItem>
-                      
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <span className="text-red-500 text-sm">{form.formState.errors.status?.message}</span>
-            </Field>
+          <Field>
+            <Label htmlFor="status">
+              Status <span className="text-red-500">*</span>
+            </Label>
+            <select
+              id="status"
+              className="flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={loadingUpdate}
+              {...form.register("status")}
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+            <span className="text-red-500 text-sm">{form.formState.errors.status?.message}</span>
+          </Field>
 
           <Field>
             <Label htmlFor="email">Email</Label>

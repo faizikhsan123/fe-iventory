@@ -3,17 +3,19 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 import { useEffect } from "react";
 import UsegetItems from "@/hooks/items/getItems";
 import useGetEmployes from "@/hooks/employes/getEmployes";
-import { Controller, useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { StockOutSchema } from "@/schemas/StockOut";
 import type { StockOut } from "@/schemas/StockOut";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import useSubmitStockKeluar from "@/hooks/StokKeluar/submit2hooks";
+
+const selectClassName =
+  "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50";
 
 const StockKeluar = () => {
   const { data: items, loading: loadingItems, getItems } = UsegetItems();
@@ -79,34 +81,22 @@ const StockKeluar = () => {
                 <Label>
                   Karyawan <span className="text-red-500">*</span>
                 </Label>
-                <Controller
-                  control={form.control}
-                  name="employes_id"
-                  render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      disabled={submitting}
+                <select
+                  id="employes_id"
+                  className={selectClassName}
+                  disabled={submitting}
+                  {...form.register("employes_id")}
+                >
+                  <option value="">{loadingEmployees ? "Memuat karyawan" : "-- Pilih karyawan --"}</option>
+                  {employees.map((employee) => (
+                    <option
+                      key={employee.id}
+                      value={employee.id.toString()}
                     >
-                      <SelectTrigger
-                        id="employes_id"
-                        className="w-full"
-                      >
-                        <SelectValue placeholder={loadingEmployees ? "Memuat karyawan" : "-- Pilih karyawan --"} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {employees.map((employee) => (
-                          <SelectItem
-                            key={employee.id}
-                            value={employee.id.toString()}
-                          >
-                            {employee.user.name} — {employee.division}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
+                      {employee.user.name} — {employee.division}
+                    </option>
+                  ))}
+                </select>
                 <span className="text-red-500 text-sm">{form.formState.errors.employes_id?.message}</span>
               </div>
 
@@ -166,31 +156,21 @@ const StockKeluar = () => {
                     >
                       <td className="py-3 align-top text-slate-500">{index + 1}</td>
                       <td className="py-3 pr-3 align-top">
-                        <Controller
-                          control={form.control}
-                          name={`items.${index}.items_id`}
-                          render={({ field }) => (
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                              disabled={submitting}
+                        <select
+                          className={selectClassName}
+                          disabled={submitting}
+                          {...form.register(`items.${index}.items_id`)}
+                        >
+                          <option value="">{loadingItems ? "Memuat barang" : "-- Pilih barang --"}</option>
+                          {items.map((item) => (
+                            <option
+                              key={item.id}
+                              value={item.id.toString()}
                             >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder={loadingItems ? "Memuat barang" : "-- Pilih barang --"} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {items.map((item) => (
-                                  <SelectItem
-                                    key={item.id}
-                                    value={item.id.toString()}
-                                  >
-                                    {item.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )}
-                        />
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
                         <span className="text-red-500 text-sm">
                           {form.formState.errors.items?.[index]?.items_id?.message}
                         </span>

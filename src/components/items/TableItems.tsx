@@ -19,8 +19,10 @@ import UseDelete from "@/hooks/items/DeleteItems";
 import { STORAGE_URL } from "@/lib/axios";
 import { useNavigate } from "react-router";
 import { cn } from "cn";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useEffect, useState } from "react";
+
+const selectClassName =
+  "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
 
 const STATUS_STYLE: Record<string, string> = {
   available: "bg-emerald-50 text-emerald-700",
@@ -155,27 +157,20 @@ const TableItems = () => {
             <Button disabled={loading}>Cari</Button>
           </form>
 
-          <Select
+          <select
+            className={selectClassName}
             value={status}
-            onValueChange={(value) => {
-              if (value) {
-                Setstatus(value);
-                Setpage(1);
-              }
+            onChange={(e) => {
+              Setstatus(e.target.value);
+              Setpage(1);
             }}
           >
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Pilih Kategori" />
-            </SelectTrigger>
+            <option value="all">Semua Kategori</option>
 
-            <SelectContent>
-              <SelectItem value="all">Semua Kategori</SelectItem>
+            <option value="apd">APD</option>
 
-              <SelectItem value="apd">APD</SelectItem>
-
-              <SelectItem value="tools">TOOLS</SelectItem>
-            </SelectContent>
-          </Select>
+            <option value="tools">TOOLS</option>
+          </select>
         </div>
 
         {errodelete && <p className="px-4 pt-3 text-sm text-red-500">{errodelete}</p>}

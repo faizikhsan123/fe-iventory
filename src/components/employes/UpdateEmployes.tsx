@@ -11,10 +11,9 @@ import { Field, FieldGroup } from "../ui/field";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import type { employes } from "@/types/employes";
 import { useEffect } from "react";
 import UseeditEmployes from "@/hooks/employes/editEmployes";
@@ -46,17 +45,17 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
   };
 
   useEffect(() => {
-    if (!employes) return; // jaga-jaga kalau employes masih null, jangan lanjut
+    if (!employes) return;
 
     form.reset({
       name: employes.user.name,
       email: employes.user.email,
 
       division: employes.division,
-      position: employes.position, // fix typo
+      position: employes.position,
       status: employes.status,
     });
-  }, [employes]); // koma di sini, bukan kurung siku nempel
+  }, [employes]);
 
   return (
     <Dialog
@@ -117,29 +116,16 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               <Label htmlFor="division">
                 Division <span className="text-red-500">*</span>
               </Label>
-              <Controller
-                control={form.control}
-                name="division"
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={loadingupdate}
-                  >
-                    <SelectTrigger
-                      id="division"
-                      className="w-full"
-                    >
-                      <SelectValue placeholder="-- Select Division --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="GA">GA</SelectItem>
-                      <SelectItem value="INC-PMR">INC-PMR</SelectItem>
-                      <SelectItem value="INC-ER">INC-ER</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              <select
+                id="division"
+                {...form.register("division")}
+              >
+                <option value="">-- Pilih Divisi --</option>
+                <option value="GA">GA</option>
+                <option value="INC-PMR">INC-PMR</option>
+                <option value="INC-ER">INC-ER</option>
+              </select>
+
               <span className="text-red-500 text-sm">{form.formState.errors.division?.message}</span>
             </Field>
 
@@ -147,29 +133,16 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               <Label htmlFor="position">
                 Position <span className="text-red-500">*</span>
               </Label>
-              <Controller
-                control={form.control}
-                name="position"
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={loadingupdate}
-                  >
-                    <SelectTrigger
-                      id="position"
-                      className="w-full"
-                    >
-                      <SelectValue placeholder="-- Select Position --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Supervisor">Supervisor</SelectItem>
-                      <SelectItem value="Technician">Technician</SelectItem>
-                      <SelectItem value="Foreman">Foreman</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              <select
+                id="position"
+                {...form.register("position")}
+              >
+                <option value="">-- Pilih Posisi --</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="Technician">Technician</option>
+                <option value="Foreman">Foreman</option>
+              </select>
+
               <span className="text-red-500 text-sm">{form.formState.errors.position?.message}</span>
             </Field>
 
@@ -177,28 +150,14 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               <Label htmlFor="status">
                 Status <span className="text-red-500">*</span>
               </Label>
-              <Controller
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={loadingupdate}
-                  >
-                    <SelectTrigger
-                      id="status"
-                      className="w-full"
-                    >
-                      <SelectValue placeholder="-- Select Position --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">active</SelectItem>
-                      <SelectItem value="inactive">inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
+              <select
+                id="status"
+                {...form.register("status")}
+              >
+                <option value="">-- Pilih Status --</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
               <span className="text-red-500 text-sm">{form.formState.errors.status?.message}</span>
             </Field>
           </div>
