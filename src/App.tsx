@@ -12,6 +12,7 @@ import UpdateItems from "./components/items/updateItems";
 import StockMasuk from "./pages/StockMasuk";
 import StockKeluarPage from "./pages/StockKeluar";
 import Activityy from "./pages/Activity";
+import LaporanPage from "./pages/Laporan";
 
 function App() {
   return (
@@ -68,6 +69,10 @@ function App() {
           <Route
             path="/Activity-log"
             element={<Activityy />}
+          />
+          <Route
+            path="/laporan"
+            element={<LaporanPage />}
           />
         </Route>
       </Route>
