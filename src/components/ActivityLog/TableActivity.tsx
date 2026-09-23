@@ -25,6 +25,9 @@ const TableAvtivity = () => {
   // state utuk halaman status
   const [type, setType] = useState("all");
 
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   // satu halaman 10 item
   const perPage = 10;
 
@@ -50,8 +53,13 @@ const TableAvtivity = () => {
       page,
 
       per_page: perPage,
+
+      start: startDate,
+
+      end : endDate
+
     });
-  }, [search, type, page, handleGet]);
+  }, [search, type, page, startDate,endDate, handleGet]);
 
   //Mengambil ulang data supplier setelah aksi tertentu seperti delete atau update.
   const lastPage = meta?.last_page ?? 1;
@@ -107,6 +115,33 @@ const TableAvtivity = () => {
 
           <option value="system">Sistem</option>
         </select>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="rounded-lg border border-neutral-200 px-2.5 py-1.5 text-sm text-neutral-700 outline-none focus:border-blue-400"
+          />
+          <span className="text-sm text-neutral-400">—</span>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="rounded-lg border border-neutral-200 px-2.5 py-1.5 text-sm text-neutral-700 outline-none focus:border-blue-400"
+          />
+          {(startDate || endDate) && (
+            <button
+              onClick={() => {
+                setStartDate("");
+                setEndDate("");
+              }}
+              className="text-sm text-neutral-400 hover:text-neutral-600"
+            >
+              Reset
+            </button>
+          )}
+        </div>
       </div>
 
       {/* TABLE */}
@@ -179,8 +214,6 @@ const TableAvtivity = () => {
               !error &&
               data.length > 0 &&
               data.map((activity, index) => (
-            
-
                 <TableRow
                   key={activity.id}
                   className="hover:bg-slate-50"
@@ -189,8 +222,6 @@ const TableAvtivity = () => {
                   <TableCell className="px-6 py-4 font-medium">{activity.date}</TableCell>
                   <TableCell className="px-6 py-4">{activity.user_id?.name ?? "-"}</TableCell>
                   <TableCell className="px-6 py-4">{activity.activity ?? "-"}</TableCell>
-                
-                
                   <TableCell className="px-6 py-4">
                     {activity.type ? (
                       <span

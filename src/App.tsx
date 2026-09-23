@@ -13,6 +13,7 @@ import StockMasuk from "./pages/StockMasuk";
 import StockKeluarPage from "./pages/StockKeluar";
 import Activityy from "./pages/Activity";
 import LaporanPage from "./pages/Laporan";
+import DashboardPage from "./pages/Dashboard";
 
 function App() {
   return (
@@ -73,6 +74,10 @@ function App() {
           <Route
             path="/laporan"
             element={<LaporanPage />}
+          />
+          <Route
+            path="/dashboard"
+            element={<DashboardPage />}
           />
         </Route>
       </Route>

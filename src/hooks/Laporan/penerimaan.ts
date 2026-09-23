@@ -1,9 +1,6 @@
 import { AxiosInstance } from "@/lib/axios";
 import { useState } from "react";
 
-// Struktur ini ngikutin persis apa yang dikirim StockHistoryResource dari backend.
-// Kalau field di backend berubah, sesuaikan di sini juga.
-
 interface Supplier {
   id: number;
   name: string;
@@ -26,7 +23,6 @@ interface Item {
   current_stock: string;
   status: string;
   description: string;
-  supplier_id: Supplier;
 }
 
 interface User {
@@ -42,22 +38,43 @@ export interface StockHistoryItem {
   date: string;
   user_id: User;
   item_id: Item;
+  supplier_id: Supplier;
+}
+
+interface Meta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+interface GetParams {
+  start?: string;
+  end?: string;
+  page?: number;
+  per_page?: number;
 }
 
 export const usePenerimaanStok = () => {
   const [dataPenerimaanStok, setData] = useState<StockHistoryItem[]>([]);
+  const [meta, setMeta] = useState<Meta | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const getPenerimaanStok = async () => {
+  const getPenerimaanStok = async (params: GetParams = {}) => {
     try {
       setLoading(true);
       setError("");
-      // filter type=in dilakukan di FE dulu (lihat komponen tabel),
-      // karena belum jelas apakah endpoint stock-history support query ?type=in.
-      // Kalau backend sudah support, tinggal pindahin filter ke params di sini.
-      const response = await AxiosInstance.get("/stock-history");
+      const response = await AxiosInstance.get("/stock-history", {
+        params: {
+          start: params.start || undefined,
+          end: params.end || undefined,
+          page: params.page || 1,
+          per_page: params.per_page || 10,
+        },
+      });
       setData(response.data.data);
+      setMeta(response.data.meta ?? null);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -67,6 +84,7 @@ export const usePenerimaanStok = () => {
 
   return {
     dataPenerimaanStok,
+    meta,
     loading,
     error,
     getPenerimaanStok,

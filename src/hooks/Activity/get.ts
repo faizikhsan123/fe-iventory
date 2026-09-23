@@ -8,6 +8,8 @@ type Params = {
   per_page?: number;
   type?: string;
   detai?: string;
+  start?: string;
+  end?: string;
 };
 
 type Meta = {
