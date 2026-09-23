@@ -15,6 +15,7 @@ import { useDeleteEmployes } from "@/hooks/employes/deleteEmployes";
 import UpdateEmployes from "./UpdateEmployes";
 
 import type { employes } from "@/types/employes";
+import {  useNavigate } from "react-router";
 
 const selectClassName =
   "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
@@ -43,6 +44,8 @@ const TableEmployes = () => {
 
   // satu halaman 10 item
   const perPage = 10;
+
+  const navigate = useNavigate()
 
   // use effect dijalankan dengan beberapa parameter
   useEffect(() => {
@@ -78,7 +81,7 @@ const TableEmployes = () => {
   const lastPage = meta?.last_page ?? 1;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       {/* SEARCH + FILTER */}
 
       <div className="flex flex-col gap-3 border-b border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
@@ -108,7 +111,7 @@ const TableEmployes = () => {
             />
           </div>
 
-          <Button disabled={isLoading}>Cari</Button>
+          <Button className="bg-blue-600" disabled={isLoading}>Cari</Button>
         </form>
 
         {/* Filter Divisi */}
@@ -274,6 +277,14 @@ const TableEmployes = () => {
                           size="icon"
                           variant="outline"
                           onClick={() => setStateUpdate(employes)}
+                        >
+                          <SquarePen size={16} />
+                        </Button>
+
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() => navigate(`/employes/${employes.id}`)}
                         >
                           <SquarePen size={16} />
                         </Button>

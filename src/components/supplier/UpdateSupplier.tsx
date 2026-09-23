@@ -1,3 +1,4 @@
+// EditSupplier.tsx
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -107,8 +108,8 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
               disabled={loadingUpdate}
               {...form.register("status")}
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="active">Aktif</option>
+              <option value="inactive">Tidak Aktif</option>
             </select>
             <span className="text-red-500 text-sm">{form.formState.errors.status?.message}</span>
           </Field>

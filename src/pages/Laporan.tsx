@@ -7,6 +7,7 @@ const Activityy = () => {
   return (
     <div>
       <Navbar title="Laporan" />
+      <br />
 
       <StockDashboardSection />
 

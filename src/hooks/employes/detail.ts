@@ -1,18 +1,52 @@
-// import { AxiosInstance } from '@/lib/axios'
-// import { useState } from 'react'
+import { AxiosInstance } from "@/lib/axios";
+import { useCallback, useState } from "react";
 
-// const Usedetail = () => {
-//  const [errordetail, Seterrordetail] = useState("")
-//  const [loadingdetail, SetloadingDetail] = (false)
+interface EmployeInfo {
+  id: number;
+  name: string;
+  division: string;
+  position: string;
+  status: string;
+}
 
-//  const getDetail = async (id:number) => {
-//     Seterrordetail("")
-//     SetloadingDetail(true)
+interface Statistik {
+  total_barang_diterima: number;
+}
 
-//     const data = await AxiosInstance.get(`/employes/${id}`)
+interface RiwayatDiberikan {
+  transaction_number: string;
+  date: string;
+  barang: string;
+  qty: number;
+  note: string | null;
+}
 
+interface EmployeDetailData {
+  employe: EmployeInfo;
+  statistik: Statistik;
+  riwayat_diberikan: RiwayatDiberikan[];
+}
 
-//  }
-// }
+const useEmployeDetail = () => {
+  const [data, setData] = useState<EmployeDetailData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-// export default Usedetail
+  const handleGet = useCallback(async (employeId: string) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await AxiosInstance.get(`/employes/${employeId}/detail`);
+      setData(response.data.data);
+    } catch (err) {
+      setError("Gagal mengambil detail karyawan");
+    }
+
+    setLoading(false);
+  }, []);
+
+  return { data, error, loading, handleGet };
+};
+
+export default useEmployeDetail;

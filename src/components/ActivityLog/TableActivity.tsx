@@ -1,3 +1,4 @@
+// TableAvtivity.tsx
 import { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -89,13 +90,13 @@ const TableAvtivity = () => {
 
             <Input
               className="pl-10"
-              placeholder="Cari Detail Aktifitas"
+              placeholder="Cari Detail Aktivitas"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
           </div>
 
-          <Button disabled={loading}>Cari</Button>
+          <Button className="bg-blue-600" disabled={loading}>Cari</Button>
         </form>
 
         {/* Filter Status */}
@@ -108,10 +109,10 @@ const TableAvtivity = () => {
             setPage(1);
           }}
         >
-          <option value="all">Semua Aktifitass</option>
+          <option value="all">Semua Aktivitas</option>
 
-          <option value="stockin">barang Masuk</option>
-          <option value="stockout">barang keluar</option>
+          <option value="stockin">Barang Masuk</option>
+          <option value="stockout">Barang Keluar</option>
 
           <option value="system">Sistem</option>
         </select>
@@ -121,14 +122,14 @@ const TableAvtivity = () => {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="rounded-lg border border-neutral-200 px-2.5 py-1.5 text-sm text-neutral-700 outline-none focus:border-blue-400"
+            className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 outline-none focus:border-blue-400"
           />
-          <span className="text-sm text-neutral-400">—</span>
+          <span className="text-sm text-slate-400">—</span>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="rounded-lg border border-neutral-200 px-2.5 py-1.5 text-sm text-neutral-700 outline-none focus:border-blue-400"
+            className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 outline-none focus:border-blue-400"
           />
           {(startDate || endDate) && (
             <button
@@ -136,7 +137,7 @@ const TableAvtivity = () => {
                 setStartDate("");
                 setEndDate("");
               }}
-              className="text-sm text-neutral-400 hover:text-neutral-600"
+              className="text-sm text-slate-400 hover:text-slate-600"
             >
               Reset
             </button>
@@ -156,7 +157,7 @@ const TableAvtivity = () => {
 
               <TableHead className="px-6">Nama</TableHead>
 
-              <TableHead className="px-6">Aktifitas</TableHead>
+              <TableHead className="px-6">Aktivitas</TableHead>
 
               <TableHead className="px-6">Jenis</TableHead>
               <TableHead className="px-6">Detail</TableHead>
@@ -168,9 +169,9 @@ const TableAvtivity = () => {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-32 text-center text-gray-500"
+                  className="h-32 text-center text-slate-500"
                 >
-                  Memuat data Aktifitas...
+                  Memuat data aktivitas...
                 </TableCell>
               </TableRow>
             )}
@@ -197,12 +198,12 @@ const TableAvtivity = () => {
                   <div className="flex flex-col items-center gap-2">
                     <Search
                       size={32}
-                      className="text-gray-300"
+                      className="text-slate-300"
                     />
 
-                    <p className="font-medium text-gray-600">Aktifitas Log tidak ditemukan</p>
+                    <p className="font-medium text-slate-600">Aktivitas tidak ditemukan</p>
 
-                    <p className="text-sm text-gray-400">Coba gunakan kata kunci lain</p>
+                    <p className="text-sm text-slate-400">Coba gunakan kata kunci lain</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -253,7 +254,7 @@ const TableAvtivity = () => {
 
       {data.length > 0 && (
         <div className="flex items-center justify-between border-t bg-slate-50 p-4">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-slate-500">
             Halaman {page} dari {lastPage}
           </span>
 

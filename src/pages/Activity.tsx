@@ -5,7 +5,8 @@ import Navbar from "@/components/Navbar"
 const Activityy = () => {
   return (
     <div>
-      <Navbar title="Barang Keluar" />
+      <Navbar title="Aktifitas Tercatat" />
+      <br />
 
       <TableAvtivity />
 

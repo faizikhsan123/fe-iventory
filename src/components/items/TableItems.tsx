@@ -1,3 +1,4 @@
+// TableItems.tsx
 import {
   // Boxes,
   // CheckCircle2,
@@ -31,9 +32,9 @@ const STATUS_STYLE: Record<string, string> = {
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  available: "Available",
-  low_stock: "Low Stock",
-  out_of_stock: "Out of Stock",
+  available: "Tersedia",
+  low_stock: "Stok Menipis",
+  out_of_stock: "Stok Habis",
 };
 
 const CATEGORY_STYLE: Record<string, string> = {
@@ -89,8 +90,8 @@ const TableItems = () => {
 
   // untuk no dimulai dari halaman yg uda terlwati contoh lagi buka halamn 3 maka 2 halaman sebelumnya uda terlwati kan
   // berarti 3 -1  = 2 kali 10  maka 20
-  // maka dibawah 20 + 1 sampai seterusnya 
-  const startNumber = (page - 1) * $perPage
+  // maka dibawah 20 + 1 sampai seterusnya
+  const startNumber = (page - 1) * $perPage;
 
   //  const summary = useMemo(() => {
   //   const available = data.filter((items) => items.status === "available").length;
@@ -126,7 +127,7 @@ const TableItems = () => {
         ))}
       </div> */}
 
-      <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         {/* Toolbar */}
 
         <div className="flex flex-col gap-3 border-b border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
@@ -148,13 +149,18 @@ const TableItems = () => {
 
               <Input
                 className="pl-10"
-                placeholder="Cari supplier..."
+                placeholder="Cari barang..."
                 value={keyword}
                 onChange={(e) => Setkeyword(e.target.value)}
               />
             </div>
 
-            <Button disabled={loading}>Cari</Button>
+            <Button
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={loading}
+            >
+              Cari
+            </Button>
           </form>
 
           <select
@@ -199,7 +205,7 @@ const TableItems = () => {
                   colSpan={9}
                   className="h-24 text-center text-slate-500"
                 >
-                  loading...
+                  Memuat data barang...
                 </TableCell>
               </TableRow>
             ) : error ? (
@@ -220,20 +226,19 @@ const TableItems = () => {
                   <div className="flex flex-col items-center gap-2">
                     <Search
                       size={32}
-                      className="text-gray-300"
+                      className="text-slate-300"
                     />
 
-                    <p className="font-medium text-gray-600">Barang tidak ditemukan</p>
+                    <p className="font-medium text-slate-600">Barang tidak ditemukan</p>
 
-                    <p className="text-sm text-gray-400">Coba gunakan kata kunci lain</p>
+                    <p className="text-sm text-slate-400">Coba gunakan kata kunci lain</p>
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
               data.map((items, index) => (
                 <TableRow key={items.id}>
-                 
-                  <TableCell className="px-6 py-4">{startNumber + index  + 1}</TableCell>
+                  <TableCell className="px-6 py-4">{startNumber + index + 1}</TableCell>
                   <TableCell>
                     <div className="h-9 w-9 overflow-hidden rounded-lg bg-slate-100">
                       {items.file ? (
@@ -275,12 +280,14 @@ const TableItems = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
+                    
+
                       <Button
                         size="icon"
                         variant="outline"
-                        className="h-8 w-8 text-slate-500"
+                        onClick={() => navigate(`/items/${items.id}`)}
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye size={16} />
                       </Button>
 
                       <Button
@@ -312,7 +319,7 @@ const TableItems = () => {
 
         {data.length > 0 && (
           <div className="flex items-center justify-between border-t bg-slate-50 p-4">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-slate-500">
               Halaman {page} dari {lastPage}
             </span>
 

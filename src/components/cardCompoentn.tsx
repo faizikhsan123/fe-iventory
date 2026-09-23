@@ -1,3 +1,4 @@
+// CardComponent.tsx
 import { Truck, Check, X, Info } from "lucide-react";
 import React from "react";
 
@@ -38,14 +39,14 @@ const CardComponent = () => {
       {cards.map((card) => (
         <div
           key={card.label}
-          className="bg-neutral-primary-soft flex items-center gap-4 p-6 border border-default rounded-base shadow-xs"
+          className="bg-white flex items-center gap-4 p-6 border border-slate-200 rounded-xl shadow-sm"
         >
           <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${card.iconBg}`}>
             <card.icon className={`w-6 h-6 ${card.iconColor}`} />
           </div>
           <div>
-            <p className="text-3xl font-bold text-black">{card.value}</p>
-            <p className="text-sm text-gray-500">{card.label}</p>
+            <p className="text-3xl font-bold text-slate-900">{card.value}</p>
+            <p className="text-sm text-slate-500">{card.label}</p>
           </div>
         </div>
       ))}

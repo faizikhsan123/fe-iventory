@@ -1,3 +1,4 @@
+// SidebarComponent.tsx
 import {
   ActivityIcon,
   ArrowDown,
@@ -7,10 +8,8 @@ import {
   ChartNoAxesColumn,
   CircleUser,
   LayoutDashboard,
-
   Shield,
   // Undo2,
-
   UserStar,
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
@@ -20,8 +19,10 @@ const SidebarComponent = () => {
 
   // helper kecil biar gak nulis ternary panjang di tiap <Link>
   const linkClass = (path: string) =>
-    `flex items-center px-2 py-1.5 text-body rounded-base group ${
-      pathname === path ? "bg-blue-600 rounded-md text-white" : "text-white hover:bg-neutral-tertiary hover:text-fg-brand"
+    `flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors group ${
+      pathname === path
+        ? "bg-blue-600 text-white shadow-sm"
+        : "text-slate-300 hover:bg-white/10 hover:text-white"
     }`;
 
   return (
@@ -54,38 +55,38 @@ const SidebarComponent = () => {
 
       <aside
         id="logo-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-full transition-transform -translate-x-full sm:translate-x-0"
+        className="fixed top-0 left-0 z-40 w-64 h-full transition-transform -translate-x-full sm:translate-x-0 border-e border-white/10"
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default bg-[#000042] flex flex-col">
+        <div className="h-full px-3 py-4 overflow-y-auto bg-[#000042] flex flex-col">
           <Link
             to={"/dashboard"}
-            className="flex items-center ps-2.5 mb-5"
+            className="flex items-center ps-2.5 mb-6"
           >
-            <div className="w-9 h-9 rounded-base bg-blue-600 flex items-center justify-center me-3 shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center me-3 shrink-0">
               <Shield
                 size={18}
                 className="text-white"
               />
             </div>
             <span className="min-w-0">
-              <span className="block text-lg text-heading font-semibold leading-tight whitespace-nowrap text-white">
+              <span className="block text-lg font-semibold leading-tight whitespace-nowrap text-white">
                 PT. Industri
               </span>
-              <span className="block text-xs text-gray-400 leading-tight whitespace-nowrap">Inventory System</span>
+              <span className="block text-xs text-slate-400 leading-tight whitespace-nowrap">Inventory System</span>
             </span>
           </Link>
 
-          <ul className="mx-2 mb-1">
-            <h1 className="text-xs text-gray-500 uppercase tracking-wider">Menu Utama</h1>
+          <ul className="mx-2 mb-2">
+            <h1 className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Menu Utama</h1>
           </ul>
-          <ul className="space-y-2 font-medium">
+          <ul className="space-y-1 font-medium">
             <li>
               <Link
                 to={"/dashboard"}
                 className={linkClass("/dashboard")}
               >
-                <LayoutDashboard />
+                <LayoutDashboard size={18} />
                 <span className="ms-3">Dashboard</span>
               </Link>
             </li>
@@ -94,7 +95,7 @@ const SidebarComponent = () => {
                 to={"/items"}
                 className={linkClass("/items")}
               >
-                <BoxIcon />
+                <BoxIcon size={18} />
                 <span className="flex-1 ms-3 whitespace-nowrap">Master Barang</span>
               </Link>
             </li>
@@ -103,7 +104,7 @@ const SidebarComponent = () => {
                 to={"/supplier"}
                 className={linkClass("/supplier")}
               >
-                <BookUser />
+                <BookUser size={18} />
                 <span className="flex-1 ms-3 whitespace-nowrap">Master Supplier</span>
               </Link>
             </li>
@@ -112,22 +113,22 @@ const SidebarComponent = () => {
                 to={"/employes"}
                 className={linkClass("/employes")}
               >
-                <UserStar />
+                <UserStar size={18} />
                 <span className="flex-1 ms-3 whitespace-nowrap">Master Karyawan</span>
               </Link>
             </li>
           </ul>
 
-          <ul className="mx-2 mt-5 mb-1">
-            <h1 className="text-xs text-gray-500 uppercase tracking-wider">Transaksi</h1>
+          <ul className="mx-2 mt-6 mb-2">
+            <h1 className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Transaksi</h1>
           </ul>
-          <ul className="space-y-2 font-medium">
+          <ul className="space-y-1 font-medium">
             <li>
               <Link
                 to={"/stock-masuk"}
                 className={linkClass("/stock-masuk")}
               >
-                <ArrowUp />
+                <ArrowUp size={18} />
                 <span className="ms-3">Tambah Stock</span>
               </Link>
             </li>
@@ -136,7 +137,7 @@ const SidebarComponent = () => {
                 to={"/stock-keluar"}
                 className={linkClass("/stock-keluar")}
               >
-                <ArrowDown />
+                <ArrowDown size={18} />
                 <span className="flex-1 ms-3 whitespace-nowrap">Barang Keluar</span>
               </Link>
             </li>
@@ -151,16 +152,16 @@ const SidebarComponent = () => {
             </li> */}
           </ul>
 
-          <ul className="mx-2 mt-5 mb-1">
-            <h1 className="text-xs text-gray-500 uppercase tracking-wider">Laporan & Admin</h1>
+          <ul className="mx-2 mt-6 mb-2">
+            <h1 className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Laporan & Admin</h1>
           </ul>
-          <ul className="space-y-2 font-medium">
+          <ul className="space-y-1 font-medium">
             <li>
               <Link
                 to={"/laporan"}
                 className={linkClass("/laporan")}
               >
-                <ChartNoAxesColumn />
+                <ChartNoAxesColumn size={18} />
                 <span className="ms-3">Laporan</span>
               </Link>
             </li>
@@ -169,7 +170,7 @@ const SidebarComponent = () => {
                 to={"/activity-log"}
                 className={linkClass("/activity-log")}
               >
-                <ActivityIcon />
+                <ActivityIcon size={18} />
                 <span className="flex-1 ms-3 whitespace-nowrap">Activity Log</span>
               </Link>
             </li>
@@ -193,16 +194,6 @@ const SidebarComponent = () => {
             </li> */}
           </ul>
 
-          <div className="mt-auto flex items-center gap-3 border-t border-white/10 pt-4 px-2">
-            <CircleUser
-              size={40}
-              color="white"
-            />
-            <div className="min-w-0">
-              <p className="text-white text-sm font-semibold truncate">Budi Santoso</p>
-              <p className="text-gray-400 text-xs truncate">Admin Inventory</p>
-            </div>
-          </div>
         </div>
       </aside>
     </div>

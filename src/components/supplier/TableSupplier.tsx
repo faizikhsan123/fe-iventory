@@ -1,3 +1,4 @@
+// TableSupplier.tsx
 import { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,11 @@ import type { Supplier } from "@/types/supplier";
 const selectClassName =
   "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
 
+const STATUS_LABEL: Record<string, string> = {
+  active: "Aktif",
+  inactive: "Tidak Aktif",
+};
+
 const TableSupplier = () => {
   const { dataSUpplier, meta, loadingSupplier, error, getSupplier } = useSupplier();
 
@@ -37,8 +43,6 @@ const TableSupplier = () => {
 
   // state utuk halaman status
   const [status, setStatus] = useState("all");
-
-
 
   // satu halaman 10 item
   const perPage = 10;
@@ -76,7 +80,7 @@ const TableSupplier = () => {
   const lastPage = meta?.last_page ?? 1;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       {/* SEARCH + FILTER */}
 
       <div className="flex flex-col gap-3 border-b border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
@@ -106,7 +110,12 @@ const TableSupplier = () => {
             />
           </div>
 
-          <Button disabled={loading}>Cari</Button>
+          <Button
+            className="bg-blue-600 hover:bg-blue-700"
+            disabled={loading}
+          >
+            Cari
+          </Button>
         </form>
 
         {/* Filter Status */}
@@ -121,9 +130,9 @@ const TableSupplier = () => {
         >
           <option value="all">Semua Status</option>
 
-          <option value="active">Active</option>
+          <option value="active">Aktif</option>
 
-          <option value="inactive">Inactive</option>
+          <option value="inactive">Tidak Aktif</option>
         </select>
       </div>
 
@@ -140,7 +149,7 @@ const TableSupplier = () => {
               <TableHead className="px-6">Telepon</TableHead>
 
               <TableHead className="px-6">Email</TableHead>
-              <TableHead className="px-6">address</TableHead>
+              <TableHead className="px-6">Alamat</TableHead>
 
               <TableHead className="px-6">Status</TableHead>
 
@@ -152,8 +161,8 @@ const TableSupplier = () => {
             {loadingSupplier && (
               <TableRow>
                 <TableCell
-                  colSpan={6}
-                  className="h-32 text-center text-gray-500"
+                  colSpan={7}
+                  className="h-32 text-center text-slate-500"
                 >
                   Memuat data supplier...
                 </TableCell>
@@ -163,7 +172,7 @@ const TableSupplier = () => {
             {error && !loadingSupplier && (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="h-32 text-center text-red-500"
                 >
                   {error}
@@ -176,18 +185,18 @@ const TableSupplier = () => {
             {!loadingSupplier && !error && dataSUpplier.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="h-32 text-center"
                 >
                   <div className="flex flex-col items-center gap-2">
                     <Search
                       size={32}
-                      className="text-gray-300"
+                      className="text-slate-300"
                     />
 
-                    <p className="font-medium text-gray-600">Supplier tidak ditemukan</p>
+                    <p className="font-medium text-slate-600">Supplier tidak ditemukan</p>
 
-                    <p className="text-sm text-gray-400">Coba gunakan kata kunci lain</p>
+                    <p className="text-sm text-slate-400">Coba gunakan kata kunci lain</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -220,7 +229,7 @@ const TableSupplier = () => {
                           : "inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
                       }
                     >
-                      {supplier.status}
+                      {STATUS_LABEL[supplier.status] ?? supplier.status}
                     </span>
                   </TableCell>
 
@@ -257,7 +266,7 @@ const TableSupplier = () => {
 
       {dataSUpplier.length > 0 && (
         <div className="flex items-center justify-between border-t bg-slate-50 p-4">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-slate-500">
             Halaman {page} dari {lastPage}
           </span>
 

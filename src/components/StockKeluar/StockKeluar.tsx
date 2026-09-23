@@ -1,3 +1,4 @@
+// StockKeluar.tsx
 import { Check, Plus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -73,7 +74,7 @@ const StockKeluar = () => {
         {/* Kolom kiri */}
         <div className="space-y-6 lg:col-span-2">
           {/* Pilih Karyawan */}
-          <div className="rounded-xl border border-slate-200 bg-white p-6">
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="mb-4 font-semibold text-slate-900">Pilih Karyawan</h2>
 
             <div className="grid grid-cols-2 gap-4">
@@ -113,7 +114,7 @@ const StockKeluar = () => {
             </div>
 
             {selectedEmployee && (
-              <div className="self-end rounded-lg border border-blue-100 bg-blue-50 p-4">
+              <div className="mt-4 self-end rounded-lg border border-blue-100 bg-blue-50 p-4">
                 <p className="font-semibold text-slate-900">{selectedEmployee.user.name}</p>
                 <p className="text-sm text-slate-500">
                   {selectedEmployee.division} · {selectedEmployee.position}
@@ -123,7 +124,7 @@ const StockKeluar = () => {
           </div>
 
           {/* Daftar Barang */}
-          <div className="rounded-xl border border-slate-200 bg-white p-6">
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-semibold text-slate-900">Daftar Barang</h2>
               <Button
@@ -222,7 +223,7 @@ const StockKeluar = () => {
         </div>
 
         {/* Ringkasan */}
-        <div className="h-fit rounded-xl border border-slate-200 bg-white p-6">
+        <div className="h-fit rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="mb-4 font-semibold text-slate-900">Ringkasan Transaksi</h2>
 
           <div className="space-y-4 rounded-lg bg-slate-50 p-4 text-sm">
@@ -253,7 +254,7 @@ const StockKeluar = () => {
               onClick={form.handleSubmit(handleCreate)}
             >
               <Check className="h-4 w-4" />
-              {submitting ? "Menyimpan..." : "Submit Transaksi"}
+              {submitting ? "Menyimpan..." : "Simpan Transaksi"}
             </Button>
           </div>
         </div>

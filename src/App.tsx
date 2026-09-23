@@ -14,6 +14,8 @@ import StockKeluarPage from "./pages/StockKeluar";
 import Activityy from "./pages/Activity";
 import LaporanPage from "./pages/Laporan";
 import DashboardPage from "./pages/Dashboard";
+import DetailBarang from "./components/items/DetailItems";
+import DetailKaryawan from "./components/employes/DetailEmployes";
 
 function App() {
   return (
@@ -59,6 +61,11 @@ function App() {
           />
 
           <Route
+            path="/items/:id"
+            element={<DetailBarang />}
+          />
+
+          <Route
             path="/stock-masuk"
             element={<StockMasuk />}
           />
@@ -79,6 +86,8 @@ function App() {
             path="/dashboard"
             element={<DashboardPage />}
           />
+
+          <Route path="/employes/:id" element={<DetailKaryawan />} />
         </Route>
       </Route>
 

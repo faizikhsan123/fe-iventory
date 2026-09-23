@@ -1,3 +1,4 @@
+// CreateItems.tsx
 "use client";
 import { ChevronLeft, Check, X } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -11,6 +12,9 @@ import { itemsSchema, type ItemsCreate } from "@/schemas/items";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import UsecreateItems from "@/hooks/items/createItems";
+
+const selectClassName =
+  "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50";
 
 const CreateItems = () => {
   const navigation = useNavigate();
@@ -83,7 +87,7 @@ const CreateItems = () => {
               </div>
 
               <Field>
-                <FieldLabel htmlFor="picture">Picture</FieldLabel>
+                <FieldLabel htmlFor="picture">Foto</FieldLabel>
                 <Controller
                   control={form.control}
                   name="file"
@@ -113,7 +117,7 @@ const CreateItems = () => {
                     />
                   )}
                 />
-                <FieldDescription>Select a picture to upload.</FieldDescription>
+                <FieldDescription>Pilih gambar untuk diunggah.</FieldDescription>
                 <span className="text-red-500 text-sm">{form.formState.errors.file?.message as string}</span>
               </Field>
             </div>
@@ -148,6 +152,7 @@ const CreateItems = () => {
 
                   <select
                     id="category"
+                    className={selectClassName}
                     disabled={loadingCreate}
                     {...form.register("category")}
                   >
@@ -198,6 +203,7 @@ const CreateItems = () => {
                     </Label>
                     <select
                       id="size"
+                      className={selectClassName}
                       disabled={loadingCreate}
                       {...form.register("size")}
                     >
@@ -224,6 +230,7 @@ const CreateItems = () => {
                     </Label>
                     <select
                       id="unit"
+                      className={selectClassName}
                       disabled={loadingCreate}
                       {...form.register("unit")}
                     >
