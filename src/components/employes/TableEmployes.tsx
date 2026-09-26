@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { Search, SquarePen, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SquarePen, Trash2, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 
 import useGetEmployes from "@/hooks/employes/getEmployes";
 
@@ -15,7 +15,7 @@ import { useDeleteEmployes } from "@/hooks/employes/deleteEmployes";
 import UpdateEmployes from "./UpdateEmployes";
 
 import type { employes } from "@/types/employes";
-import {  useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 const selectClassName =
   "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
@@ -45,7 +45,7 @@ const TableEmployes = () => {
   // satu halaman 10 item
   const perPage = 10;
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // use effect dijalankan dengan beberapa parameter
   useEffect(() => {
@@ -111,7 +111,12 @@ const TableEmployes = () => {
             />
           </div>
 
-          <Button className="bg-blue-600" disabled={isLoading}>Cari</Button>
+          <Button
+            className="bg-blue-600"
+            disabled={isLoading}
+          >
+            Cari
+          </Button>
         </form>
 
         {/* Filter Divisi */}
@@ -276,15 +281,14 @@ const TableEmployes = () => {
                         <Button
                           size="icon"
                           variant="outline"
-                          onClick={() => setStateUpdate(employes)}
+                          onClick={() => navigate(`/employes/${employes.id}`)}
                         >
-                          <SquarePen size={16} />
+                          <Eye size={16} />
                         </Button>
-
                         <Button
                           size="icon"
                           variant="outline"
-                          onClick={() => navigate(`/employes/${employes.id}`)}
+                          onClick={() => setStateUpdate(employes)}
                         >
                           <SquarePen size={16} />
                         </Button>

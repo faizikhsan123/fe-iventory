@@ -167,7 +167,7 @@ const CreateItems = () => {
                 <div>
                   <Field>
                     <Label htmlFor="brand">
-                      Brand / Merk <span className="text-red-500">*</span>
+                      Brand / Merk 
                     </Label>
                     <Input
                       {...form.register("brand")}
@@ -197,25 +197,18 @@ const CreateItems = () => {
                   </Field>
                 </div>
                 <div>
-                  <Field>
+                 <Field>
                     <Label htmlFor="size">
-                      Size <span className="text-red-500">*</span>
+                      Size 
                     </Label>
-                    <select
-                      id="size"
-                      className={selectClassName}
-                      disabled={loadingCreate}
+                    
+                    <Input
                       {...form.register("size")}
-                    >
-                      <option value="">--Pilih Ukuran--</option>
-                      <option value="s">S</option>
-                      <option value="m">M</option>
-                      <option value="l">L</option>
-                      <option value="xl">XL</option>
-                      <option value="xxl">XXL</option>
-                      <option value="universal">Universal</option>
-                    </select>
-
+                      type="text"
+                      id="size"
+                      placeholder="S,X,40"
+                      disabled={loadingCreate}
+                    />
                     <span className="text-red-500 text-sm">{form.formState.errors.size?.message}</span>
                   </Field>
                 </div>

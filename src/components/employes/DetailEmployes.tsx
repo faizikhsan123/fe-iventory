@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Package } from "lucide-react";
 import useEmployeDetail from "@/hooks/employes/detail";
+import { formatTanggalIndo } from "@/lib/tanggal";
 
 const DetailKaryawan = () => {
   const { id } = useParams<{ id: string }>();
@@ -136,7 +137,7 @@ function TabelRiwayatDiberikan({ data }: { data: RiwayatDiberikanItem[] }) {
           {data.map((row, index) => (
             <tr key={index} className="text-neutral-700">
               <td className="py-3 pr-3 font-medium text-blue-600">{row.transaction_number}</td>
-              <td className="py-3 pr-3 text-neutral-500">{row.date}</td>
+              <td className="py-3 pr-3 text-neutral-500">{formatTanggalIndo(row.date)}</td>
               <td className="py-3 pr-3 font-medium text-neutral-900">{row.barang}</td>
               <td className="py-3 pr-3 font-medium text-emerald-600">{row.qty} unit</td>
               <td className="py-3 pr-3 text-neutral-500">{row.note || "-"}</td>

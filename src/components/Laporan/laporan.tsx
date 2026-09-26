@@ -5,24 +5,24 @@ import { useTopBorrowed } from "@/hooks/Laporan/TopBorrow";
 import { usePenerimaanStok, type StockHistoryItem } from "@/hooks/Laporan/penerimaan";
 import useTransaction, { type TransactionData } from "@/hooks/Laporan/BaranngKeluar";
 import useLowStock, { type LowStockItem } from "@/hooks/Laporan/lowStock";
-import useStockTrend, { type TrendItem } from "@/hooks/Laporan/Trend";
-import useCategoryDistribution, { type CategoryItem } from "@/hooks/Laporan/Distribution";
+// import useStockTrend, { type TrendItem } from "@/hooks/Laporan/Trend";
+// import useCategoryDistribution, { type CategoryItem } from "@/hooks/Laporan/Distribution";
 
 
 // ============================================================
 // DAFTAR TAB YANG ADA DI HALAMAN INI
 // ============================================================
 
-type TabKey = "top-diberikan" | "penerimaan-stok" | "barang-keluar" | "stok-kritis";
+type TabKey = "record-pengeluaran" | "penerimaan-stok" | "barang-keluar" | "stok-kritis";
 
 const DAFTAR_TAB: { key: TabKey; label: string }[] = [
-  { key: "top-diberikan", label: "Top Diberikan" },
+  { key: "record-pengeluaran", label: "Record Pengeluaran" },
   { key: "penerimaan-stok", label: "Penerimaan Stok" },
   { key: "barang-keluar", label: "Barang Keluar" },
   { key: "stok-kritis", label: "Stok Kritis" },
 ];
 
-const TAB_DEFAULT: TabKey = "top-diberikan";
+const TAB_DEFAULT: TabKey = "record-pengeluaran";
 
 function apakahTabValid(value: string | null): value is TabKey {
   const semuaKey = DAFTAR_TAB.map((tab) => tab.key);
@@ -71,11 +71,11 @@ export default function StockDashboardSection() {
   } = useLowStock();
 
   // --- Data chart (selalu tampil, gak tergantung tab) ---
-  const { data: dataTrend, loading: loadingTrend, handleGet: getTrend } = useStockTrend();
-  const { data: dataKategori, loading: loadingKategori, handleGet: getKategori } = useCategoryDistribution();
+  // const { data: dataTrend, loading: loadingTrend, handleGet: getTrend } = useStockTrend();
+  // const { data: dataKategori, loading: loadingKategori, handleGet: getKategori } = useCategoryDistribution();
 
   useEffect(() => {
-    if (tabAktif === "top-diberikan") {
+    if (tabAktif === "record-pengeluaran") {
       getTopBorrowed(startDate || undefined, endDate || undefined);
     }
     if (tabAktif === "penerimaan-stok") {
@@ -89,10 +89,10 @@ export default function StockDashboardSection() {
     }
   }, [tabAktif, startDate, endDate]);
 
-  useEffect(() => {
-    getTrend();
-    getKategori();
-  }, [getTrend, getKategori]);
+  // useEffect(() => {
+  //   getTrend();
+  //   getKategori();
+  // }, [getTrend, getKategori]);
 
   // Stok Kritis gak butuh filter tanggal (snapshot kondisi sekarang, bukan histori)
   const tampilkanFilterTanggal = tabAktif !== "stok-kritis";
@@ -142,6 +142,7 @@ export default function StockDashboardSection() {
                   onClick={() => {
                     setStartDate("");
                     setEndDate("");
+
                   }}
                   className="text-sm text-slate-400 hover:text-slate-600"
                 >
@@ -153,7 +154,7 @@ export default function StockDashboardSection() {
         </div>
 
         {/* Isi tab "Top Diberikan" */}
-        {tabAktif === "top-diberikan" && (
+        {tabAktif === "record-pengeluaran" && (
           <TabelTopDiberikan
             data={dataTopBorrowed}
             loading={loadingTopDiberikan}
@@ -190,10 +191,10 @@ export default function StockDashboardSection() {
       </div>
 
       {/* Grid 2 chart baru */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {/* <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <ChartTrenStok data={dataTrend} loading={loadingTrend} />
         <ChartDistribusiKategori data={dataKategori} loading={loadingKategori} />
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -462,143 +463,143 @@ function TabelStokKritis({ data, loading, error }: TabelStokKritisProps) {
   );
 }
 
-// ============================================================
-// CHART: TREN STOK MASUK & KELUAR
-// ============================================================
+// // ============================================================
+// // CHART: TREN STOK MASUK & KELUAR
+// // ============================================================
 
-const NAMA_BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+// const NAMA_BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
 
-function formatBulan(bulan: string) {
-  const [, bulanAngka] = bulan.split("-");
-  return NAMA_BULAN[parseInt(bulanAngka, 10) - 1];
-}
+// function formatBulan(bulan: string) {
+//   const [, bulanAngka] = bulan.split("-");
+//   return NAMA_BULAN[parseInt(bulanAngka, 10) - 1];
+// }
 
-function ChartTrenStok({ data, loading }: { data: TrendItem[]; loading: boolean }) {
-  if (loading) {
-    return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex h-64 items-center justify-center text-sm text-slate-400">Memuat data...</div>
-      </div>
-    );
-  }
+// function ChartTrenStok({ data, loading }: { data: TrendItem[]; loading: boolean }) {
+//   if (loading) {
+//     return (
+//       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+//         <div className="flex h-64 items-center justify-center text-sm text-slate-400">Memuat data...</div>
+//       </div>
+//     );
+//   }
 
-  if (data.length === 0) {
-    return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex h-64 items-center justify-center text-sm text-slate-400">Belum ada data</div>
-      </div>
-    );
-  }
+//   if (data.length === 0) {
+//     return (
+//       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+//         <div className="flex h-64 items-center justify-center text-sm text-slate-400">Belum ada data</div>
+//       </div>
+//     );
+//   }
 
-  const maxValue = Math.max(...data.flatMap((d) => [d.stock_masuk, d.stock_keluar]), 10);
-  const bulanAwal = formatBulan(data[0].bulan);
-  const bulanAkhir = formatBulan(data[data.length - 1].bulan);
+//   const maxValue = Math.max(...data.flatMap((d) => [d.stock_masuk, d.stock_keluar]), 10);
+//   const bulanAwal = formatBulan(data[0].bulan);
+//   const bulanAkhir = formatBulan(data[data.length - 1].bulan);
 
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-5 flex items-start justify-between">
-        <div>
-          <h3 className="font-semibold text-slate-900">Tren Stok Masuk & Keluar</h3>
-          <p className="text-sm text-slate-400">
-            {bulanAwal} — {bulanAkhir} {new Date().getFullYear()}
-          </p>
-        </div>
-        <div className="flex items-center gap-3 text-xs text-slate-500">
-          <span className="flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded-sm bg-blue-500" />
-            Stock Masuk
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded-sm bg-violet-500" />
-            Stock Keluar
-          </span>
-        </div>
-      </div>
+//   return (
+//     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+//       <div className="mb-5 flex items-start justify-between">
+//         <div>
+//           <h3 className="font-semibold text-slate-900">Tren Stok Masuk & Keluar</h3>
+//           <p className="text-sm text-slate-400">
+//             {bulanAwal} — {bulanAkhir} {new Date().getFullYear()}
+//           </p>
+//         </div>
+//         <div className="flex items-center gap-3 text-xs text-slate-500">
+//           <span className="flex items-center gap-1">
+//             <span className="h-2.5 w-2.5 rounded-sm bg-blue-500" />
+//             Stock Masuk
+//           </span>
+//           <span className="flex items-center gap-1">
+//             <span className="h-2.5 w-2.5 rounded-sm bg-violet-500" />
+//             Stock Keluar
+//           </span>
+//         </div>
+//       </div>
 
-      <div className="flex h-56 items-end justify-between gap-2">
-        {data.map((item, index) => (
-          <div key={index} className="flex flex-1 flex-col items-center gap-1">
-            <div className="flex h-48 w-full items-end justify-center gap-1">
-              <div
-                className="w-full max-w-[18px] rounded-t-sm bg-blue-500"
-                style={{ height: `${(item.stock_masuk / maxValue) * 100}%` }}
-                title={`Stock Masuk: ${item.stock_masuk}`}
-              />
-              <div
-                className="w-full max-w-[18px] rounded-t-sm bg-violet-500"
-                style={{ height: `${(item.stock_keluar / maxValue) * 100}%` }}
-                title={`Stock Keluar: ${item.stock_keluar}`}
-              />
-            </div>
-            <span className="text-xs text-slate-400">{formatBulan(item.bulan)}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+//       <div className="flex h-56 items-end justify-between gap-2">
+//         {data.map((item, index) => (
+//           <div key={index} className="flex flex-1 flex-col items-center gap-1">
+//             <div className="flex h-48 w-full items-end justify-center gap-1">
+//               <div
+//                 className="w-full max-w-[18px] rounded-t-sm bg-blue-500"
+//                 style={{ height: `${(item.stock_masuk / maxValue) * 100}%` }}
+//                 title={`Stock Masuk: ${item.stock_masuk}`}
+//               />
+//               <div
+//                 className="w-full max-w-[18px] rounded-t-sm bg-violet-500"
+//                 style={{ height: `${(item.stock_keluar / maxValue) * 100}%` }}
+//                 title={`Stock Keluar: ${item.stock_keluar}`}
+//               />
+//             </div>
+//             <span className="text-xs text-slate-400">{formatBulan(item.bulan)}</span>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
-// ============================================================
-// CHART: DISTRIBUSI KATEGORI
-// ============================================================
+// // ============================================================
+// // CHART: DISTRIBUSI KATEGORI
+// // ============================================================
 
-const WARNA_KATEGORI: Record<string, { dot: string; bar: string; text: string }> = {
-  apd: { dot: "bg-blue-500", bar: "bg-blue-500", text: "text-blue-600" },
-  tools: { dot: "bg-violet-500", bar: "bg-violet-500", text: "text-violet-600" },
-};
+// const WARNA_KATEGORI: Record<string, { dot: string; bar: string; text: string }> = {
+//   apd: { dot: "bg-blue-500", bar: "bg-blue-500", text: "text-blue-600" },
+//   tools: { dot: "bg-violet-500", bar: "bg-violet-500", text: "text-violet-600" },
+// };
 
-const LABEL_KATEGORI: Record<string, string> = {
-  apd: "APD",
-  tools: "Tools",
-};
+// const LABEL_KATEGORI: Record<string, string> = {
+//   apd: "APD",
+//   tools: "Tools",
+// };
 
-function ChartDistribusiKategori({ data, loading }: { data: CategoryItem[]; loading: boolean }) {
-  if (loading) {
-    return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex h-64 items-center justify-center text-sm text-slate-400">Memuat data...</div>
-      </div>
-    );
-  }
+// function ChartDistribusiKategori({ data, loading }: { data: CategoryItem[]; loading: boolean }) {
+//   if (loading) {
+//     return (
+//       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+//         <div className="flex h-64 items-center justify-center text-sm text-slate-400">Memuat data...</div>
+//       </div>
+//     );
+//   }
 
-  if (data.length === 0) {
-    return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex h-64 items-center justify-center text-sm text-slate-400">Belum ada data</div>
-      </div>
-    );
-  }
+//   if (data.length === 0) {
+//     return (
+//       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+//         <div className="flex h-64 items-center justify-center text-sm text-slate-400">Belum ada data</div>
+//       </div>
+//     );
+//   }
 
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-5 font-semibold text-slate-900">Distribusi Kategori</h3>
+//   return (
+//     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+//       <h3 className="mb-5 font-semibold text-slate-900">Distribusi Kategori</h3>
 
-      <div className="space-y-4">
-        {data.map((item) => {
-          const warna = WARNA_KATEGORI[item.category] ?? {
-            dot: "bg-slate-400",
-            bar: "bg-slate-400",
-            text: "text-slate-600",
-          };
-          const label = LABEL_KATEGORI[item.category] ?? item.category;
+//       <div className="space-y-4">
+//         {data.map((item) => {
+//           const warna = WARNA_KATEGORI[item.category] ?? {
+//             dot: "bg-slate-400",
+//             bar: "bg-slate-400",
+//             text: "text-slate-600",
+//           };
+//           const label = LABEL_KATEGORI[item.category] ?? item.category;
 
-          return (
-            <div key={item.category}>
-              <div className="mb-1.5 flex items-center justify-between text-sm">
-                <span className="flex items-center gap-2 font-medium text-slate-700">
-                  <span className={`h-2.5 w-2.5 rounded-sm ${warna.dot}`} />
-                  {label}
-                </span>
-                <span className="text-slate-400">{item.total} unit</span>
-                <span className={`font-semibold ${warna.text}`}>{item.percentage}%</span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                <div className={`h-full rounded-full ${warna.bar}`} style={{ width: `${item.percentage}%` }} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+//           return (
+//             <div key={item.category}>
+//               <div className="mb-1.5 flex items-center justify-between text-sm">
+//                 <span className="flex items-center gap-2 font-medium text-slate-700">
+//                   <span className={`h-2.5 w-2.5 rounded-sm ${warna.dot}`} />
+//                   {label}
+//                 </span>
+//                 <span className="text-slate-400">{item.total} unit</span>
+//                 <span className={`font-semibold ${warna.text}`}>{item.percentage}%</span>
+//               </div>
+//               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+//                 <div className={`h-full rounded-full ${warna.bar}`} style={{ width: `${item.percentage}%` }} />
+//               </div>
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </div>
+//   );
+// }

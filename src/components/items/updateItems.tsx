@@ -54,7 +54,7 @@ const UpdateItems = () => {
       category: item.category,
       brand: item.brand,
       type: item.type ?? undefined,
-      size: item.size,
+      size: item.size ?? undefined,
       unit: item.unit,
       min_stock: item.min_stock ?? undefined,
       description: item.description ?? undefined,
@@ -233,24 +233,18 @@ const UpdateItems = () => {
                   </div>
                   <div>
                     <Field>
-                      <Label htmlFor="size">
-                        Size <span className="text-red-500">*</span>
-                      </Label>
-                      <select
-                        id="size"
-                        disabled={updateloading}
-                        {...form.register("size")}
-                      >
-                        <option value="">--Pilih Ukuran--</option>
-                        <option value="s">S</option>
-                        <option value="m">M</option>
-                        <option value="l">L</option>
-                        <option value="xl">XL</option>
-                        <option value="xxl">XXL</option>
-                        <option value="universal">Universal</option>
-                      </select>
-                      <span className="text-red-500 text-sm">{form.formState.errors.size?.message}</span>
-                    </Field>
+                    <Label htmlFor="size">
+                      Size 
+                    </Label>
+                    <Input
+                      {...form.register("size")}
+                      type="text"
+                      id="size"
+                      placeholder="S,X,40"
+                      disabled={updateloading}
+                    />
+                    <span className="text-red-500 text-sm">{form.formState.errors.size?.message}</span>
+                  </Field>
                   </div>
                 </div>
 
@@ -263,6 +257,7 @@ const UpdateItems = () => {
                       </Label>
                       <select
                         id="unit"
+                   
                         disabled={updateloading}
                         {...form.register("unit")}
                       >

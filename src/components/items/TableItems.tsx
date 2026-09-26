@@ -187,8 +187,8 @@ const TableItems = () => {
             <TableRow className="bg-slate-50 hover:bg-slate-50">
               <TableHead className="w-12">No</TableHead>
               <TableHead>Foto</TableHead>
-              <TableHead>Part Number</TableHead>
               <TableHead>Nama Barang</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Kategori</TableHead>
               <TableHead>Merk</TableHead>
               <TableHead className="text-center">Min Stok</TableHead>
@@ -246,16 +246,25 @@ const TableItems = () => {
                           className="h-full w-full object-cover"
                           src={`${STORAGE_URL}${items.file}`}
                           alt={items.name ?? "Item image"}
+                          onError={(e) => {
+                            console.log("Gambar gagal dimuat:", e.currentTarget.src);
+                          }}
                         />
                       ) : (
+                        // <img
+                        //   className="h-full w-full object-cover"
+                        //   src={`${STORAGE_URL}${items.file}`}
+                        //   alt={items.name ?? "Item image"}
+                        // />
                         <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
                           No Image
                         </div>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium text-blue-600">{items.part_number}</TableCell>
                   <TableCell className="font-medium text-slate-900">{items.name}</TableCell>
+                  <TableCell className="font-medium text-blue-600">{items.type ?? "-"}</TableCell>
+
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
@@ -265,7 +274,7 @@ const TableItems = () => {
                       {items.category}
                     </span>
                   </TableCell>
-                  <TableCell className="text-slate-500">{items.brand}</TableCell>
+                  <TableCell className="text-slate-500">{items.brand ?? "-"}</TableCell>
                   <TableCell className="text-center text-slate-500">{items.min_stock} unit</TableCell>
                   <TableCell className="text-center font-semibold text-slate-800">{items.current_stock} unit</TableCell>
                   <TableCell>
@@ -280,8 +289,6 @@ const TableItems = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
-                    
-
                       <Button
                         size="icon"
                         variant="outline"

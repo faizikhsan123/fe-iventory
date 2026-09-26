@@ -71,9 +71,9 @@ const SidebarComponent = () => {
             </div>
             <span className="min-w-0">
               <span className="block text-lg font-semibold leading-tight whitespace-nowrap text-white">
-                PT. Industri
+                PT. Vando
               </span>
-              <span className="block text-xs text-slate-400 leading-tight whitespace-nowrap">Inventory System</span>
+              <span className="block text-xs text-slate-400 leading-tight whitespace-nowrap">Inventory Gresik</span>
             </span>
           </Link>
 

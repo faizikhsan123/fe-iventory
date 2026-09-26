@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import useItemDetail from "@/hooks/items/detail";
 import { STORAGE_URL } from "@/lib/axios";
+import { formatTanggalIndo } from "@/lib/tanggal";
 
 const DetailBarang = () => {
   // ambil id dari URL, contoh route: /items/:id
@@ -235,7 +236,7 @@ function TabelRiwayatStok({ data }: { data: RiwayatStokItem[] }) {
                 key={index}
                 className="text-neutral-700"
               >
-                <td className="py-3 pr-3 text-neutral-500">{row.date}</td>
+                <td className="py-3 pr-3 text-neutral-500">{formatTanggalIndo(row.date)}</td>
                 <td className="py-3 pr-3">
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-medium ${
@@ -299,7 +300,7 @@ function TabelRiwayatPemberian({ data }: { data: RiwayatPemberianItem[] }) {
               className="text-neutral-700"
             >
               <td className="py-3 pr-3 font-medium text-blue-600">{row.transaction_number}</td>
-              <td className="py-3 pr-3 text-neutral-500">{row.date}</td>
+              <td className="py-3 pr-3 text-neutral-500">{formatTanggalIndo(row.date)}</td>
               <td className="py-3 pr-3 font-medium text-red-600">-{row.qty}</td>
               <td className="py-3 pr-3 text-neutral-900">{row.employe_name}</td>
               <td className="py-3 pr-3 text-neutral-500">{row.note || "-"}</td>

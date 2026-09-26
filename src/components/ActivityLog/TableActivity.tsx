@@ -155,7 +155,7 @@ const TableAvtivity = () => {
 
               <TableHead className="px-6">Tanggal - Waktu</TableHead>
 
-              <TableHead className="px-6">Nama</TableHead>
+              {/* <TableHead className="px-6">Nama</TableHead> */}
 
               <TableHead className="px-6">Aktivitas</TableHead>
 
@@ -221,8 +221,8 @@ const TableAvtivity = () => {
                 >
                   <TableCell className="px-6 py-4">{(page - 1) * perPage + index + 1}</TableCell>{" "}
                   <TableCell className="px-6 py-4 font-medium">{activity.date}</TableCell>
-                  <TableCell className="px-6 py-4">{activity.user_id?.name ?? "-"}</TableCell>
-                  <TableCell className="px-6 py-4">{activity.activity ?? "-"}</TableCell>
+                  {/* <TableCell className="px-6 py-4">{activity.user_id?.name ?? "-"}</TableCell> */}
+                  <TableCell className="px-6 py-4">{activity.type ?? "-"}</TableCell>
                   <TableCell className="px-6 py-4">
                     {activity.type ? (
                       <span

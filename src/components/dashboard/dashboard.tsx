@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { Package, BarChart3, ArrowDownCircle, CheckCircle2, XCircle } from "lucide-react";
 import useDashboard from "@/hooks/dashboard/get";
+import { formatTanggalIndo } from "@/lib/tanggal";
 
 const Dashboard = () => {
   const { data, loading, error, handleGet } = useDashboard();
@@ -151,7 +152,7 @@ function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
                 const isIn = item.type === "in";
                 return (
                   <tr key={index} className="text-slate-700">
-                    <td className="py-3 pr-3 text-slate-500">{item.date}</td>
+                    <td className="py-3 pr-3 text-slate-500">{formatTanggalIndo(item.date)}</td>
                     <td className="py-3 pr-3 text-blue-600">{item.part_number}</td>
                     <td className="py-3 pr-3 font-medium text-slate-900">{item.name}</td>
                     <td className="py-3 pr-3">
@@ -219,7 +220,7 @@ function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
                   <td className="py-3 pr-3 font-medium text-blue-600">{trx.transaction_number}</td>
                   <td className="py-3 pr-3 text-slate-900">{trx.employe_name}</td>
                   <td className="py-3 pr-3 text-slate-500">{trx.barang || "—"}</td>
-                  <td className="py-3 pr-3 text-slate-500">{trx.date}</td>
+                  <td className="py-3 pr-3 text-slate-500">{formatTanggalIndo(trx.date)}</td>
                 </tr>
               ))}
             </tbody>
