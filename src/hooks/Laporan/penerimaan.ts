@@ -4,6 +4,8 @@ import { useState } from "react";
 interface Supplier {
   id: number;
   name: string;
+  pic : string;
+  spesialis : string
   phone: string | null;
   email: string | null;
   address: string | null;

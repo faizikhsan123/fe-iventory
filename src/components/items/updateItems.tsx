@@ -11,7 +11,6 @@ import { itemsSchema, type ItemsCreate } from "@/schemas/items";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
-
 import UseUpdateItems from "@/hooks/items/updateitems";
 import useGetItemById from "@/hooks/items/getByid";
 import { STORAGE_URL } from "@/lib/axios";
@@ -45,6 +44,22 @@ const UpdateItems = () => {
     setPreviewImage(null);
   };
 
+  const formatRupiah = (value: string | number) => {
+    const number = typeof value === "string" ? value.replace(/\D/g, "") : value;
+    if (!number) return "";
+    return new Intl.NumberFormat("id-ID").format(Number(number));
+  };
+
+  const [displayPrice, setDisplayPrice] = useState(formatRupiah(form.getValues("price") || ""));
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, ""); // buang semua non-digit
+    form.setValue("price", rawValue ? Number(rawValue) : 0, {
+      shouldValidate: true,
+    });
+    setDisplayPrice(formatRupiah(rawValue));
+  };
+
   // isi ulang form begitu data lama (item) berhasil di-fetch
   useEffect(() => {
     if (!item) return;
@@ -52,13 +67,16 @@ const UpdateItems = () => {
     form.reset({
       name: item.name,
       category: item.category,
-      brand: item.brand,
+      brand: item.brand ?? undefined,
       type: item.type ?? undefined,
       size: item.size ?? undefined,
       unit: item.unit,
       min_stock: item.min_stock ?? undefined,
       description: item.description ?? undefined,
+      price: item.price ?? undefined,
     });
+
+    setDisplayPrice(formatRupiah(item.price ?? "")); // <-- tambahin ini
   }, [item]);
 
   // effect terpisah khusus buat preview, biar gampang dibaca
@@ -195,14 +213,14 @@ const UpdateItems = () => {
                       <option value="apd">APD</option>
                       <option value="tools">Tools</option>
                     </select>
-                   
+
                     <span className="text-red-500 text-sm">{form.formState.errors.category?.message}</span>
                   </Field>
 
                   <div>
                     <Field>
                       <Label htmlFor="brand">
-                        Brand / Merk <span className="text-red-500">*</span>
+                        Brand / Merk 
                       </Label>
                       <Input
                         {...form.register("brand")}
@@ -233,18 +251,16 @@ const UpdateItems = () => {
                   </div>
                   <div>
                     <Field>
-                    <Label htmlFor="size">
-                      Size 
-                    </Label>
-                    <Input
-                      {...form.register("size")}
-                      type="text"
-                      id="size"
-                      placeholder="S,X,40"
-                      disabled={updateloading}
-                    />
-                    <span className="text-red-500 text-sm">{form.formState.errors.size?.message}</span>
-                  </Field>
+                      <Label htmlFor="size">Size</Label>
+                      <Input
+                        {...form.register("size")}
+                        type="text"
+                        id="size"
+                        placeholder="S,X,40"
+                        disabled={updateloading}
+                      />
+                      <span className="text-red-500 text-sm">{form.formState.errors.size?.message}</span>
+                    </Field>
                   </div>
                 </div>
 
@@ -257,7 +273,6 @@ const UpdateItems = () => {
                       </Label>
                       <select
                         id="unit"
-                   
                         disabled={updateloading}
                         {...form.register("unit")}
                       >
@@ -287,6 +302,20 @@ const UpdateItems = () => {
                       <span className="text-blue-600 text-sm">Sistem akan notifikasi jika stok ≤ nilai ini</span>
                     </Field>
                   </div>
+
+                  <Field>
+                    <Label htmlFor="price">Harga Perolehan</Label>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={displayPrice}
+                      onChange={handlePriceChange}
+                      id="price"
+                      placeholder=" 50.000"
+                      disabled={updateloading}
+                    />
+                    <span className="text-red-500 text-sm">{form.formState.errors.price?.message}</span>
+                  </Field>
                 </div>
 
                 {/* Deskripsi */}

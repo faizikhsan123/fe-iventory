@@ -19,6 +19,8 @@ export const useCreateSupplier = () => {
 
       await AxiosInstance.post("/suppliers", {
         name: payload.nama ,
+        pic : payload.pic,
+        spesialis : payload.spesialis,
         phone: payload.phone ||undefined,
         email: payload.email ||undefined,
         address: payload.address || undefined,

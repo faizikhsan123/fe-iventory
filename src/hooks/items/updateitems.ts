@@ -11,17 +11,20 @@ const UseUpdateItems = () => {
   const Myswal = withReactContent(Swal);
   const [updateloading, Setloadingcreate] = useState(false);
   const [updateerror, Seterrorcreate] = useState("");
-  const [data, setData] = useState<Items | null>(null); // ✅ satu object karena dia update 
+  const [data, setData] = useState<Items | null>(null); // ✅ satu object karena dia update
 
   //getbyid
-   const [items, SetItems] = useState<Items | null>(null); 
+  const [items, SetItems] = useState<Items | null>(null);
   const navigate = useNavigate();
 
-  const getById = async (id : number) => {
-    await AxiosInstance.get(`/items/${id}`)
-    SetItems(items)
+const getById = async (id: number) => {
+  try {
+    const response = await AxiosInstance.get(`/items/${id}`);
+    SetItems(response.data.data);
+  } catch (error) {
+    console.log("Gagal ambil data item:", error);
   }
-
+};
   const HandleUpdate = async (id: number, payload: ItemsCreate) => {
     try {
       Setloadingcreate(true);
@@ -34,13 +37,13 @@ const UseUpdateItems = () => {
       if (payload.file) formData.append("file", payload.file);
       formData.append("name", payload.name);
       formData.append("category", payload.category);
-      formData.append("brand", payload.brand);
+      if (payload.brand) formData.append("brand", payload.brand);
       if (payload.type) formData.append("type", payload.type);
       if (payload.min_stock) formData.append("min_stock", String(payload.min_stock));
-      formData.append("size", payload.size);
+      if (payload.price) formData.append("price", String(payload.price));
+      if (payload.size) formData.append("size", payload.size);
       formData.append("unit", payload.unit);
       if (payload.description) formData.append("description", payload.description);
-
       const response = await AxiosInstance.patch(`/items/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -76,7 +79,7 @@ const UseUpdateItems = () => {
     data,
     HandleUpdate,
     items,
-    getById
+    getById,
   };
 };
 

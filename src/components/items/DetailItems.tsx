@@ -81,8 +81,8 @@ const DetailBarang = () => {
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <InfoBox
-                label="Kategori"
-                value={item.category}
+                label="harga Perolehan"
+                value={`Rp  ${item.price || "-"}`}
               />
               <InfoBox
                 label="Tipe"

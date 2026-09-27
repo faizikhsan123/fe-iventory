@@ -1,5 +1,5 @@
 // StockDashboardSection.tsx (Laporan)
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTopBorrowed } from "@/hooks/Laporan/TopBorrow";
 import { usePenerimaanStok, type StockHistoryItem } from "@/hooks/Laporan/penerimaan";
@@ -7,7 +7,6 @@ import useTransaction, { type TransactionData } from "@/hooks/Laporan/BaranngKel
 import useLowStock, { type LowStockItem } from "@/hooks/Laporan/lowStock";
 // import useStockTrend, { type TrendItem } from "@/hooks/Laporan/Trend";
 // import useCategoryDistribution, { type CategoryItem } from "@/hooks/Laporan/Distribution";
-
 
 // ============================================================
 // DAFTAR TAB YANG ADA DI HALAMAN INI
@@ -142,7 +141,6 @@ export default function StockDashboardSection() {
                   onClick={() => {
                     setStartDate("");
                     setEndDate("");
-
                   }}
                   className="text-sm text-slate-400 hover:text-slate-600"
                 >
@@ -249,7 +247,10 @@ function TabelTopDiberikan({ data, loading, error }: TabelTopDiberikanProps) {
         </thead>
         <tbody className="divide-y divide-slate-50">
           {data.map((item) => (
-            <BarisTabel key={item.id} item={item} />
+            <BarisTabel
+              key={item.id}
+              item={item}
+            />
           ))}
         </tbody>
       </table>
@@ -313,23 +314,46 @@ function TabelPenerimaanStok({ data, loading, error }: TabelPenerimaanStokProps)
           <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
             <th className="py-3 pr-4 font-medium">Tanggal</th>
             <th className="py-3 pr-4 font-medium">Barang</th>
+            <th className="py-3 pr-4 font-medium">Category  </th>
             <th className="py-3 pr-4 font-medium">Supplier</th>
+            <th className="py-3 pr-4 font-medium">Spesialis</th>
             <th className="py-3 pr-4 font-medium">Qty</th>
-            <th className="py-3 pr-4 font-medium">Catatan</th>
-            <th className="py-3 pr-4 font-medium">User</th>
+            {/* <th className="py-3 pr-4 font-medium">Catatan</th> */}
+            <th className="py-3 pr-4 font-medium">Stock Akhir</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-50">
           {dataMasuk.map((item, index) => (
-            <tr key={index} className="text-slate-700">
+            <tr
+              key={index}
+              className="text-slate-700"
+            >
               <td className="py-3.5 pr-4 text-slate-500">{item.date}</td>
               <td className="py-3.5 pr-4 font-medium text-slate-900">{item.item_id?.name ?? "—"}</td>
+              <td className="py-3.5 pr-4">
+                {item.item_id?.category ? (
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      item.item_id.category === "apd"
+                        ? "bg-blue-100 text-blue-700"
+                        : item.item_id.category === "Tools"
+                          ? "bg-purple-100 text-purple-700"
+                          : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    {item.item_id.category}
+                  </span>
+                ) : (
+                  <span className="text-slate-500">—</span>
+                )}
+              </td>{" "}
               <td className="py-3.5 pr-4 text-slate-500">{item.supplier_id?.name ?? "—"}</td>
+              <td className="py-3.5 pr-4 text-slate-500">{item.supplier_id?.spesialis ?? "—"}</td>
               <td className="py-3.5 pr-4 font-medium text-emerald-600">
                 +{item.qty} {item.item_id?.unit ?? ""}
               </td>
-              <td className="py-3.5 pr-4 text-slate-500">{item.note || "—"}</td>
-              <td className="py-3.5 pr-4 text-slate-500">{item.user_id?.name ?? "—"}</td>
+              {/* <td className="py-3.5 pr-4 text-slate-500">{item.note || "—"}</td> */}
+              <td className="py-3.5 pr-4 text-slate-500">{item.item_id?.current_stock ?? "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -371,20 +395,25 @@ function TabelBarangKeluar({ data, loading, error }: TabelBarangKeluarProps) {
         <thead>
           <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
             <th className="py-3 pr-4 font-medium">Tanggal</th>
-            <th className="py-3 pr-4 font-medium">No. Transaksi</th>
+            {/* <th className="py-3 pr-4 font-medium">No. Transaksi</th> */}
             <th className="py-3 pr-4 font-medium">Barang</th>
             <th className="py-3 pr-4 font-medium">Karyawan</th>
             <th className="py-3 pr-4 font-medium">Qty</th>
+            <th className="py-3 pr-4 font-medium">Stock Akhir</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-50">
           {data.map((trx) => (
-            <tr key={trx.id} className="text-slate-700">
+            <tr
+              key={trx.id}
+              className="text-slate-700"
+            >
               <td className="py-3.5 pr-4 text-slate-500">{trx.date}</td>
-              <td className="py-3.5 pr-4 font-medium text-blue-600">{trx.transaction_number}</td>
+              {/* <td className="py-3.5 pr-4 font-medium text-blue-600">{trx.transaction_number}</td> */}
               <td className="py-3.5 pr-4 font-medium text-slate-900">{trx.barang || "—"}</td>
               <td className="py-3.5 pr-4 text-slate-500">{trx.employe_name ?? "—"}</td>
               <td className="py-3.5 pr-4 font-medium text-red-600">-{trx.total_qty}</td>
+              <td className="py-3.5 pr-4 font-medium text-blue-600">{trx.total_stock}</td>
             </tr>
           ))}
         </tbody>
@@ -436,7 +465,10 @@ function TabelStokKritis({ data, loading, error }: TabelStokKritisProps) {
           {data.map((item) => {
             const habis = Number(item.current_stock) <= 0;
             return (
-              <tr key={item.id} className="text-slate-700">
+              <tr
+                key={item.id}
+                className="text-slate-700"
+              >
                 <td className="py-3.5 pr-4 font-medium text-slate-900">{item.name}</td>
                 <td className="py-3.5 pr-4 text-slate-500">{item.category}</td>
                 <td className="py-3.5 pr-4 font-medium text-red-600">

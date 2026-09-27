@@ -12,6 +12,7 @@ export interface TransactionData {
   position: string | null;
   barang: string;
   total_qty: number;
+  total_stock : number
 }
 
 interface Meta {

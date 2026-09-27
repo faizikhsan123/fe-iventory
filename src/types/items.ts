@@ -9,12 +9,13 @@ export interface Items {
   name: string
   file: string;
   category: Category;
-  brand: string;
+  brand?: string;
   type: string;
   size: Size;
   unit: Unit;
   min_stock: number;
   current_stock: number;
   status: Status;
+  price : string
   description: string;
 }

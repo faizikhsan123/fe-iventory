@@ -9,11 +9,11 @@ export const itemsSchema = z.object({
     message: "Pilih antara apd dan tools",
   }),
 
-  brand: z.string("Minimal 1 karakter dan 20 karakter").min(1).max(20),
+  brand: z.string("Minimal 1 karakter dan 20 karakter").min(1).max(20).optional().or(z.literal("")),
 
   type: z.string("maksimal 20 karakter").max(20).optional().or(z.literal("")),
 
-  min_stock: z.number("Masukkan Angka Bulat").optional().nullable(),
+min_stock: z.coerce.number("Masukkan Angka Bulat").optional().nullable(), 
 
   size: z.string( ).max(20).optional().or(z.literal("")),
 
@@ -25,7 +25,10 @@ export const itemsSchema = z.object({
     message: "Pilih diantara satu kategori yang tersedia",
   }),
 
+ price: z.coerce.number().optional(),
+
   description: z.string("Maksimal 200 karakter").max(200).optional().or(z.literal("")),
+
 });
 
 export type ItemsCreate = z.infer<typeof itemsSchema>;

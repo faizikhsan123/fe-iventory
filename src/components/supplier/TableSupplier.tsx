@@ -14,7 +14,7 @@ import { useSupplier } from "@/hooks/suppliers/getSupplier";
 import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
 
 import { EditSupplier } from "./UpdateSupplier";
-
+  
 import type { Supplier } from "@/types/supplier";
 
 const selectClassName =
@@ -145,6 +145,8 @@ const TableSupplier = () => {
               <TableHead className="px-6">No</TableHead>
 
               <TableHead className="px-6">Nama</TableHead>
+              <TableHead className="px-6">PIC</TableHead>
+              <TableHead className="px-6">Spesialis</TableHead>
 
               <TableHead className="px-6">Telepon</TableHead>
 
@@ -216,6 +218,8 @@ const TableSupplier = () => {
 
                   <TableCell className="px-6 py-4 font-medium">{supplier.name}</TableCell>
 
+                  <TableCell className="px-6 py-4">{supplier.pic ?? "-"}</TableCell>
+                  <TableCell className="px-6 py-4">{supplier.spesialis ?? "-"}</TableCell>
                   <TableCell className="px-6 py-4">{supplier.phone ?? "-"}</TableCell>
 
                   <TableCell className="px-6 py-4">{supplier.email ?? "-"}</TableCell>

@@ -22,19 +22,20 @@ const UsecreateItems = () => {
       //   pakai form karenga gambar gabisa dikirmi by json harus multi part form data
       // terus  if itu untuk kondisi nullbale
 
-      const formData = new FormData();
-      if (payload.file) formData.append("file", payload.file);
-      formData.append("name", payload.name);
-      formData.append("category", payload.category);
-      formData.append("brand", payload.brand);
-      if (payload.type) formData.append("type", payload.type);
-      if (payload.min_stock) formData.append("min_stock", String(payload.min_stock));
-      formData.append("size", payload.size);
-      formData.append("unit", payload.unit);
-      if (payload.description) formData.append("description", payload.description);
+    const formData = new FormData();
+if (payload.file) formData.append("file", payload.file);
+formData.append("name", payload.name);
+formData.append("category", payload.category);
+if (payload.brand) formData.append("brand", payload.brand);
+if (payload.type) formData.append("type", payload.type);
+if (payload.min_stock) formData.append("min_stock", String(payload.min_stock));
+if (payload.price) formData.append("price", String(payload.price));
+if (payload.size) formData.append("size", payload.size);
+formData.append("unit", payload.unit);
+if (payload.description) formData.append("description", payload.description);
 
       const response = await AxiosInstance.post("/items", formData, {
-        headers: {
+        headers: {  
           "Content-Type": "multipart/form-data",
         },
       });

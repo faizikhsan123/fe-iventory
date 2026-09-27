@@ -241,6 +241,7 @@ const TableEmployes = () => {
                     key={employes.id}
                     className="hover:bg-slate-50"
                   >
+                    
                     <TableCell className="px-6 py-4">{(page - 1) * perPage + index + 1}</TableCell>
 
                     <TableCell className="px-6 py-4 font-medium">

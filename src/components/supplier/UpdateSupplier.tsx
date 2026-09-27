@@ -40,6 +40,8 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
     }
     form.reset({
       nama: supplier.name,
+      pic : supplier.pic,
+      spesialis : supplier.spesialis,
       phone: supplier.phone ?? "",
       email: supplier.email ?? "",
       address: supplier.address ?? "",
@@ -84,6 +86,32 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
               disabled={loadingUpdate}
             />
             <span className="text-red-500 text-sm">{form.formState.errors.nama?.message}</span>
+          </Field>
+          <Field>
+            <Label htmlFor="pic">
+              Nama PIC <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              type="text"
+              {...form.register("pic")}
+              id="pic"
+              placeholder="Budi Jaya"
+              disabled={loadingUpdate}
+            />
+            <span className="text-red-500 text-sm">{form.formState.errors.pic?.message}</span>
+          </Field>
+          <Field>
+            <Label htmlFor="spesialis">
+              Spesialis <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              type="text"
+              {...form.register("spesialis")}
+              id="spesialis"
+              placeholder="APD"
+              disabled={loadingUpdate}
+            />
+            <span className="text-red-500 text-sm">{form.formState.errors.spesialis?.message}</span>
           </Field>
 
           <Field>

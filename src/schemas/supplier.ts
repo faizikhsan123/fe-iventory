@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const supplierSchema = z.object({
   nama: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
+  pic: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
+  spesialis: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
   phone: z
     .string()
     .min(8, "Nomor telepon terlalu pendek")
@@ -17,6 +19,8 @@ export type SupplierForm = z.infer<typeof supplierSchema>;
 
 export const supplierSchemaEdit = z.object({
   nama: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
+  pic: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
+  spesialis: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
   phone: z
     .string()
     .min(8, "Nomor telepon terlalu pendek")

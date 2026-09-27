@@ -8,6 +8,8 @@ import { isAxiosError } from "axios";
 const UseeditEmployes = () => {
   const [loadingupdate, Setloadingupdate] = useState(false);
   const [errorupdate, SetErrorupdate] = useState("");
+    const [data, Setdata] = useState<employes[]>([]);
+  
 
   const Myswal = withReactContent(Swal);
 
@@ -16,14 +18,28 @@ const UseeditEmployes = () => {
       Setloadingupdate(true);
       SetErrorupdate("");
 
-      await AxiosInstance.patch(`/employes/${id}`, {
-        name: payload.name,
-        email: payload.email,
-        password: payload.password,
-        division: payload.division,
-        position: payload.position,
-        status: payload.status,
+      const formData = new FormData();
+      if (payload.file) formData.append("file", payload.file);
+      formData.append("name", payload.name);
+      formData.append("email", payload.email);
+      // formData.append("password", payload.password);
+      formData.append("division", payload.division);
+      formData.append("position", payload.position);
+      formData.append("status", payload.status)
+      // if (payload.brand) formData.append("brand", payload.brand);
+      // if (payload.type) formData.append("type", payload.type);
+      // if (payload.min_stock) formData.append("min_stock", String(payload.min_stock));
+      // if (payload.price) formData.append("price", String(payload.price));
+      // if (payload.size) formData.append("size", payload.size);
+      // formData.append("unit", payload.unit);
+      // if (payload.description) formData.append("description", payload.description);
+
+      const response = await AxiosInstance.patch(`/employes/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
+      Setdata(response.data.data)
       Myswal.fire("Berhasil!", "Data supplier berhasil dirubah.", "success");
       onSucces?.();
     } catch (error) {
@@ -68,6 +84,7 @@ const UseeditEmployes = () => {
   };
 
   return {
+    data,
     loadingupdate,
     errorupdate,
     handleUpdate,

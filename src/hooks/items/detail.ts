@@ -14,6 +14,7 @@ interface ItemInfo {
   size: string;
   unit: string;
   min_stock: string;
+  price : string
   current_stock: string;
   status: string;
   description: string;

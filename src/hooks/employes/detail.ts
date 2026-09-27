@@ -7,6 +7,7 @@ interface EmployeInfo {
   division: string;
   position: string;
   status: string;
+  file : string
 }
 
 interface Statistik {

@@ -62,6 +62,32 @@ export function CreateSupplier({ open, onOpenChange }: CreateSupplierProps) {
             />
             <span className="text-red-500 text-sm">{form.formState.errors.nama?.message}</span>
           </Field>
+          <Field>
+            <Label htmlFor="pic">
+              Nama PIC <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              type="text"
+              {...form.register("pic")}
+              id="pic"
+              placeholder="Budi Jaya"
+              disabled={loadingCreate}
+            />
+            <span className="text-red-500 text-sm">{form.formState.errors.pic?.message}</span>
+          </Field>
+          <Field>
+            <Label htmlFor="spesialis">
+              Spesialis <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              type="text"
+              {...form.register("spesialis")}
+              id="spesialis"
+              placeholder="APD "
+              disabled={loadingCreate}
+            />
+            <span className="text-red-500 text-sm">{form.formState.errors.spesialis?.message}</span>
+          </Field>
 
           <Field>
             <Label htmlFor="phone">No. Telepon</Label>

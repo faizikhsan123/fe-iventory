@@ -4,6 +4,7 @@ export type Status = "active" | "inactive";
 
 export type employes = {
   id: number;
+  file : string
   division: Division;
   position: Position;
   status: Status;

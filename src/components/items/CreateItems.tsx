@@ -34,6 +34,22 @@ const CreateItems = () => {
     setPreviewImage(null);
   };
 
+  const formatRupiah = (value: string | number) => {
+    const number = typeof value === "string" ? value.replace(/\D/g, "") : value;
+    if (!number) return "";
+    return new Intl.NumberFormat("id-ID").format(Number(number));
+  };
+
+  const [displayPrice, setDisplayPrice] = useState(formatRupiah(form.getValues("price") || ""));
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, ""); // buang semua non-digit
+    form.setValue("price", rawValue ? Number(rawValue) : 0, {
+      shouldValidate: true,
+    });
+    setDisplayPrice(formatRupiah(rawValue));
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="mx-auto max-w-6xl">
@@ -166,9 +182,7 @@ const CreateItems = () => {
 
                 <div>
                   <Field>
-                    <Label htmlFor="brand">
-                      Brand / Merk 
-                    </Label>
+                    <Label htmlFor="brand">Brand / Merk</Label>
                     <Input
                       {...form.register("brand")}
                       type="text"
@@ -197,11 +211,9 @@ const CreateItems = () => {
                   </Field>
                 </div>
                 <div>
-                 <Field>
-                    <Label htmlFor="size">
-                      Size 
-                    </Label>
-                    
+                  <Field>
+                    <Label htmlFor="size">Size</Label>
+
                     <Input
                       {...form.register("size")}
                       type="text"
@@ -233,7 +245,7 @@ const CreateItems = () => {
                       <option value="unit">UNIT</option>
                       <option value="pair">PAIR</option>
                     </select>
-              
+
                     <span className="text-red-500 text-sm">{form.formState.errors.unit?.message}</span>
                   </Field>
                 </div>
@@ -244,7 +256,7 @@ const CreateItems = () => {
                     <Input
                       {...form.register("min_stock", {
                         setValueAs: (value) => (value === "" ? null : Number(value)),
-                      })}
+                      })} 
                       type="number"
                       id="min_stock"
                       placeholder="0"
@@ -254,9 +266,23 @@ const CreateItems = () => {
                     <span className="text-blue-600 text-sm">Sistem akan notifikasi jika stok ≤ nilai ini</span>
                   </Field>
                 </div>
-              </div>
 
-              {/* Deskripsi */}
+                <div>
+                  <Field>
+                    <Label htmlFor="description">Harga Perolehan</Label>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={displayPrice}
+                      onChange={handlePriceChange}
+                      id="description"
+                      placeholder="50.000"
+                      disabled={loadingCreate}
+                    />
+                    <span className="text-red-500 text-sm">{form.formState.errors.price?.message}</span>
+                  </Field>
+                </div>
+              </div>
               <div>
                 <Field>
                   <Label htmlFor="description">Deskripsi Barang</Label>
@@ -269,6 +295,8 @@ const CreateItems = () => {
                   <span className="text-red-500 text-sm">{form.formState.errors.description?.message}</span>
                 </Field>
               </div>
+
+              {/* Deskripsi */}
 
               {/* Actions */}
               <div className="mt-1 flex items-center justify-end gap-3 border-t border-slate-100 pt-5">

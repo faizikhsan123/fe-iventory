@@ -263,7 +263,7 @@ const TableItems = () => {
                     </div>
                   </TableCell>
                   <TableCell className="font-medium text-slate-900">{items.name}</TableCell>
-                  <TableCell className="font-medium text-blue-600">{items.type ?? "-"}</TableCell>
+                  <TableCell className="font-medium text-slate-600">{items.type ?? "-"}</TableCell>
 
                   <TableCell>
                     <span

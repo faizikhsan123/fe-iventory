@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Package } from "lucide-react";
 import useEmployeDetail from "@/hooks/employes/detail";
 import { formatTanggalIndo } from "@/lib/tanggal";
+import { STORAGE_URL } from "@/lib/axios";
 
 const DetailKaryawan = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,9 +19,7 @@ const DetailKaryawan = () => {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-neutral-400">
-        Memuat detail karyawan...
-      </div>
+      <div className="flex h-64 items-center justify-center text-sm text-neutral-400">Memuat detail karyawan...</div>
     );
   }
 
@@ -54,7 +53,15 @@ const DetailKaryawan = () => {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
           {/* Avatar */}
           <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-blue-50">
-            <User className="h-9 w-9 text-blue-500" />
+            {employe.file ? (
+              <img
+                src={`${STORAGE_URL}${employe.file}`}
+                alt={employe.name}
+                className="h-full w-full rounded-full object-contain"
+              />
+            ) : (
+              <User className="h-8 w-8 text-blue-400" />
+            )}
           </div>
 
           {/* Nama + info */}
@@ -62,9 +69,7 @@ const DetailKaryawan = () => {
             <div className="mb-1">
               <span
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  employe.status === "active"
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-neutral-100 text-neutral-500"
+                  employe.status === "active" ? "bg-emerald-50 text-emerald-600" : "bg-neutral-100 text-neutral-500"
                 }`}
               >
                 {employe.status}
@@ -109,7 +114,7 @@ interface RiwayatDiberikanItem {
   date: string;
   barang: string;
   qty: number;
-  note: string | null;  
+  note: string | null;
 }
 
 function TabelRiwayatDiberikan({ data }: { data: RiwayatDiberikanItem[] }) {
@@ -135,7 +140,10 @@ function TabelRiwayatDiberikan({ data }: { data: RiwayatDiberikanItem[] }) {
         </thead>
         <tbody className="divide-y divide-neutral-50">
           {data.map((row, index) => (
-            <tr key={index} className="text-neutral-700">
+            <tr
+              key={index}
+              className="text-neutral-700"
+            >
               <td className="py-3 pr-3 font-medium text-blue-600">{row.transaction_number}</td>
               <td className="py-3 pr-3 text-neutral-500">{formatTanggalIndo(row.date)}</td>
               <td className="py-3 pr-3 font-medium text-neutral-900">{row.barang}</td>
