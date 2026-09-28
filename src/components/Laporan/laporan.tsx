@@ -5,8 +5,8 @@ import { useTopBorrowed } from "@/hooks/Laporan/TopBorrow";
 import { usePenerimaanStok, type StockHistoryItem } from "@/hooks/Laporan/penerimaan";
 import useTransaction, { type TransactionData } from "@/hooks/Laporan/BaranngKeluar";
 import useLowStock, { type LowStockItem } from "@/hooks/Laporan/lowStock";
-// import useStockTrend, { type TrendItem } from "@/hooks/Laporan/Trend";
-// import useCategoryDistribution, { type CategoryItem } from "@/hooks/Laporan/Distribution";
+import useExport from "@/hooks/Laporan/exportRecordPengeluaran";
+import { Download } from "lucide-react";
 
 // ============================================================
 // DAFTAR TAB YANG ADA DI HALAMAN INI
@@ -20,6 +20,14 @@ const DAFTAR_TAB: { key: TabKey; label: string }[] = [
   { key: "barang-keluar", label: "Barang Keluar" },
   { key: "stok-kritis", label: "Stok Kritis" },
 ];
+
+// endpoint & nama file tiap tab (dipakai tombol Export Excel)
+const EXPORT_CONFIG: Record<TabKey, { endpoint: string; filename: string }> = {
+  "record-pengeluaran": { endpoint: "/items/export-ranking", filename: "record-pengeluaran.xlsx" },
+  "penerimaan-stok": { endpoint: "/stock-history/export-in", filename: "penerimaan-stok.xlsx" },
+ "barang-keluar": { endpoint: "/transactions/export", filename: "barang-keluar.xlsx" },
+  "stok-kritis": { endpoint: "/items/export-low-stock", filename: "stok-kritis.xlsx" },
+};
 
 const TAB_DEFAULT: TabKey = "record-pengeluaran";
 
@@ -41,6 +49,17 @@ export default function StockDashboardSection() {
   // --- Filter tanggal (dipakai bersama, kecuali tab Stok Kritis) ---
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  // --- Export (hook harus di DALAM komponen) ---
+  const { loadingExport, handleExport } = useExport();
+
+  function exportTabAktif() {
+    const { endpoint, filename } = EXPORT_CONFIG[tabAktif];
+    handleExport(endpoint, filename, {
+      start: startDate || undefined,
+      end: endDate || undefined,
+    });
+  }
 
   function pindahTab(tabBaru: TabKey) {
     const paramsBaru = new URLSearchParams(searchParams);
@@ -69,10 +88,6 @@ export default function StockDashboardSection() {
     handleGet: getStokKritis,
   } = useLowStock();
 
-  // --- Data chart (selalu tampil, gak tergantung tab) ---
-  // const { data: dataTrend, loading: loadingTrend, handleGet: getTrend } = useStockTrend();
-  // const { data: dataKategori, loading: loadingKategori, handleGet: getKategori } = useCategoryDistribution();
-
   useEffect(() => {
     if (tabAktif === "record-pengeluaran") {
       getTopBorrowed(startDate || undefined, endDate || undefined);
@@ -88,18 +103,13 @@ export default function StockDashboardSection() {
     }
   }, [tabAktif, startDate, endDate]);
 
-  // useEffect(() => {
-  //   getTrend();
-  //   getKategori();
-  // }, [getTrend, getKategori]);
-
   // Stok Kritis gak butuh filter tanggal (snapshot kondisi sekarang, bukan histori)
   const tampilkanFilterTanggal = tabAktif !== "stok-kritis";
 
   return (
     <div className="w-full space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        {/* Tombol-tombol tab + filter tanggal */}
+        {/* Tombol-tombol tab + filter tanggal + export */}
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-1 rounded-lg bg-slate-50 p-1">
             {DAFTAR_TAB.map((tab) => {
@@ -120,38 +130,51 @@ export default function StockDashboardSection() {
             })}
           </div>
 
-          {/* Filter tanggal — cuma tampil di tab yang butuh histori */}
-          {tampilkanFilterTanggal && (
-            <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 outline-none focus:border-blue-400"
-              />
-              <span className="text-sm text-slate-400">—</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 outline-none focus:border-blue-400"
-              />
-              {(startDate || endDate) && (
-                <button
-                  onClick={() => {
-                    setStartDate("");
-                    setEndDate("");
-                  }}
-                  className="text-sm text-slate-400 hover:text-slate-600"
-                >
-                  Reset
-                </button>
-              )}
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Filter tanggal — cuma tampil di tab yang butuh histori */}
+            {tampilkanFilterTanggal && (
+              <>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 outline-none focus:border-blue-400"
+                />
+                <span className="text-sm text-slate-400">—</span>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-700 outline-none focus:border-blue-400"
+                />
+                {(startDate || endDate) && (
+                  <button
+                    onClick={() => {
+                      setStartDate("");
+                      setEndDate("");
+                    }}
+                    className="text-sm text-slate-400 hover:text-slate-600"
+                  >
+                    Reset
+                  </button>
+                )}
+              </>
+            )}
+
+            {/* Tombol export, ngikutin tab yang lagi aktif */}
+            <button
+              type="button"
+              onClick={exportTabAktif}
+              disabled={loadingExport}
+              className="flex items-center gap-2 rounded-lg bg-emerald-600 px-3.5 py-1.5 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:opacity-50"
+            >
+              <Download className="h-4 w-4" />
+              {loadingExport ? "Mengunduh..." : "Export Excel"}
+            </button>
+          </div>
         </div>
 
-        {/* Isi tab "Top Diberikan" */}
+        {/* Isi tab "Record Pengeluaran" */}
         {tabAktif === "record-pengeluaran" && (
           <TabelTopDiberikan
             data={dataTopBorrowed}
@@ -187,18 +210,12 @@ export default function StockDashboardSection() {
           />
         )}
       </div>
-
-      {/* Grid 2 chart baru */}
-      {/* <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <ChartTrenStok data={dataTrend} loading={loadingTrend} />
-        <ChartDistribusiKategori data={dataKategori} loading={loadingKategori} />
-      </div> */}
     </div>
   );
 }
 
 // ============================================================
-// SUB-KOMPONEN: TABEL TOP DIBERIKAN
+// SUB-KOMPONEN: TABEL RECORD PENGELUARAN (TOP DIBERIKAN)
 // ============================================================
 
 interface TopBorrowedItem {
@@ -314,11 +331,10 @@ function TabelPenerimaanStok({ data, loading, error }: TabelPenerimaanStokProps)
           <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
             <th className="py-3 pr-4 font-medium">Tanggal</th>
             <th className="py-3 pr-4 font-medium">Barang</th>
-            <th className="py-3 pr-4 font-medium">Category  </th>
+            <th className="py-3 pr-4 font-medium">Category </th>
             <th className="py-3 pr-4 font-medium">Supplier</th>
             <th className="py-3 pr-4 font-medium">Spesialis</th>
             <th className="py-3 pr-4 font-medium">Qty</th>
-            {/* <th className="py-3 pr-4 font-medium">Catatan</th> */}
             <th className="py-3 pr-4 font-medium">Stock Akhir</th>
           </tr>
         </thead>
@@ -346,13 +362,12 @@ function TabelPenerimaanStok({ data, loading, error }: TabelPenerimaanStokProps)
                 ) : (
                   <span className="text-slate-500">—</span>
                 )}
-              </td>{" "}
+              </td>
               <td className="py-3.5 pr-4 text-slate-500">{item.supplier_id?.name ?? "—"}</td>
               <td className="py-3.5 pr-4 text-slate-500">{item.supplier_id?.spesialis ?? "—"}</td>
               <td className="py-3.5 pr-4 font-medium text-emerald-600">
                 +{item.qty} {item.item_id?.unit ?? ""}
               </td>
-              {/* <td className="py-3.5 pr-4 text-slate-500">{item.note || "—"}</td> */}
               <td className="py-3.5 pr-4 text-slate-500">{item.item_id?.current_stock ?? "—"}</td>
             </tr>
           ))}
@@ -395,7 +410,6 @@ function TabelBarangKeluar({ data, loading, error }: TabelBarangKeluarProps) {
         <thead>
           <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
             <th className="py-3 pr-4 font-medium">Tanggal</th>
-            {/* <th className="py-3 pr-4 font-medium">No. Transaksi</th> */}
             <th className="py-3 pr-4 font-medium">Barang</th>
             <th className="py-3 pr-4 font-medium">Karyawan</th>
             <th className="py-3 pr-4 font-medium">Qty</th>
@@ -409,7 +423,6 @@ function TabelBarangKeluar({ data, loading, error }: TabelBarangKeluarProps) {
               className="text-slate-700"
             >
               <td className="py-3.5 pr-4 text-slate-500">{trx.date}</td>
-              {/* <td className="py-3.5 pr-4 font-medium text-blue-600">{trx.transaction_number}</td> */}
               <td className="py-3.5 pr-4 font-medium text-slate-900">{trx.barang || "—"}</td>
               <td className="py-3.5 pr-4 text-slate-500">{trx.employe_name ?? "—"}</td>
               <td className="py-3.5 pr-4 font-medium text-red-600">-{trx.total_qty}</td>
@@ -494,144 +507,3 @@ function TabelStokKritis({ data, loading, error }: TabelStokKritisProps) {
     </div>
   );
 }
-
-// // ============================================================
-// // CHART: TREN STOK MASUK & KELUAR
-// // ============================================================
-
-// const NAMA_BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-
-// function formatBulan(bulan: string) {
-//   const [, bulanAngka] = bulan.split("-");
-//   return NAMA_BULAN[parseInt(bulanAngka, 10) - 1];
-// }
-
-// function ChartTrenStok({ data, loading }: { data: TrendItem[]; loading: boolean }) {
-//   if (loading) {
-//     return (
-//       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-//         <div className="flex h-64 items-center justify-center text-sm text-slate-400">Memuat data...</div>
-//       </div>
-//     );
-//   }
-
-//   if (data.length === 0) {
-//     return (
-//       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-//         <div className="flex h-64 items-center justify-center text-sm text-slate-400">Belum ada data</div>
-//       </div>
-//     );
-//   }
-
-//   const maxValue = Math.max(...data.flatMap((d) => [d.stock_masuk, d.stock_keluar]), 10);
-//   const bulanAwal = formatBulan(data[0].bulan);
-//   const bulanAkhir = formatBulan(data[data.length - 1].bulan);
-
-//   return (
-//     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-//       <div className="mb-5 flex items-start justify-between">
-//         <div>
-//           <h3 className="font-semibold text-slate-900">Tren Stok Masuk & Keluar</h3>
-//           <p className="text-sm text-slate-400">
-//             {bulanAwal} — {bulanAkhir} {new Date().getFullYear()}
-//           </p>
-//         </div>
-//         <div className="flex items-center gap-3 text-xs text-slate-500">
-//           <span className="flex items-center gap-1">
-//             <span className="h-2.5 w-2.5 rounded-sm bg-blue-500" />
-//             Stock Masuk
-//           </span>
-//           <span className="flex items-center gap-1">
-//             <span className="h-2.5 w-2.5 rounded-sm bg-violet-500" />
-//             Stock Keluar
-//           </span>
-//         </div>
-//       </div>
-
-//       <div className="flex h-56 items-end justify-between gap-2">
-//         {data.map((item, index) => (
-//           <div key={index} className="flex flex-1 flex-col items-center gap-1">
-//             <div className="flex h-48 w-full items-end justify-center gap-1">
-//               <div
-//                 className="w-full max-w-[18px] rounded-t-sm bg-blue-500"
-//                 style={{ height: `${(item.stock_masuk / maxValue) * 100}%` }}
-//                 title={`Stock Masuk: ${item.stock_masuk}`}
-//               />
-//               <div
-//                 className="w-full max-w-[18px] rounded-t-sm bg-violet-500"
-//                 style={{ height: `${(item.stock_keluar / maxValue) * 100}%` }}
-//                 title={`Stock Keluar: ${item.stock_keluar}`}
-//               />
-//             </div>
-//             <span className="text-xs text-slate-400">{formatBulan(item.bulan)}</span>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
-// // ============================================================
-// // CHART: DISTRIBUSI KATEGORI
-// // ============================================================
-
-// const WARNA_KATEGORI: Record<string, { dot: string; bar: string; text: string }> = {
-//   apd: { dot: "bg-blue-500", bar: "bg-blue-500", text: "text-blue-600" },
-//   tools: { dot: "bg-violet-500", bar: "bg-violet-500", text: "text-violet-600" },
-// };
-
-// const LABEL_KATEGORI: Record<string, string> = {
-//   apd: "APD",
-//   tools: "Tools",
-// };
-
-// function ChartDistribusiKategori({ data, loading }: { data: CategoryItem[]; loading: boolean }) {
-//   if (loading) {
-//     return (
-//       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-//         <div className="flex h-64 items-center justify-center text-sm text-slate-400">Memuat data...</div>
-//       </div>
-//     );
-//   }
-
-//   if (data.length === 0) {
-//     return (
-//       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-//         <div className="flex h-64 items-center justify-center text-sm text-slate-400">Belum ada data</div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-//       <h3 className="mb-5 font-semibold text-slate-900">Distribusi Kategori</h3>
-
-//       <div className="space-y-4">
-//         {data.map((item) => {
-//           const warna = WARNA_KATEGORI[item.category] ?? {
-//             dot: "bg-slate-400",
-//             bar: "bg-slate-400",
-//             text: "text-slate-600",
-//           };
-//           const label = LABEL_KATEGORI[item.category] ?? item.category;
-
-//           return (
-//             <div key={item.category}>
-//               <div className="mb-1.5 flex items-center justify-between text-sm">
-//                 <span className="flex items-center gap-2 font-medium text-slate-700">
-//                   <span className={`h-2.5 w-2.5 rounded-sm ${warna.dot}`} />
-//                   {label}
-//                 </span>
-//                 <span className="text-slate-400">{item.total} unit</span>
-//                 <span className={`font-semibold ${warna.text}`}>{item.percentage}%</span>
-//               </div>
-//               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-//                 <div className={`h-full rounded-full ${warna.bar}`} style={{ width: `${item.percentage}%` }} />
-//               </div>
-//             </div>
-//           );
-//         })}
-//       </div>
-//     </div>
-//   );
-// }

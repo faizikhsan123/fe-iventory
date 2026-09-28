@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import useItemDetail from "@/hooks/items/detail";
 import { STORAGE_URL } from "@/lib/axios";
 import { formatTanggalIndo } from "@/lib/tanggal";
+import { formatRupiah } from "@/lib/Harga";
 
 const DetailBarang = () => {
   // ambil id dari URL, contoh route: /items/:id
@@ -81,8 +82,8 @@ const DetailBarang = () => {
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <InfoBox
-                label="harga Perolehan"
-                value={`Rp  ${item.price || "-"}`}
+                label="Harga Perolehan"
+                value={formatRupiah(item.price)}
               />
               <InfoBox
                 label="Tipe"

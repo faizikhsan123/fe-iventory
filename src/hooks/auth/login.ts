@@ -19,8 +19,10 @@ export const UseLogin = () => {
         password: payload2,
       });
 
-      const token = response.data.data.token;
+      const {token, user} = response.data.data;
+
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user)); // simpan user (isi role & permission)
       // redirect ke halaman dashboard
       navigate("/");
       //   jika login berhasil, maka reset state email dan password

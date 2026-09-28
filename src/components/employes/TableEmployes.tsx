@@ -16,6 +16,7 @@ import UpdateEmployes from "./UpdateEmployes";
 
 import type { employes } from "@/types/employes";
 import { useNavigate } from "react-router";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const selectClassName =
   "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
@@ -46,6 +47,10 @@ const TableEmployes = () => {
   const perPage = 10;
 
   const navigate = useNavigate();
+
+  const { user } = useAuth();
+
+  const isAdmin = user?.roles?.includes("admin");
 
   // use effect dijalankan dengan beberapa parameter
   useEffect(() => {
@@ -241,7 +246,6 @@ const TableEmployes = () => {
                     key={employes.id}
                     className="hover:bg-slate-50"
                   >
-                    
                     <TableCell className="px-6 py-4">{(page - 1) * perPage + index + 1}</TableCell>
 
                     <TableCell className="px-6 py-4 font-medium">
@@ -286,27 +290,34 @@ const TableEmployes = () => {
                         >
                           <Eye size={16} />
                         </Button>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() => setStateUpdate(employes)}
-                        >
-                          <SquarePen size={16} />
-                        </Button>
 
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          disabled={isLoading}
-                          onClick={() => handleDelete(employes.id, refresh)}
-                        >
-                          <Trash2
-                            size={16}
-                            className="text-red-500"
-                          />
-                        </Button>
+                        {isAdmin && (
+                          <div>
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              onClick={() => setStateUpdate(employes)}
+                            >
+                              <SquarePen size={16} />
+                            </Button>
+
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              disabled={isLoading}
+                              onClick={() => handleDelete(employes.id, refresh)}
+                            >
+                              <Trash2
+                                size={16}
+                                className="text-red-500"
+                              />
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </TableCell>
+
+                  
                   </TableRow>
                 );
               })}

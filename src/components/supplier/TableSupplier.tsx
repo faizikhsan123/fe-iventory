@@ -14,8 +14,9 @@ import { useSupplier } from "@/hooks/suppliers/getSupplier";
 import { useDeleteSupplier } from "@/hooks/suppliers/deleteSupplier";
 
 import { EditSupplier } from "./UpdateSupplier";
-  
+
 import type { Supplier } from "@/types/supplier";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const selectClassName =
   "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
@@ -46,6 +47,10 @@ const TableSupplier = () => {
 
   // satu halaman 10 item
   const perPage = 10;
+
+  const { user } = useAuth();
+
+  const isAdmin = user?.roles?.includes("admin");
 
   // use effct dijalankan dengan ebebrapa parameter
   useEffect(() => {
@@ -155,7 +160,7 @@ const TableSupplier = () => {
 
               <TableHead className="px-6">Status</TableHead>
 
-              <TableHead className="px-6">Aksi</TableHead>
+              <TableHead className="px-6">{isAdmin ? "AKSI" : null}</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -237,29 +242,31 @@ const TableSupplier = () => {
                     </span>
                   </TableCell>
 
-                  <TableCell className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => setEditSupplier(supplier)}
-                      >
-                        <SquarePen size={16} />
-                      </Button>
+                  {isAdmin && (
+                    <TableCell className="px-6 py-4">
+                      <div className="flex gap-2">
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() => setEditSupplier(supplier)}
+                        >
+                          <SquarePen size={16} />
+                        </Button>
 
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        disabled={loading}
-                        onClick={() => handleDelete(supplier.id, refresh)}
-                      >
-                        <Trash2
-                          size={16}
-                          className="text-red-500"
-                        />
-                      </Button>
-                    </div>
-                  </TableCell>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          disabled={loading}
+                          onClick={() => handleDelete(supplier.id, refresh)}
+                        >
+                          <Trash2
+                            size={16}
+                            className="text-red-500"
+                          />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
           </TableBody>

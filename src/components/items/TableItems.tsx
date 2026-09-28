@@ -21,6 +21,7 @@ import { STORAGE_URL } from "@/lib/axios";
 import { useNavigate } from "react-router";
 import { cn } from "cn";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const selectClassName =
   "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
@@ -92,6 +93,10 @@ const TableItems = () => {
   // berarti 3 -1  = 2 kali 10  maka 20
   // maka dibawah 20 + 1 sampai seterusnya
   const startNumber = (page - 1) * $perPage;
+
+  const { user } = useAuth();
+
+  const isAdmin = user?.roles?.includes("admin");
 
   //  const summary = useMemo(() => {
   //   const available = data.filter((items) => items.status === "available").length;
@@ -194,7 +199,7 @@ const TableItems = () => {
               <TableHead className="text-center">Min Stok</TableHead>
               <TableHead className="text-center">Stok Sekarang</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-center">AKSI</TableHead>
+              <TableHead className="text-center">Aksi</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -287,6 +292,7 @@ const TableItems = () => {
                       );
                     })()}
                   </TableCell>
+
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
                       <Button
@@ -297,25 +303,29 @@ const TableItems = () => {
                         <Eye size={16} />
                       </Button>
 
-                      <Button
-                        onClick={() => navigate(`/update-items/${items.id}`)}
-                        size="icon"
-                        variant="outline"
-                        className="h-8 w-8 text-slate-500"
-                        disabled={deleteloading}
-                      >
-                        <SquarePen className="h-4 w-4" />
-                      </Button>
+                      {isAdmin && (
+                        <div>
+                          <Button
+                            onClick={() => navigate(`/update-items/${items.id}`)}
+                            size="icon"
+                            variant="outline"
+                            className="h-8 w-8 text-slate-500"
+                            disabled={deleteloading}
+                          >
+                            <SquarePen className="h-4 w-4" />
+                          </Button>
 
-                      <Button
-                        onClick={() => onDelete(items.id)}
-                        size="icon"
-                        variant="outline"
-                        className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"
-                        disabled={deleteloading}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                          <Button
+                            onClick={() => onDelete(items.id)}
+                            size="icon"
+                            variant="outline"
+                            className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"
+                            disabled={deleteloading}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
