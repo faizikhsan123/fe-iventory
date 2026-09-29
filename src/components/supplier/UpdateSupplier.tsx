@@ -40,8 +40,8 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
     }
     form.reset({
       nama: supplier.name,
-      pic : supplier.pic,
-      spesialis : supplier.spesialis,
+      pic: supplier.pic,
+      spesialis: supplier.spesialis,
       phone: supplier.phone ?? "",
       email: supplier.email ?? "",
       address: supplier.address ?? "",
@@ -104,16 +104,17 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
             <Label htmlFor="spesialis">
               Spesialis <span className="text-red-500">*</span>
             </Label>
-            <Input
-              type="text"
-              {...form.register("spesialis")}
+            <select
               id="spesialis"
-              placeholder="APD"
-              disabled={loadingUpdate}
-            />
+              {...form.register("spesialis")}
+            >
+              <option value=""> -- Pilih Kategori --</option>
+              <option value="apd">APD</option>
+              <option value="tools">Tools</option>
+              <option value="others">Others</option>
+            </select>
             <span className="text-red-500 text-sm">{form.formState.errors.spesialis?.message}</span>
           </Field>
-
           <Field>
             <Label htmlFor="phone">No. Telepon</Label>
             <Input

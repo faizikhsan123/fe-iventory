@@ -26,7 +26,18 @@ const STATUS_LABEL: Record<string, string> = {
   inactive: "Tidak Aktif",
 };
 
-const TableSupplier = () => {
+// style badge spesialis (sama kayak CATEGORY_STYLE di items)
+const SPESIALIS_STYLE: Record<string, string> = {
+  apd: "bg-blue-50 text-blue-700",
+  tools: "bg-purple-50 text-purple-700",
+};
+
+type TableSupplierProps = {
+  // naik setiap kali ada create sukses dari parent -> tabel refetch
+  refreshKey?: number;
+};
+
+const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
   const { dataSUpplier, meta, loadingSupplier, error, getSupplier } = useSupplier();
 
   const { handleDelete, loadingDelete } = useDeleteSupplier();
@@ -52,7 +63,7 @@ const TableSupplier = () => {
 
   const isAdmin = user?.roles?.includes("admin");
 
-  // use effct dijalankan dengan ebebrapa parameter
+  // fetch ulang kalau filter/page berubah ATAU refreshKey dari parent naik
   useEffect(() => {
     getSupplier({
       search,
@@ -63,7 +74,7 @@ const TableSupplier = () => {
 
       per_page: perPage,
     });
-  }, [search, status, page, getSupplier]);
+  }, [search, status, page, getSupplier, refreshKey]);
 
   //Mengambil ulang data supplier setelah aksi tertentu seperti delete atau update.
   const refresh = () => {
@@ -78,10 +89,20 @@ const TableSupplier = () => {
     });
   };
 
+  // kalau yang dihapus item terakhir di halaman (dan bukan halaman 1), mundur 1 halaman
+  const onDelete = (id: number) => {
+    handleDelete(id, () => {
+      if (dataSUpplier.length === 1 && page > 1) {
+        setPage(page - 1); // useEffect otomatis fetch
+      } else {
+        refresh();
+      }
+    });
+  };
+
   //loading ketika loading get dan delete
   const loading = loadingSupplier || loadingDelete;
 
-  //Mengambil ulang data supplier setelah aksi tertentu seperti delete atau update.
   const lastPage = meta?.last_page ?? 1;
 
   return (
@@ -168,7 +189,7 @@ const TableSupplier = () => {
             {loadingSupplier && (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={9}
                   className="h-32 text-center text-slate-500"
                 >
                   Memuat data supplier...
@@ -179,7 +200,7 @@ const TableSupplier = () => {
             {error && !loadingSupplier && (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={9}
                   className="h-32 text-center text-red-500"
                 >
                   {error}
@@ -192,7 +213,7 @@ const TableSupplier = () => {
             {!loadingSupplier && !error && dataSUpplier.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={9}
                   className="h-32 text-center"
                 >
                   <div className="flex flex-col items-center gap-2">
@@ -224,7 +245,22 @@ const TableSupplier = () => {
                   <TableCell className="px-6 py-4 font-medium">{supplier.name}</TableCell>
 
                   <TableCell className="px-6 py-4">{supplier.pic ?? "-"}</TableCell>
-                  <TableCell className="px-6 py-4">{supplier.spesialis ?? "-"}</TableCell>
+
+                  {/* Spesialis pakai badge seperti kategori di items */}
+                  <TableCell className="px-6 py-4">
+                    {supplier.spesialis ? (
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
+                          SPESIALIS_STYLE[supplier.spesialis.toLowerCase()] ?? "bg-slate-100 text-slate-600"
+                        }`}
+                      >
+                        {supplier.spesialis}
+                      </span>
+                    ) : (
+                      "-"
+                    )}
+                  </TableCell>
+
                   <TableCell className="px-6 py-4">{supplier.phone ?? "-"}</TableCell>
 
                   <TableCell className="px-6 py-4">{supplier.email ?? "-"}</TableCell>
@@ -257,7 +293,7 @@ const TableSupplier = () => {
                           size="icon"
                           variant="outline"
                           disabled={loading}
-                          onClick={() => handleDelete(supplier.id, refresh)}
+                          onClick={() => onDelete(supplier.id)}
                         >
                           <Trash2
                             size={16}
@@ -285,8 +321,6 @@ const TableSupplier = () => {
             <Button
               size="icon"
               variant="outline"
-              // disable ketika page kurang dari 1 sama dengan 1 dan loading
-
               disabled={page <= 1 || loading}
               onClick={() => setPage(page - 1)}
             >
@@ -305,7 +339,7 @@ const TableSupplier = () => {
         </div>
       )}
 
-      {/* kondnisi edit */}
+      {/* kondisi edit */}
 
       <EditSupplier
         open={!!editSupplier}

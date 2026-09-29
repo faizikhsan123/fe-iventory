@@ -4,12 +4,12 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { isAxiosError } from "axios";
+import type { employes } from "@/types/employes";
 
 const UseeditEmployes = () => {
   const [loadingupdate, Setloadingupdate] = useState(false);
   const [errorupdate, SetErrorupdate] = useState("");
-    const [data, Setdata] = useState<employes[]>([]);
-  
+  const [data, Setdata] = useState<employes[]>([]);
 
   const Myswal = withReactContent(Swal);
 
@@ -25,7 +25,8 @@ const UseeditEmployes = () => {
       // formData.append("password", payload.password);
       formData.append("division", payload.division);
       formData.append("position", payload.position);
-      formData.append("status", payload.status)
+      formData.append("status", payload.status);
+      formData.append("_method", "PATCH");
       // if (payload.brand) formData.append("brand", payload.brand);
       // if (payload.type) formData.append("type", payload.type);
       // if (payload.min_stock) formData.append("min_stock", String(payload.min_stock));
@@ -34,12 +35,12 @@ const UseeditEmployes = () => {
       // formData.append("unit", payload.unit);
       // if (payload.description) formData.append("description", payload.description);
 
-      const response = await AxiosInstance.patch(`/employes/${id}`, formData, {
+      const response = await AxiosInstance.post(`/employes/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      Setdata(response.data.data)
+      Setdata(response.data.data);
       Myswal.fire("Berhasil!", "Data supplier berhasil dirubah.", "success");
       onSucces?.();
     } catch (error) {

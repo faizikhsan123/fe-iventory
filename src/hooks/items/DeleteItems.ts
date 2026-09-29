@@ -10,7 +10,8 @@ const UseDelete = () => {
 
   const MySwal = withReactContent(Swal);
 
-  const handleDelete = async (id: number) => {
+  // onSuccess dipanggil HANYA kalau delete berhasil
+  const handleDelete = async (id: number, onSuccess?: () => void) => {
     const result = await Swal.fire({
       title: "Yakin mau hapus?",
       text: "Data yang dihapus tidak bisa dikembalikan!",
@@ -22,12 +23,14 @@ const UseDelete = () => {
 
     // kalau user klik Batal atau tutup dialog, stop di sini
     if (!result.isConfirmed) return;
+
     try {
       Setdeleteloading(true);
       Seterrordelete("");
 
       await AxiosInstance.delete(`/items/${id}`);
       MySwal.fire("Terhapus!", "Data berhasil dihapus.", "success");
+      onSuccess?.();
     } catch (error) {
       let message = "Terjadi kesalahan, coba lagi.";
 
@@ -43,12 +46,13 @@ const UseDelete = () => {
         }
       }
 
-      Seterrordelete(message); // sesuaikan nama function-nya
+      Seterrordelete(message);
       MySwal.fire("Gagal!", message, "error");
     } finally {
       Setdeleteloading(false);
     }
   };
+
   return {
     deleteloading,
     errodelete,

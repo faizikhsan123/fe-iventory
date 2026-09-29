@@ -58,7 +58,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
 
     form.reset({
       name: employes.user.name,
-      
+
       email: employes.user.email,
       division: employes.division,
       position: employes.position,
@@ -66,11 +66,11 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
     });
   }, [employes]);
 
-   useEffect(() => {
-      if (employes?.file) {
-        setPreviewImage(`${STORAGE_URL}${employes.file}`);
-      }
-    }, [employes?.file]);
+  useEffect(() => {
+    if (employes?.file) {
+      setPreviewImage(`${STORAGE_URL}${employes.file}`);
+    }
+  }, [employes?.file]);
 
   return (
     <Dialog

@@ -9,7 +9,7 @@ export const StockMasukSchema = z.object({
       z.object({
         item_id: z.string("Barang Wajib Dipilih").min(1, "Barang wajib dipilih"),
         qty: z.number("Masukkan Angka Bulat").min(1, "Qty minimal 1"),
-        unit: z.enum(["pcs", "set", "pair", "unit"], {
+        unit: z.enum(["pcs", "set", "pair", "unit","others"], {
           message: "Pilih Satuan",
         }),
       })

@@ -212,6 +212,7 @@ const UpdateItems = () => {
                       <option value=""> -- Pilih Kategori --</option>
                       <option value="apd">APD</option>
                       <option value="tools">Tools</option>
+                      <option value="others">Others</option>
                     </select>
 
                     <span className="text-red-500 text-sm">{form.formState.errors.category?.message}</span>
@@ -281,6 +282,7 @@ const UpdateItems = () => {
                         <option value="set">SET</option>
                         <option value="unit">UNIT</option>
                         <option value="pair">PAIR</option>
+                        <option value="others">Others</option>
                       </select>
                       <span className="text-red-500 text-sm">{form.formState.errors.unit?.message}</span>
                     </Field>

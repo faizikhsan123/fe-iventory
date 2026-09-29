@@ -57,7 +57,7 @@ const DetailKaryawan = () => {
               <img
                 src={`${STORAGE_URL}${employe.file}`}
                 alt={employe.name}
-                className="h-full w-full rounded-full object-contain"
+                className="h-full w-full rounded-full object-cover"
               />
             ) : (
               <User className="h-8 w-8 text-blue-400" />

@@ -1,19 +1,19 @@
 import CreateEmployes from "@/components/employes/CreateEmployes";
 import TableEmployes from "@/components/employes/TableEmployes";
 import Navbar from "@/components/Navbar";
-import SambutanCoomponent from "@/components/SambutanCoomponent";
-import useGetEmployes from "@/hooks/employes/getEmployes";
+import SambutanComponent from "@/components/SambutanCoomponent";
+
 import { useState } from "react";
 
 const Employes = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { getEmployesButton } = useGetEmployes();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   return (
     <div>
       <Navbar title="Employes"></Navbar>
 
-      <SambutanCoomponent
+      <SambutanComponent
         paragraf1="Master Employes"
         paragraf2="Data karyawan yang dapat mengakses inventaris"
         button="+ Tambah Karyawan"
@@ -23,10 +23,10 @@ const Employes = () => {
       <CreateEmployes
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        onSuccess={() => getEmployesButton()}
+        onSuccess={() => setRefreshKey((k) => k + 1)}
       />
 
-      <TableEmployes />
+      <TableEmployes refreshKey={refreshKey} />
     </div>
   );
 };

@@ -5,8 +5,8 @@ export const itemsSchema = z.object({
 
   name: z.string("Minimal 1 karakter dan 50 karakter").min(1).max(50),
 
-  category: z.enum(["apd", "tools"], {
-    message: "Pilih antara apd dan tools",
+  category: z.enum(["apd", "tools", "others"], {
+    message: "Pilih  Salah Satu Kategori ",
   }),
 
   brand: z.string("Minimal 1 karakter dan 20 karakter").min(1).max(20).optional().or(z.literal("")),
@@ -21,7 +21,7 @@ min_stock: z.coerce.number("Masukkan Angka Bulat").optional().nullable(),
   //   message : "Pilih diantara satu kategori yang tersedia"
   // }),
 
-  unit: z.enum(["pcs", "set", "unit", "pair"], {
+  unit: z.enum(["pcs", "set", "unit", "pair", "others"], {
     message: "Pilih diantara satu kategori yang tersedia",
   }),
 

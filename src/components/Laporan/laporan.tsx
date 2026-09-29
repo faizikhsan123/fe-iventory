@@ -9,6 +9,29 @@ import useExport from "@/hooks/Laporan/exportRecordPengeluaran";
 import { Download } from "lucide-react";
 
 // ============================================================
+// STYLE BADGE KATEGORI (sama kayak di TableItems)
+// ============================================================
+
+const CATEGORY_STYLE: Record<string, string> = {
+  apd: "bg-blue-50 text-blue-700",
+  tools: "bg-purple-50 text-purple-700",
+};
+
+function BadgeKategori({ value }: { value?: string | null }) {
+  if (!value) return <span className="text-slate-500">—</span>;
+
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
+        CATEGORY_STYLE[value.toLowerCase()] ?? "bg-slate-100 text-slate-600"
+      }`}
+    >
+      {value}
+    </span>
+  );
+}
+
+// ============================================================
 // DAFTAR TAB YANG ADA DI HALAMAN INI
 // ============================================================
 
@@ -25,7 +48,7 @@ const DAFTAR_TAB: { key: TabKey; label: string }[] = [
 const EXPORT_CONFIG: Record<TabKey, { endpoint: string; filename: string }> = {
   "record-pengeluaran": { endpoint: "/items/export-ranking", filename: "record-pengeluaran.xlsx" },
   "penerimaan-stok": { endpoint: "/stock-history/export-in", filename: "penerimaan-stok.xlsx" },
- "barang-keluar": { endpoint: "/transactions/export", filename: "barang-keluar.xlsx" },
+  "barang-keluar": { endpoint: "/transactions/export", filename: "barang-keluar.xlsx" },
   "stok-kritis": { endpoint: "/items/export-low-stock", filename: "stok-kritis.xlsx" },
 };
 
@@ -276,8 +299,6 @@ function TabelTopDiberikan({ data, loading, error }: TabelTopDiberikanProps) {
 }
 
 function BarisTabel({ item }: { item: TopBorrowedItem }) {
-  const warnaKategori = item.category === "APD" ? "bg-blue-50 text-blue-600" : "bg-violet-50 text-violet-600";
-
   return (
     <tr className="text-slate-700">
       <td className="py-3.5 pr-4">
@@ -287,7 +308,7 @@ function BarisTabel({ item }: { item: TopBorrowedItem }) {
       </td>
       <td className="py-3.5 pr-4 font-medium text-slate-900">{item.name}</td>
       <td className="py-3.5 pr-4">
-        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${warnaKategori}`}>{item.category}</span>
+        <BadgeKategori value={item.category} />
       </td>
       <td className="py-3.5 pr-4">{item.current_stock} unit</td>
       <td className="py-3.5 pr-4 font-medium text-violet-600">{item.total_pinjam}x</td>
@@ -347,24 +368,12 @@ function TabelPenerimaanStok({ data, loading, error }: TabelPenerimaanStokProps)
               <td className="py-3.5 pr-4 text-slate-500">{item.date}</td>
               <td className="py-3.5 pr-4 font-medium text-slate-900">{item.item_id?.name ?? "—"}</td>
               <td className="py-3.5 pr-4">
-                {item.item_id?.category ? (
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      item.item_id.category === "apd"
-                        ? "bg-blue-100 text-blue-700"
-                        : item.item_id.category === "Tools"
-                          ? "bg-purple-100 text-purple-700"
-                          : "bg-slate-100 text-slate-500"
-                    }`}
-                  >
-                    {item.item_id.category}
-                  </span>
-                ) : (
-                  <span className="text-slate-500">—</span>
-                )}
+                <BadgeKategori value={item.item_id?.category} />
               </td>
               <td className="py-3.5 pr-4 text-slate-500">{item.supplier_id?.name ?? "—"}</td>
-              <td className="py-3.5 pr-4 text-slate-500">{item.supplier_id?.spesialis ?? "—"}</td>
+              <td className="py-3.5 pr-4">
+                <BadgeKategori value={item.supplier_id?.spesialis} />
+              </td>
               <td className="py-3.5 pr-4 font-medium text-emerald-600">
                 +{item.qty} {item.item_id?.unit ?? ""}
               </td>
@@ -483,7 +492,9 @@ function TabelStokKritis({ data, loading, error }: TabelStokKritisProps) {
                 className="text-slate-700"
               >
                 <td className="py-3.5 pr-4 font-medium text-slate-900">{item.name}</td>
-                <td className="py-3.5 pr-4 text-slate-500">{item.category}</td>
+                <td className="py-3.5 pr-4">
+                  <BadgeKategori value={item.category} />
+                </td>
                 <td className="py-3.5 pr-4 font-medium text-red-600">
                   {item.current_stock} {item.unit}
                 </td>

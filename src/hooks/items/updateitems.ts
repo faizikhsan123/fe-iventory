@@ -17,14 +17,14 @@ const UseUpdateItems = () => {
   const [items, SetItems] = useState<Items | null>(null);
   const navigate = useNavigate();
 
-const getById = async (id: number) => {
-  try {
-    const response = await AxiosInstance.get(`/items/${id}`);
-    SetItems(response.data.data);
-  } catch (error) {
-    console.log("Gagal ambil data item:", error);
-  }
-};
+  const getById = async (id: number) => {
+    try {
+      const response = await AxiosInstance.get(`/items/${id}`);
+      SetItems(response.data.data);
+    } catch (error) {
+      console.log("Gagal ambil data item:", error);
+    }
+  };
   const HandleUpdate = async (id: number, payload: ItemsCreate) => {
     try {
       Setloadingcreate(true);
@@ -39,12 +39,15 @@ const getById = async (id: number) => {
       formData.append("category", payload.category);
       if (payload.brand) formData.append("brand", payload.brand);
       if (payload.type) formData.append("type", payload.type);
-      if (payload.min_stock) formData.append("min_stock", String(payload.min_stock));
-      if (payload.price) formData.append("price", String(payload.price));
+      if (payload.min_stock != null) formData.append("min_stock", String(payload.min_stock));
+      if (payload.price != null) formData.append("price", String(payload.price));
       if (payload.size) formData.append("size", payload.size);
       formData.append("unit", payload.unit);
       if (payload.description) formData.append("description", payload.description);
-      const response = await AxiosInstance.patch(`/items/${id}`, formData, {
+
+      formData.append("_method", "PATCH");
+
+      const response = await AxiosInstance.post(`/items/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

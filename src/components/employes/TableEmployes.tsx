@@ -21,7 +21,12 @@ import { useAuth } from "@/hooks/auth/useAuth";
 const selectClassName =
   "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
 
-const TableEmployes = () => {
+type TableEmployesProps = {
+  // naik setiap kali ada create sukses dari parent -> tabel refetch
+  refreshKey?: number;
+};
+
+const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
   const { data, meta, loading, error, getEmployesButton } = useGetEmployes();
 
   const { errorDelete, handleDelete, loadingDelete } = useDeleteEmployes();
@@ -40,7 +45,7 @@ const TableEmployes = () => {
   // state utuk filter divisi
   const [division, setDivision] = useState("all");
 
-  // state utuk halaman status
+  // state utuk filter position
   const [position, setPosition] = useState("all");
 
   // satu halaman 10 item
@@ -52,7 +57,7 @@ const TableEmployes = () => {
 
   const isAdmin = user?.roles?.includes("admin");
 
-  // use effect dijalankan dengan beberapa parameter
+  // fetch ulang kalau filter/page berubah ATAU refreshKey dari parent naik
   useEffect(() => {
     getEmployesButton({
       search,
@@ -64,7 +69,7 @@ const TableEmployes = () => {
 
       per_page: perPage,
     });
-  }, [search, division, page, getEmployesButton, position]);
+  }, [search, division, page, getEmployesButton, position, refreshKey]);
 
   //Mengambil ulang data employes setelah aksi tertentu seperti delete atau update.
   const refresh = () => {
@@ -77,6 +82,18 @@ const TableEmployes = () => {
       page,
 
       per_page: perPage,
+    });
+  };
+
+  // kalau yang dihapus item terakhir di halaman (dan bukan halaman 1), mundur 1 halaman
+  // biar gak nampil halaman kosong
+  const onDelete = (id: number) => {
+    handleDelete(id, () => {
+      if (data.length === 1 && page > 1) {
+        setPage(page - 1); // useEffect otomatis fetch
+      } else {
+        refresh();
+      }
     });
   };
 
@@ -136,7 +153,6 @@ const TableEmployes = () => {
         >
           <option value="all">Semua Divisi</option>
 
-          {/* TODO: sesuaikan value dengan divisi yang ada di BE */}
           <option value="GA">GA</option>
 
           <option value="INC-PMR">INC - PMR</option>
@@ -144,7 +160,7 @@ const TableEmployes = () => {
           <option value="INC-ER">INC - ER</option>
         </select>
 
-        {/* posiition */}
+        {/* position */}
         <select
           className={selectClassName}
           value={position}
@@ -155,7 +171,6 @@ const TableEmployes = () => {
         >
           <option value="all">Semua Position</option>
 
-          {/* TODO: sesuaikan value dengan divisi yang ada di BE */}
           <option value="Supervisor">Supervisor</option>
 
           <option value="Foreman">Foreman</option>
@@ -292,7 +307,7 @@ const TableEmployes = () => {
                         </Button>
 
                         {isAdmin && (
-                          <div>
+                          <div className="flex gap-2">
                             <Button
                               size="icon"
                               variant="outline"
@@ -305,7 +320,7 @@ const TableEmployes = () => {
                               size="icon"
                               variant="outline"
                               disabled={isLoading}
-                              onClick={() => handleDelete(employes.id, refresh)}
+                              onClick={() => onDelete(employes.id)}
                             >
                               <Trash2
                                 size={16}
@@ -316,8 +331,6 @@ const TableEmployes = () => {
                         )}
                       </div>
                     </TableCell>
-
-                  
                   </TableRow>
                 );
               })}
@@ -339,7 +352,6 @@ const TableEmployes = () => {
             <Button
               size="icon"
               variant="outline"
-              // disable ketika page kurang dari sama dengan 1 dan loading
               disabled={page <= 1 || isLoading}
               onClick={() => setPage(page - 1)}
             >

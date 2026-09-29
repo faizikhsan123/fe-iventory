@@ -82,9 +82,15 @@ const TableItems = () => {
     });
   };
 
-  const onDelete = async (id: number) => {
-    await handleDelete(id);
-    refresh();
+   // kalau yang dihapus item terakhir di halaman (dan bukan halaman 1), mundur 1 halaman
+  const onDelete = (id: number) => {
+    handleDelete(id, () => {
+      if (data.length === 1 && page > 1) {
+        Setpage(page - 1); // useEffect otomatis fetch
+      } else {
+        refresh();
+      }
+    });
   };
 
   const lastPage = meta?.last_page ?? 1;

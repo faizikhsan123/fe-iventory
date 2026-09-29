@@ -20,9 +20,10 @@ import { useCreateSupplier } from "@/hooks/suppliers/createSupplier";
 type CreateSupplierProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 };
 
-export function CreateSupplier({ open, onOpenChange }: CreateSupplierProps) {
+export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplierProps) {
   const { errorCreate, handleCreate, loadingCreate } = useCreateSupplier();
   const form = useForm<SupplierForm>({
     resolver: zodResolver(supplierSchema),
@@ -34,6 +35,7 @@ export function CreateSupplier({ open, onOpenChange }: CreateSupplierProps) {
     handleCreate(data, () => {
       form.reset();
       onOpenChange(false);
+      onSuccess?.();
     });
   };
 
@@ -79,13 +81,15 @@ export function CreateSupplier({ open, onOpenChange }: CreateSupplierProps) {
             <Label htmlFor="spesialis">
               Spesialis <span className="text-red-500">*</span>
             </Label>
-            <Input
-              type="text"
-              {...form.register("spesialis")}
+            <select
               id="spesialis"
-              placeholder="APD "
-              disabled={loadingCreate}
-            />
+              {...form.register("spesialis")}
+            >
+              <option value=""> -- Pilih Kategori --</option>
+              <option value="apd">APD</option>
+              <option value="tools">Tools</option>
+              <option value="others">Others</option>
+            </select>
             <span className="text-red-500 text-sm">{form.formState.errors.spesialis?.message}</span>
           </Field>
 
