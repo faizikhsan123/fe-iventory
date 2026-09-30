@@ -21,7 +21,7 @@ const Supplier = () => {
       />
 
       <CreateSupplier
-        open={isDialogOpen}
+        open={isDialogOpen}                         
         onOpenChange={setIsDialogOpen}
         onSuccess={() => setRefreshKey((k) => k + 1)}
       />
