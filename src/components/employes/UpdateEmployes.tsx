@@ -176,6 +176,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   <option value="Supervisor">Supervisor</option>
                   <option value="Technician">Technician</option>
                   <option value="Foreman">Foreman</option>
+                  <option value="Safety">Safety</option>
                 </select>
                 <FieldError message={form.formState.errors.position?.message} />
               </Field>

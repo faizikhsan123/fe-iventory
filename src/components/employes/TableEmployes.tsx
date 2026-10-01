@@ -317,7 +317,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Karyawan</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Divisi</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Jabatan</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Posisi</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Status</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Barang Dipinjam</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Aksi</TableHead>

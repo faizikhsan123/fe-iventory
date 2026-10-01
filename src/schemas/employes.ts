@@ -8,7 +8,7 @@ export const employeeCreateSchema = z.object({
   division: z.enum(["INC-PMR", "INC-ER", "GA"], {
     message: "Division wajib dipilih",
   }),
-  position: z.enum(["Supervisor", "Technician", "Foreman"], {
+  position: z.enum(["Supervisor", "Technician", "Foreman", "Safety"], {
     message: "Position wajib dipilih",
   }),
 });
@@ -32,7 +32,7 @@ export const employeeEditSchema = z.object({
   division: z.enum(["INC-PMR", "INC-ER", "GA"], {
     message: "Division wajib dipilih",
   }),
-  position: z.enum(["Supervisor", "Technician", "Foreman"], {
+  position: z.enum(["Supervisor", "Technician", "Foreman", "Safety"], {
     message: "Position wajib dipilih",
   }),
   status: z.enum(["active", "inactive"], {
