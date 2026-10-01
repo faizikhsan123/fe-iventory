@@ -111,6 +111,7 @@ const EXPORT_CONFIG: Partial<Record<TabKey, { endpoint: string; filename: string
   "penerimaan-stok": { endpoint: "/stock-history/export-in", filename: "penerimaan-stok.xlsx" },
   "barang-keluar": { endpoint: "/transactions/export", filename: "barang-keluar.xlsx" },
   "stok-kritis": { endpoint: "/items/export-low-stock", filename: "stok-kritis.xlsx" },
+  "stock-on-hand": { endpoint: "/items/export-stock-on-hand", filename: "stock-on-hand.xlsx" },
 };
 
 const TAB_DEFAULT: TabKey = "record-pengeluaran";
