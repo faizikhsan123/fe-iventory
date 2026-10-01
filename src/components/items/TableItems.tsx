@@ -1,35 +1,47 @@
 // TableItems.tsx
-import {
-  // Boxes,
-  // CheckCircle2,
-  // AlertTriangle,
-  // XCircle,
-  Eye,
-  Search,
-  SquarePen,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { AlertCircle, ChevronLeft, ChevronRight, Eye, Package, Search, SquarePen, Trash2, X } from "lucide-react";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import UsegetItems from "@/hooks/items/getItems";
-// import { useEffect, useMemo, useState } from "react";
 import UseDelete from "@/hooks/items/DeleteItems";
 import { STORAGE_URL } from "@/lib/axios";
 import { useNavigate } from "react-router";
-import { cn } from "cn";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/hooks/auth/useAuth";
 
+/*
+  Palet:
+  navy #112D4E | biru #3F72AF | muda #DBE2EF | putih #F9F7F7
+  turunan: navy gelap #0B2240, border #BFCCE3, border toolbar #9DB2D3,
+           muted #50688C, placeholder #7B8FAE
+  semantik: merah #B3261E (bg #FDECEA, border #F2B8B5) stok habis, hapus, error
+            amber #8A5A00 (bg #FFF4DB, border #F2C96B) stok menipis
+*/
+
+// Select solid putih. text-base di HP biar iOS tidak auto-zoom.
 const selectClassName =
-  "flex h-9 w-full items-center rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[180px]";
+  "flex h-11 w-full items-center rounded-lg border border-[#9DB2D3] bg-white px-3 text-base text-[#112D4E] outline-none transition hover:border-[#3F72AF] focus-visible:border-[#3F72AF] focus-visible:ring-4 focus-visible:ring-[#F9F7F7] disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm md:w-[190px]";
+
+const searchClass =
+  "h-11 w-full rounded-lg border border-[#9DB2D3] bg-white pl-10 pr-9 text-base text-[#112D4E] outline-none transition placeholder:text-[#7B8FAE] hover:border-[#3F72AF] focus-visible:border-[#3F72AF] focus-visible:ring-4 focus-visible:ring-[#F9F7F7] sm:text-sm";
+
+const pageBtnClass =
+  "h-10 w-10 rounded-lg border border-[#BFCCE3] bg-white p-0 text-[#112D4E] hover:bg-[#DBE2EF] disabled:opacity-50";
+
+const actionBtnClass =
+  "h-10 w-10 rounded-lg border border-[#BFCCE3] bg-white p-0 text-[#112D4E] hover:bg-[#DBE2EF] disabled:opacity-50";
 
 const STATUS_STYLE: Record<string, string> = {
-  available: "bg-emerald-50 text-emerald-700",
-  low_stock: "bg-amber-50 text-amber-700",
-  out_of_stock: "bg-red-50 text-red-700",
+  available: "bg-[#DBE2EF] text-[#112D4E] ring-[#BFCCE3]",
+  low_stock: "bg-[#FFF4DB] text-[#8A5A00] ring-[#F2C96B]",
+  out_of_stock: "bg-[#FDECEA] text-[#B3261E] ring-[#F2B8B5]",
+};
+
+const STATUS_DOT: Record<string, string> = {
+  available: "bg-[#3F72AF]",
+  low_stock: "bg-[#F2A900]",
+  out_of_stock: "bg-[#B3261E]",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -39,8 +51,8 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const CATEGORY_STYLE: Record<string, string> = {
-  apd: "bg-blue-50 text-blue-700",
-  tools: "bg-purple-50 text-purple-700",
+  apd: "bg-[#DBE2EF] text-[#112D4E] ring-[#BFCCE3]",
+  tools: "bg-white text-[#112D4E] ring-[#3F72AF]",
 };
 
 // function badge status
@@ -48,6 +60,51 @@ function getStockStatus(current: number, min: number): string {
   if (current === 0) return "out_of_stock";
   if (current <= min) return "low_stock";
   return "available";
+}
+
+function BadgeKategori({ value }: { value?: string | null }) {
+  if (!value) return <span className="text-[#7B8FAE]">-</span>;
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ring-1 ring-inset ${
+        CATEGORY_STYLE[value.toLowerCase()] ?? "bg-[#F9F7F7] text-[#50688C] ring-[#DBE2EF]"
+      }`}
+    >
+      {value}
+    </span>
+  );
+}
+
+function BadgeStatus({ status }: { status: string }) {
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${STATUS_STYLE[status]}`}
+    >
+      <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[status]}`} />
+      {STATUS_LABEL[status]}
+    </span>
+  );
+}
+
+function Thumb({ file, name, className = "h-12 w-12" }: { file?: string | null; name?: string | null; className?: string }) {
+  return (
+    <div
+      className={`grid shrink-0 place-items-center overflow-hidden rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] ${className}`}
+    >
+      {file ? (
+        <img
+          className="h-full w-full object-cover"
+          src={`${STORAGE_URL}${file}`}
+          alt={name ?? "Item image"}
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
+        />
+      ) : (
+        <Package className="h-5 w-5 text-[#9DB2D3]" />
+      )}
+    </div>
+  );
 }
 
 const TableItems = () => {
@@ -82,7 +139,7 @@ const TableItems = () => {
     });
   };
 
-   // kalau yang dihapus item terakhir di halaman (dan bukan halaman 1), mundur 1 halaman
+  // kalau yang dihapus item terakhir di halaman (dan bukan halaman 1), mundur 1 halaman
   const onDelete = (id: number) => {
     handleDelete(id, () => {
       if (data.length === 1 && page > 1) {
@@ -91,6 +148,12 @@ const TableItems = () => {
         refresh();
       }
     });
+  };
+
+  const clearSearch = () => {
+    Setkeyword("");
+    Setsearch("");
+    Setpage(1);
   };
 
   const lastPage = meta?.last_page ?? 1;
@@ -104,46 +167,54 @@ const TableItems = () => {
 
   const isAdmin = user?.roles?.includes("admin");
 
-  //  const summary = useMemo(() => {
-  //   const available = data.filter((items) => items.status === "available").length;
-  //   const lowStock = data.filter((items) => items.status === "low_stock").length;
-  //   const outOfStock = meta.filter((items) => meta?.total.items.status === "out_of_stock").length;
-  //   return { total: meta?.total ?? data.length, available, lowStock, outOfStock };
-  // }, [data, meta]);
+  // tombol aksi (dipakai di kartu mobile & tabel)
+  const renderActions = (id: number, name?: string | null): ReactNode => (
+    <div className="flex items-center gap-2">
+      <Button
+        size="icon"
+        variant="outline"
+        className={actionBtnClass}
+        aria-label={`Lihat ${name ?? "barang"}`}
+        onClick={() => navigate(`/items/${id}`)}
+      >
+        <Eye size={16} />
+      </Button>
 
-  //   const stats = [
-  //     { icon: Boxes, iconClass: "bg-blue-50 text-blue-600", value: summary.total, label: "Total Item" },
-  //     { icon: CheckCircle2, iconClass: "bg-emerald-50 text-emerald-600", value: summary.available, label: "Available" },
-  //     { icon: AlertTriangle, iconClass: "bg-amber-50 text-amber-600", value: summary.lowStock, label: "Low Stock" },
-  //     { icon: XCircle, iconClass: "bg-red-50 text-red-600", value: summary.outOfStock, label: "Out of Stock" },
-  //   ];
+      {isAdmin && (
+        <>
+          <Button
+            onClick={() => navigate(`/update-items/${id}`)}
+            size="icon"
+            variant="outline"
+            className={actionBtnClass}
+            aria-label={`Edit ${name ?? "barang"}`}
+            disabled={deleteloading}
+          >
+            <SquarePen size={16} />
+          </Button>
+
+          <Button
+            onClick={() => onDelete(id)}
+            size="icon"
+            variant="outline"
+            className={`${actionBtnClass} hover:border-[#F2B8B5] hover:bg-[#FDECEA]`}
+            aria-label={`Hapus ${name ?? "barang"}`}
+            disabled={deleteloading}
+          >
+            <Trash2 size={16} className="text-[#B3261E]" />
+          </Button>
+        </>
+      )}
+    </div>
+  );
 
   return (
     <div className="space-y-4">
-      {/* Stat cards */}
-      {/* <div className="flex flex-wrap gap-4 my-4">
-        {stats.map(({ icon: Icon, iconClass, value, label }) => (
-          <div
-            key={label}
-            className="flex flex-1 min-w-[220px] items-center gap-4 rounded-xl border border-slate-200 bg-white p-5"
-          >
-            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${iconClass}`}>
-              <Icon className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-2xl font-bold leading-none text-slate-900">{value}</p>
-              <p className="mt-1.5 text-sm text-slate-500">{label}</p>
-            </div>
-          </div>
-        ))}
-      </div> */}
-
-      <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        {/* Toolbar */}
-
-        <div className="flex flex-col gap-3 border-b border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
+      <div className="mt-4 overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
+        {/* ================= TOOLBAR ================= */}
+        <div className="flex flex-col gap-3 border-b border-[#BFCCE3] bg-[#DBE2EF] p-4 md:flex-row md:items-center md:justify-between">
           <form
-            className="flex w-full max-w-lg gap-2"
+            className="flex w-full gap-2 md:max-w-lg"
             onSubmit={(e) => {
               e.preventDefault();
 
@@ -152,22 +223,33 @@ const TableItems = () => {
               Setsearch(keyword);
             }}
           >
-            <div className="relative flex-1">
+            <div className="relative min-w-0 flex-1">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#3F72AF]"
                 size={17}
               />
 
               <Input
-                className="pl-10"
+                className={searchClass}
                 placeholder="Cari barang..."
                 value={keyword}
                 onChange={(e) => Setkeyword(e.target.value)}
               />
+
+              {keyword && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  aria-label="Hapus pencarian"
+                  className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[#50688C] transition hover:bg-[#DBE2EF] hover:text-[#112D4E]"
+                >
+                  <X size={15} />
+                </button>
+              )}
             </div>
 
             <Button
-              className="bg-blue-600 hover:bg-blue-700"
+              className="h-11 rounded-lg bg-[#112D4E] px-5 font-semibold text-white hover:bg-[#0B2240] disabled:opacity-60"
               disabled={loading}
             >
               Cari
@@ -181,6 +263,7 @@ const TableItems = () => {
               Setstatus(e.target.value);
               Setpage(1);
             }}
+            aria-label="Filter kategori"
           >
             <option value="all">Semua Kategori</option>
 
@@ -190,184 +273,180 @@ const TableItems = () => {
           </select>
         </div>
 
-        {errodelete && <p className="px-4 pt-3 text-sm text-red-500">{errodelete}</p>}
-
-        {/* Table */}
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-slate-50 hover:bg-slate-50">
-              <TableHead className="w-12">No</TableHead>
-              <TableHead>Foto</TableHead>
-              <TableHead>Nama Barang</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Kategori</TableHead>
-              <TableHead>Merk</TableHead>
-              <TableHead className="text-center">Min Stok</TableHead>
-              <TableHead className="text-center">Stok Sekarang</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-center">Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={9}
-                  className="h-24 text-center text-slate-500"
-                >
-                  Memuat data barang...
-                </TableCell>
-              </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell
-                  colSpan={9}
-                  className="h-24 text-center text-red-500"
-                >
-                  Gagal mengambil data barang.
-                </TableCell>
-              </TableRow>
-            ) : data.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={9}
-                  className="h-32 text-center"
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <Search
-                      size={32}
-                      className="text-slate-300"
-                    />
-
-                    <p className="font-medium text-slate-600">Barang tidak ditemukan</p>
-
-                    <p className="text-sm text-slate-400">Coba gunakan kata kunci lain</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              data.map((items, index) => (
-                <TableRow key={items.id}>
-                  <TableCell className="px-6 py-4">{startNumber + index + 1}</TableCell>
-                  <TableCell>
-                    <div className="h-9 w-9 overflow-hidden rounded-lg bg-slate-100">
-                      {items.file ? (
-                        <img
-                          className="h-full w-full object-cover"
-                          src={`${STORAGE_URL}${items.file}`}
-                          alt={items.name ?? "Item image"}
-                          onError={(e) => {
-                            console.log("Gambar gagal dimuat:", e.currentTarget.src);
-                          }}
-                        />
-                      ) : (
-                        // <img
-                        //   className="h-full w-full object-cover"
-                        //   src={`${STORAGE_URL}${items.file}`}
-                        //   alt={items.name ?? "Item image"}
-                        // />
-                        <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
-                          No Image
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-medium text-slate-900">{items.name}</TableCell>
-                  <TableCell className="font-medium text-slate-600">{items.type ?? "-"}</TableCell>
-
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
-                        CATEGORY_STYLE[items.category] ?? "bg-slate-100 text-slate-600"
-                      }`}
-                    >
-                      {items.category}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-slate-500">{items.brand ?? "-"}</TableCell>
-                  <TableCell className="text-center text-slate-500">{items.min_stock} unit</TableCell>
-                  <TableCell className="text-center font-semibold text-slate-800">{items.current_stock} unit</TableCell>
-                  <TableCell>
-                    {(() => {
-                      const status = getStockStatus(items.current_stock, items.min_stock);
-                      return (
-                        <span className={cn("px-2 py-0.5 rounded-full text-xs font-medium", STATUS_STYLE[status])}>
-                          {STATUS_LABEL[status]}
-                        </span>
-                      );
-                    })()}
-                  </TableCell>
-
-                  <TableCell>
-                    <div className="flex items-center justify-center gap-2">
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => navigate(`/items/${items.id}`)}
-                      >
-                        <Eye size={16} />
-                      </Button>
-
-                      {isAdmin && (
-                        <div>
-                          <Button
-                            onClick={() => navigate(`/update-items/${items.id}`)}
-                            size="icon"
-                            variant="outline"
-                            className="h-8 w-8 text-slate-500"
-                            disabled={deleteloading}
-                          >
-                            <SquarePen className="h-4 w-4" />
-                          </Button>
-
-                          <Button
-                            onClick={() => onDelete(items.id)}
-                            size="icon"
-                            variant="outline"
-                            className="h-8 w-8 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600"
-                            disabled={deleteloading}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-
-        {data.length > 0 && (
-          <div className="flex items-center justify-between border-t bg-slate-50 p-4">
-            <span className="text-sm text-slate-500">
-              Halaman {page} dari {lastPage}
-            </span>
-
-            <div className="flex gap-2">
-              <Button
-                size="icon"
-                variant="outline"
-                // disable ketika page kurang dari 1 sama dengan 1 dan loading
-
-                disabled={page <= 1 || loading}
-                onClick={() => Setpage(page - 1)}
-              >
-                <ChevronLeft size={16} />
-              </Button>
-
-              <Button
-                size="icon"
-                variant="outline"
-                disabled={page >= lastPage || loading}
-                onClick={() => Setpage(page + 1)}
-              >
-                <ChevronRight size={16} />
-              </Button>
-            </div>
+        {errodelete && (
+          <div
+            role="alert"
+            className="mx-4 mt-4 flex items-start gap-2 rounded-lg border border-[#F2B8B5] bg-[#FDECEA] px-3 py-2.5 text-sm text-[#B3261E]"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span className="min-w-0 break-words">{errodelete}</span>
           </div>
+        )}
+
+        {/* ================= LOADING ================= */}
+        {loading && (
+          <div className="divide-y divide-[#DBE2EF]">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex animate-pulse items-center gap-3 p-4 sm:px-6">
+                <div className="h-12 w-12 shrink-0 rounded-lg bg-[#DBE2EF]" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-1/3 rounded bg-[#DBE2EF]" />
+                  <div className="h-3 w-2/3 rounded bg-[#EBEFF6]" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ================= ERROR ================= */}
+        {error && !loading && (
+          <div className="flex flex-col items-center gap-2 px-4 py-14 text-center">
+            <AlertCircle size={32} className="text-[#B3261E]" />
+            <p className="text-sm font-medium text-[#B3261E]">Gagal mengambil data barang.</p>
+          </div>
+        )}
+
+        {/* ================= KOSONG ================= */}
+        {!loading && !error && data.length === 0 && (
+          <div className="flex flex-col items-center gap-2 px-4 py-14 text-center">
+            <div className="grid h-16 w-16 place-items-center rounded-xl bg-[#DBE2EF]">
+              <Search size={28} className="text-[#3F72AF]" />
+            </div>
+            <p className="font-semibold text-[#112D4E]">Barang tidak ditemukan</p>
+            <p className="text-sm text-[#50688C]">Coba gunakan kata kunci lain</p>
+          </div>
+        )}
+
+        {/* ================= DATA ================= */}
+        {!loading && !error && data.length > 0 && (
+          <>
+            {/* Mobile: kartu */}
+            <ul className="divide-y divide-[#DBE2EF] md:hidden">
+              {data.map((items, index) => {
+                const stockStatus = getStockStatus(items.current_stock, items.min_stock);
+                return (
+                  <li key={items.id} className="p-4">
+                    <div className="flex gap-3">
+                      <Thumb file={items.file} name={items.name} className="h-14 w-14" />
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-xs font-medium text-[#50688C]">#{startNumber + index + 1}</p>
+                            <p className="break-words text-sm font-bold text-[#112D4E]">{items.name}</p>
+                          </div>
+                          <BadgeStatus status={stockStatus} />
+                        </div>
+
+                        <p className="mt-0.5 break-words text-xs text-[#50688C]">
+                          {[items.brand, items.type].filter(Boolean).join(" · ") || "-"}
+                        </p>
+                        <div className="mt-1.5">
+                          <BadgeKategori value={items.category} />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-2 gap-3 rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-3">
+                      <div>
+                        <p className="text-xs text-[#50688C]">Stok sekarang</p>
+                        <p className="font-bold text-[#112D4E]">{items.current_stock} unit</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-[#50688C]">Min stok</p>
+                        <p className="font-semibold text-[#112D4E]">{items.min_stock} unit</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3">{renderActions(items.id, items.name)}</div>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* Tablet & desktop: tabel */}
+            <div className="hidden w-full overflow-x-auto md:block">
+              <Table className="min-w-[960px]">
+                <TableHeader>
+                  <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
+                    <TableHead className="w-12 px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Foto</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Nama Barang</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Type</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Kategori</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Merk</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Min Stok</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Stok Sekarang</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Status</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {data.map((items, index) => {
+                    const stockStatus = getStockStatus(items.current_stock, items.min_stock);
+                    return (
+                      <TableRow
+                        key={items.id}
+                        className="border-[#DBE2EF] text-[#112D4E] transition-colors hover:bg-[#F9F7F7]"
+                      >
+                        <TableCell className="px-4 py-4 text-[#50688C] lg:px-6">{startNumber + index + 1}</TableCell>
+                        <TableCell className="px-4 py-4">
+                          <Thumb file={items.file} name={items.name} className="h-10 w-10" />
+                        </TableCell>
+                        <TableCell className="px-4 py-4 font-medium">{items.name}</TableCell>
+                        <TableCell className="px-4 py-4 text-[#50688C]">{items.type ?? "-"}</TableCell>
+                        <TableCell className="px-4 py-4">
+                          <BadgeKategori value={items.category} />
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-[#50688C]">{items.brand ?? "-"}</TableCell>
+                        <TableCell className="px-4 py-4 text-center text-[#50688C]">{items.min_stock} unit</TableCell>
+                        <TableCell className="px-4 py-4 text-center font-bold">{items.current_stock} unit</TableCell>
+                        <TableCell className="px-4 py-4">
+                          <BadgeStatus status={stockStatus} />
+                        </TableCell>
+                        <TableCell className="px-4 py-4">
+                          <div className="flex justify-center">{renderActions(items.id, items.name)}</div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* ================= PAGINATION ================= */}
+            <div className="flex items-center justify-between gap-3 border-t border-[#DBE2EF] bg-[#F9F7F7] p-4">
+              <span className="text-sm text-[#50688C]">
+                Halaman <b className="text-[#112D4E]">{page}</b> dari <b className="text-[#112D4E]">{lastPage}</b>
+              </span>
+
+              <div className="flex gap-2">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className={pageBtnClass}
+                  aria-label="Halaman sebelumnya"
+                  // disable ketika page kurang dari 1 sama dengan 1 dan loading
+                  disabled={page <= 1 || loading}
+                  onClick={() => Setpage(page - 1)}
+                >
+                  <ChevronLeft size={16} />
+                </Button>
+
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className={pageBtnClass}
+                  aria-label="Halaman berikutnya"
+                  disabled={page >= lastPage || loading}
+                  onClick={() => Setpage(page + 1)}
+                >
+                  <ChevronRight size={16} />
+                </Button>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

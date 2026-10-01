@@ -1,82 +1,157 @@
 // Dashboard.tsx
-import { useEffect } from "react";
-import { Package, BarChart3, ArrowDownCircle, CheckCircle2, XCircle } from "lucide-react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { Link } from "react-router";
+import {
+  AlertCircle,
+  ArrowDownCircle,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  BarChart3,
+  CheckCircle2,
+  FileBarChart,
+  Inbox,
+  Package,
+  RefreshCw,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react";
 import useDashboard from "@/hooks/dashboard/get";
+import { useAuth } from "@/hooks/auth/useAuth";
 import { formatTanggalIndo } from "@/lib/tanggal";
+
+/*
+  Palet:
+  navy #112D4E | biru #3F72AF | muda #DBE2EF | putih #F9F7F7
+  turunan: navy gelap #0B2240, border #BFCCE3, muted #50688C, redup di navy #9DB2D3
+  semantik: merah #B3261E (bg #FDECEA, border #F2B8B5) khusus barang keluar, stok habis, error
+*/
+
+// pola garis halus di banner navy (warna solid, bukan transparan)
+const gridStyle: CSSProperties = {
+  backgroundImage:
+    "linear-gradient(to right, #1B3F68 1px, transparent 1px), linear-gradient(to bottom, #1B3F68 1px, transparent 1px)",
+  backgroundSize: "36px 36px",
+};
+
+// ============================================================
+// HELPER
+// ============================================================
+
+// angka menghitung naik saat pertama tampil (dimatikan kalau user pilih reduced motion)
+const useCountUp = (target: number, duration = 900) => {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setN(target);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const tick = (t: number) => {
+      const p = Math.min((t - start) / duration, 1);
+      setN(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+  return n;
+};
+
+const getSapaan = () => {
+  const h = new Date().getHours();
+  if (h < 11) return "Selamat pagi";
+  if (h < 15) return "Selamat siang";
+  if (h < 18) return "Selamat sore";
+  return "Selamat malam";
+};
+
+// ============================================================
+// DASHBOARD
+// ============================================================
 
 const Dashboard = () => {
   const { data, loading, error, handleGet } = useDashboard();
+  const { user } = useAuth();
 
   useEffect(() => {
     handleGet();
   }, [handleGet]);
 
-  if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center text-sm text-slate-400">
-        Memuat dashboard...
-      </div>
-    );
-  }
+  const namaDepan = user?.name?.split(" ")[0];
+
+  if (loading) return <DashboardSkeleton />;
 
   if (error) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-red-500">
-        {error}
+      <div className="flex flex-col items-center gap-3 rounded-lg border border-[#F2B8B5] bg-[#FDECEA] px-4 py-14 text-center sm:rounded-xl">
+        <AlertCircle className="h-9 w-9 text-[#B3261E]" />
+        <p className="max-w-md break-words text-sm font-medium text-[#B3261E]">{error}</p>
+        <button
+          onClick={() => handleGet()}
+          className="inline-flex h-11 items-center gap-2 rounded-lg border border-[#F2B8B5] bg-white px-5 text-sm font-semibold text-[#B3261E] transition hover:bg-[#FDECEA] active:scale-95"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Coba lagi
+        </button>
       </div>
     );
   }
 
-  if (!data) {
-    return null;
-  }
+  if (!data) return null;
 
   const { summary, aktivitas_stok, transaksi_terbaru } = data;
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Selamat Datang 👋</h1>
-        <p className="text-sm text-slate-500">Ringkasan inventaris</p>
-      </div>
+    <div className="space-y-5 sm:space-y-6">
+      {/* Banner sambutan */}
+      <section className="relative overflow-hidden rounded-lg bg-[#112D4E] sm:rounded-xl" style={gridStyle}>
+        <div className="relative flex flex-col gap-4 p-5 pb-6 sm:flex-row sm:items-center sm:justify-between sm:p-7 sm:pb-8">
+          <div className="min-w-0">
+            <h2 className="text-xl font-extrabold leading-tight text-white sm:text-2xl lg:text-3xl">
+              {getSapaan()}
+              {namaDepan ? `, ${namaDepan}` : ""}
+            </h2>
+            <p className="mt-1.5 text-sm text-[#DBE2EF] sm:text-base">
+              Pantau stok dan pergerakan barang APD &amp; Tools hari ini.
+            </p>
+          </div>
 
-      {/* Card Summary */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <Link
+            to="/laporan"
+            className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-[#F9F7F7] px-5 text-sm font-bold text-[#112D4E] outline-none transition hover:bg-[#DBE2EF] focus-visible:ring-4 focus-visible:ring-[#9DB2D3] active:scale-95 sm:w-auto"
+          >
+            <FileBarChart className="h-4 w-4" />
+            Lihat laporan
+          </Link>
+        </div>
+
+        {/* Pita palet */}
+        <div className="absolute inset-x-0 bottom-0 flex h-1.5" aria-hidden="true">
+          <span className="h-full flex-[4] bg-[#F9F7F7]" />
+          <span className="h-full flex-[3] bg-[#DBE2EF]" />
+          <span className="h-full flex-[2] bg-[#3F72AF]" />
+        </div>
+      </section>
+
+      {/* Card summary */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+        <CardSummary icon={Package} tone="navy" label="Total Barang" value={summary.total_barang} />
+        <CardSummary icon={BarChart3} tone="azure" label="Stok Saat Ini" value={summary.current_stock} />
+        <CardSummary icon={ArrowDownCircle} tone="sky" label="Barang Keluar" value={summary.barang_keluar} />
+        <CardSummary icon={CheckCircle2} tone="ice" label="Barang Masuk" value={summary.barang_masuk} />
         <CardSummary
-          icon={<Package className="h-5 w-5 text-blue-600" />}
-          iconBg="bg-blue-50"
-          label="Total Barang"
-          value={summary.total_barang}
-        />
-        <CardSummary
-          icon={<BarChart3 className="h-5 w-5 text-sky-600" />}
-          iconBg="bg-sky-50"
-          label="Stok Saat Ini"
-          value={summary.current_stock}
-        />
-        <CardSummary
-          icon={<ArrowDownCircle className="h-5 w-5 text-violet-600" />}
-          iconBg="bg-violet-50"
-          label="Barang Keluar"
-          value={summary.barang_keluar}
-        />
-        <CardSummary
-          icon={<CheckCircle2 className="h-5 w-5 text-emerald-600" />}
-          iconBg="bg-emerald-50"
-          label="Barang Masuk"
-          value={summary.barang_masuk}
-        />
-        <CardSummary
-          icon={<XCircle className="h-5 w-5 text-red-600" />}
-          iconBg="bg-red-50"
+          icon={XCircle}
+          tone="danger"
           label="Stok Habis"
           value={summary.out_of_stock}
+          alert={summary.out_of_stock > 0}
+          className="col-span-2 sm:col-span-1"
         />
       </div>
 
-      {/* 2 Tabel */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {/* Tabel: tumpuk ke bawah, baru 2 kolom di layar sangat lebar */}
+      <div className="grid grid-cols-1 gap-5 sm:gap-6 2xl:grid-cols-2">
         <TabelAktivitasStok data={aktivitas_stok} />
         <TabelTransaksiTerbaru data={transaksi_terbaru} />
       </div>
@@ -87,24 +162,101 @@ const Dashboard = () => {
 export default Dashboard;
 
 // ============================================================
+// SKELETON LOADING
+// ============================================================
+
+function DashboardSkeleton() {
+  return (
+    <div className="animate-pulse space-y-5 sm:space-y-6">
+      <div className="h-36 rounded-lg bg-[#DBE2EF] sm:h-40 sm:rounded-xl" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={i}
+            className={`h-28 rounded-lg bg-[#DBE2EF] sm:rounded-xl ${i === 4 ? "col-span-2 sm:col-span-1" : ""}`}
+          />
+        ))}
+      </div>
+      <div className="h-72 rounded-lg bg-[#DBE2EF] sm:rounded-xl" />
+    </div>
+  );
+}
+
+// ============================================================
 // CARD SUMMARY
 // ============================================================
 
+type Tone = "navy" | "azure" | "sky" | "ice" | "danger";
+
+// warna tile icon + garis atas kartu, semuanya dari palet (danger khusus stok habis)
+const toneClass: Record<Tone, { tile: string; top: string }> = {
+  navy: { tile: "bg-[#112D4E] text-white", top: "border-t-[#112D4E]" },
+  azure: { tile: "bg-[#3F72AF] text-white", top: "border-t-[#3F72AF]" },
+  sky: { tile: "bg-[#DBE2EF] text-[#112D4E]", top: "border-t-[#9DB2D3]" },
+  ice: { tile: "bg-[#F9F7F7] text-[#112D4E] border border-[#BFCCE3]", top: "border-t-[#DBE2EF]" },
+  danger: { tile: "bg-[#B3261E] text-white", top: "border-t-[#B3261E]" },
+};
+
 interface CardSummaryProps {
-  icon: React.ReactNode;
-  iconBg: string;
+  icon: LucideIcon;
+  tone: Tone;
   label: string;
   value: number;
+  alert?: boolean;
+  className?: string;
 }
 
-function CardSummary({ icon, iconBg, label, value }: CardSummaryProps) {
+function CardSummary({ icon: Icon, tone, label, value, alert, className = "" }: CardSummaryProps) {
+  const count = useCountUp(value);
+  const t = toneClass[tone];
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${iconBg}`}>
-        {icon}
+    <div
+      className={`min-w-0 rounded-lg border border-t-[3px] bg-white p-4 shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl sm:p-5 ${
+        alert ? "border-[#F2B8B5]" : "border-[#DBE2EF]"
+      } ${t.top} ${className}`}
+    >
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <div className={`grid h-10 w-10 place-items-center rounded-lg sm:h-11 sm:w-11 ${t.tile}`}>
+          <Icon className="h-5 w-5" />
+        </div>
+        {alert && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FDECEA] px-2.5 py-0.5 text-xs font-bold text-[#B3261E] ring-1 ring-inset ring-[#F2B8B5]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#B3261E]" />
+            Perlu restock
+          </span>
+        )}
       </div>
-      <p className="text-2xl font-bold text-slate-900">{value.toLocaleString("id-ID")}</p>
-      <p className="text-sm text-slate-500">{label}</p>
+      <p className="text-2xl font-extrabold leading-none tabular-nums text-[#112D4E] sm:text-3xl">
+        {count.toLocaleString("id-ID")}
+      </p>
+      <p className="mt-1.5 truncate text-xs font-medium text-[#50688C] sm:text-sm">{label}</p>
+    </div>
+  );
+}
+
+// ============================================================
+// KERANGKA PANEL (dipakai kedua tabel)
+// ============================================================
+
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="min-w-0 overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
+      <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
+        <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
+        <h2 className="font-bold text-[#112D4E]">{title}</h2>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Kosong({ text }: { text: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2 px-4 py-12 text-center">
+      <div className="grid h-14 w-14 place-items-center rounded-xl bg-[#DBE2EF]">
+        <Inbox className="h-6 w-6 text-[#3F72AF]" />
+      </div>
+      <p className="text-sm text-[#50688C]">{text}</p>
     </div>
   );
 }
@@ -124,59 +276,91 @@ interface AktivitasStokItem {
 
 function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold text-slate-900">Aktivitas Stok Terbaru</h2>
-       
-      </div>
-
+    <Panel title="Aktivitas Stok Terbaru">
       {data.length === 0 ? (
-        <div className="flex h-32 items-center justify-center text-sm text-slate-400">
-          Belum ada aktivitas
-        </div>
+        <Kosong text="Belum ada aktivitas" />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
-                <th className="py-2 pr-3 font-medium">Tanggal</th>
-                <th className="py-2 pr-3 font-medium">Part No.</th>
-                <th className="py-2 pr-3 font-medium">Nama Barang</th>
-                <th className="py-2 pr-3 font-medium">Aktivitas</th>
-                <th className="py-2 pr-3 font-medium">Qty</th>
-                <th className="py-2 pr-3 font-medium">User</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {data.map((item, index) => {
-                const isIn = item.type === "in";
-                return (
-                  <tr key={index} className="text-slate-700">
-                    <td className="py-3 pr-3 text-slate-500">{formatTanggalIndo(item.date)}</td>
-                    <td className="py-3 pr-3 text-blue-600">{item.part_number}</td>
-                    <td className="py-3 pr-3 font-medium text-slate-900">{item.name}</td>
-                    <td className="py-3 pr-3">
+        <>
+          {/* Mobile: kartu */}
+          <ul className="divide-y divide-[#DBE2EF] md:hidden">
+            {data.map((item, index) => {
+              const isIn = item.type === "in";
+              const Icon = isIn ? ArrowDownToLine : ArrowUpFromLine;
+              return (
+                <li key={index} className="flex gap-3 p-4">
+                  <div
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg ${
+                      isIn ? "bg-[#DBE2EF] text-[#112D4E]" : "bg-[#FDECEA] text-[#B3261E]"
+                    }`}
+                  >
+                    <Icon size={18} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="break-words text-sm font-semibold text-[#112D4E]">{item.name}</p>
                       <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                          isIn ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600"
-                        }`}
+                        className={`shrink-0 text-sm font-extrabold ${isIn ? "text-[#112D4E]" : "text-[#B3261E]"}`}
                       >
-                        {isIn ? "Stok Masuk" : "Stok Keluar"}
+                        {isIn ? "+" : "-"}
+                        {item.qty}
                       </span>
-                    </td>
-                    <td className={`py-3 pr-3 font-medium ${isIn ? "text-emerald-600" : "text-red-600"}`}>
-                      {isIn ? "+" : "-"}
-                      {item.qty}
-                    </td>
-                    <td className="py-3 pr-3 text-slate-500">{item.user_name}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                    <p className="text-xs font-medium text-[#3F72AF]">{item.part_number}</p>
+                    <p className="mt-1 text-xs text-[#50688C]">
+                      {formatTanggalIndo(item.date)}, {item.user_name}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Tablet & desktop: tabel */}
+          <div className="hidden overflow-x-auto md:block">
+            <table className="w-full min-w-[640px] text-left text-sm">
+              <thead>
+                <tr className="bg-[#DBE2EF] text-sm text-[#112D4E]">
+                  <th className="px-6 py-3 font-semibold">Tanggal</th>
+                  <th className="px-3 py-3 font-semibold">Part No.</th>
+                  <th className="px-3 py-3 font-semibold">Nama Barang</th>
+                  <th className="px-3 py-3 font-semibold">Aktivitas</th>
+                  <th className="px-3 py-3 font-semibold">Qty</th>
+                  <th className="px-6 py-3 font-semibold">User</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#DBE2EF]">
+                {data.map((item, index) => {
+                  const isIn = item.type === "in";
+                  return (
+                    <tr key={index} className="text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
+                      <td className="whitespace-nowrap px-6 py-3.5 text-[#50688C]">{formatTanggalIndo(item.date)}</td>
+                      <td className="whitespace-nowrap px-3 py-3.5 font-medium text-[#3F72AF]">{item.part_number}</td>
+                      <td className="px-3 py-3.5 font-medium">{item.name}</td>
+                      <td className="px-3 py-3.5">
+                        <span
+                          className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${
+                            isIn
+                              ? "bg-[#DBE2EF] text-[#112D4E] ring-[#BFCCE3]"
+                              : "bg-[#FDECEA] text-[#B3261E] ring-[#F2B8B5]"
+                          }`}
+                        >
+                          {isIn ? "Stok Masuk" : "Stok Keluar"}
+                        </span>
+                      </td>
+                      <td className={`px-3 py-3.5 font-bold ${isIn ? "text-[#112D4E]" : "text-[#B3261E]"}`}>
+                        {isIn ? "+" : "-"}
+                        {item.qty}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-3.5 text-[#50688C]">{item.user_name}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
-    </div>
+    </Panel>
   );
 }
 
@@ -193,40 +377,52 @@ interface TransaksiTerbaruItem {
 
 function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold text-slate-900">Transaksi Terbaru</h2>
-      
-      </div>
-
+    <Panel title="Transaksi Terbaru">
       {data.length === 0 ? (
-        <div className="flex h-32 items-center justify-center text-sm text-slate-400">
-          Belum ada transaksi
-        </div>
+        <Kosong text="Belum ada transaksi" />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
-                <th className="py-2 pr-3 font-medium">No. Transaksi</th>
-                <th className="py-2 pr-3 font-medium">Karyawan</th>
-                <th className="py-2 pr-3 font-medium">Barang</th>
-                <th className="py-2 pr-3 font-medium">Tanggal</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {data.map((trx, index) => (
-                <tr key={index} className="text-slate-700">
-                  <td className="py-3 pr-3 font-medium text-blue-600">{trx.transaction_number}</td>
-                  <td className="py-3 pr-3 text-slate-900">{trx.employe_name}</td>
-                  <td className="py-3 pr-3 text-slate-500">{trx.barang || "—"}</td>
-                  <td className="py-3 pr-3 text-slate-500">{formatTanggalIndo(trx.date)}</td>
+        <>
+          {/* Mobile: kartu */}
+          <ul className="divide-y divide-[#DBE2EF] md:hidden">
+            {data.map((trx, index) => (
+              <li key={index} className="p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="min-w-0 break-all text-sm font-bold text-[#112D4E]">{trx.transaction_number}</p>
+                  <span className="shrink-0 text-xs text-[#50688C]">{formatTanggalIndo(trx.date)}</span>
+                </div>
+                <p className="mt-1 text-sm font-medium text-[#112D4E]">{trx.employe_name}</p>
+                <p className="break-words text-xs text-[#50688C]">{trx.barang || "—"}</p>
+              </li>
+            ))}
+          </ul>
+
+          {/* Tablet & desktop: tabel */}
+          <div className="hidden overflow-x-auto md:block">
+            <table className="w-full min-w-[520px] text-left text-sm">
+              <thead>
+                <tr className="bg-[#DBE2EF] text-sm text-[#112D4E]">
+                  <th className="px-6 py-3 font-semibold">No. Transaksi</th>
+                  <th className="px-3 py-3 font-semibold">Karyawan</th>
+                  <th className="px-3 py-3 font-semibold">Barang</th>
+                  <th className="px-6 py-3 font-semibold">Tanggal</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-[#DBE2EF]">
+                {data.map((trx, index) => (
+                  <tr key={index} className="text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
+                    <td className="whitespace-nowrap px-6 py-3.5 font-semibold text-[#112D4E]">
+                      {trx.transaction_number}
+                    </td>
+                    <td className="px-3 py-3.5 font-medium">{trx.employe_name}</td>
+                    <td className="px-3 py-3.5 text-[#50688C]">{trx.barang || "—"}</td>
+                    <td className="whitespace-nowrap px-6 py-3.5 text-[#50688C]">{formatTanggalIndo(trx.date)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
-    </div>
+    </Panel>
   );
 }

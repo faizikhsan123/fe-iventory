@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const employeeCreateSchema = z.object({
-  name: z.string().min(4, "Nama terlalu pendek").max(20, "nama terlalu panjang"),
+  name: z.string().min(4, "Nama terlalu pendek").max(50, "nama terlalu panjang"),
   file: z.instanceof(File).optional().nullable(),
-  email: z.email("Format email tidak valid").max(50, "email terlalu panjang"),
-  password: z.string().min(8, "password terlalu sedikit").max(50, "password terlalu panjang"),
+  // email: z.email("Format email tidak valid").max(50, "email terlalu panjang"),
+  // password: z.string().min(8, "password terlalu sedikit").max(50, "password terlalu panjang"),
   division: z.enum(["INC-PMR", "INC-ER", "GA"], {
     message: "Division wajib dipilih",
   }),
@@ -15,11 +15,13 @@ export const employeeCreateSchema = z.object({
 
 export type EmployeeCreateForm = z.infer<typeof employeeCreateSchema>;
 
+
+
 export const employeeEditSchema = z.object({
 
   name: z.string().min(4, "Nama terlalu pendek").max(20, "nama terlalu panjang"),
   file: z.instanceof(File).optional().nullable(),
-  email: z.email("Format email tidak valid").max(50, "email terlalu panjang"),
+  // email: z.email("Format email tidak valid").max(50, "email terlalu panjang"),
   // password: z
   //   .string()
   //   .min(8, "password terlalu sedikit")

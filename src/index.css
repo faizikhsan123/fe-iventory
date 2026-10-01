@@ -1,11 +1,13 @@
+@import "tailwindcss";
+@import "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  -webkit-tap-highlight-color: transparent;
-  overflow-x: hidden;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* scrollbar tipis */

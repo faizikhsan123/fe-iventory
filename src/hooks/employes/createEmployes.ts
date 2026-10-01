@@ -22,8 +22,8 @@ const UseCreateEmployes = () => {
       const formData = new FormData();
       if (payload.file) formData.append("file", payload.file);
       formData.append("name", payload.name);
-      formData.append("email", payload.email);
-      formData.append("password", payload.password);
+      // formData.append("email", payload.email);
+      // formData.append("password", payload.password);
       formData.append("division", payload.division);
       formData.append("position", payload.position);
       // if (payload.brand) formData.append("brand", payload.brand);

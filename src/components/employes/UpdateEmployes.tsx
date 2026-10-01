@@ -1,3 +1,4 @@
+// UpdateEmployes.tsx
 import {
   Dialog,
   DialogClose,
@@ -18,8 +19,14 @@ import type { employes } from "@/types/employes";
 import { useEffect, useState } from "react";
 import UseeditEmployes from "@/hooks/employes/editEmployes";
 import { employeeEditSchema, type EmployeeEditForm } from "@/schemas/employes";
-import { X } from "lucide-react";
+import { AlertCircle, ImagePlus, Loader2, UserCog, X } from "lucide-react";
 import { STORAGE_URL } from "@/lib/axios";
+
+/*
+  Palet:
+  navy #112D4E | biru #3F72AF | muda #DBE2EF | putih #F9F7F7
+  turunan: navy gelap #0B2240, border input #BFCCE3, muted #50688C, placeholder #7B8FAE
+*/
 
 type updateEmployesProps = {
   open: boolean;
@@ -28,6 +35,18 @@ type updateEmployesProps = {
   employes: employes | null;
 };
 
+// Semua field solid putih (tidak transparan). text-base di HP biar iOS tidak auto-zoom.
+const fieldBase =
+  "w-full rounded-lg border border-[#BFCCE3] bg-white px-3 text-base text-[#112D4E] outline-none transition placeholder:text-[#7B8FAE] hover:border-[#3F72AF] focus-visible:border-[#3F72AF] focus-visible:ring-4 focus-visible:ring-[#DBE2EF] disabled:cursor-not-allowed disabled:bg-[#DBE2EF] disabled:opacity-70 sm:text-sm";
+
+const inputClassName = `h-11 ${fieldBase}`;
+const selectClassName = `flex h-11 items-center ${fieldBase}`;
+const fileClassName = `h-11 cursor-pointer py-1.5 ${fieldBase} file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-[#DBE2EF] file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-[#112D4E]`;
+const labelClassName = "text-sm font-semibold text-[#112D4E]";
+
+const FieldError = ({ message }: { message?: string }) =>
+  message ? <p className="mt-1 text-xs font-medium text-[#B3261E] sm:text-sm">{message}</p> : null;
+
 const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmployesProps) => {
   const form = useForm<EmployeeEditForm>({
     resolver: zodResolver(employeeEditSchema),
@@ -35,10 +54,11 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
 
   const { errorupdate, handleUpdate, loadingupdate } = UseeditEmployes();
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [fileKey, setFileKey] = useState(0);
+
   const onSubmit = async (data: EmployeeEditForm) => {
-    if (!employes) {
-      return;
-    }
+    if (!employes) return;
     handleUpdate(employes.id, data, () => {
       form.reset();
       onOpenChange(false);
@@ -46,223 +66,234 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
     });
   };
 
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-
   const handleRemoveImage = () => {
     form.setValue("file", null, { shouldValidate: true });
     setPreviewImage(null);
+    setFileKey((k) => k + 1);
   };
 
+  // isi form saat karyawan yang diedit berganti
   useEffect(() => {
     if (!employes) return;
 
     form.reset({
       name: employes.user.name,
-
       email: employes.user.email,
       division: employes.division,
       position: employes.position,
       status: employes.status,
     });
+    setFileKey((k) => k + 1);
   }, [employes]);
 
+  // preview mengikuti foto karyawan (kosongkan kalau karyawan tidak punya foto)
   useEffect(() => {
-    if (employes?.file) {
-      setPreviewImage(`${STORAGE_URL}${employes.file}`);
-    }
-  }, [employes?.file]);
+    setPreviewImage(employes?.file ? `${STORAGE_URL}${employes.file}` : null);
+  }, [employes?.file, employes?.id]);
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Update Karyawan </DialogTitle>
-          <DialogDescription>update data karyawan di bawah</DialogDescription>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="flex max-h-[92dvh] w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-xl border border-[#DBE2EF] bg-white p-0 shadow-[0_10px_30px_rgb(17,45,78,0.18)] sm:max-w-2xl">
+        {/* Header */}
+        <DialogHeader className="shrink-0 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-4 pr-12 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#3F72AF] text-white">
+              <UserCog className="h-5 w-5" />
+            </div>
+            <div className="min-w-0 text-left">
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Update Karyawan</DialogTitle>
+              <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
+                Perbarui data karyawan di bawah
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <FieldGroup>
-          <Field>
-            <Label htmlFor="nama">
-              Nama Karyawan <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              {...form.register("name")}
-              type="text"
-              id="nama"
-              placeholder="Nama lengkap karyawan"
-              disabled={loadingupdate}
-            />
-            <span className="text-red-500 text-sm">{form.formState.errors.name?.message}</span>
-          </Field>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          {/* Isi form (scroll sendiri kalau layar pendek) */}
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-6">
+            <FieldGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field className="gap-2 sm:col-span-2">
+                <Label htmlFor="nama" className={labelClassName}>
+                  Nama Karyawan <span className="text-[#B3261E]">*</span>
+                </Label>
+                <Input
+                  {...form.register("name")}
+                  type="text"
+                  id="nama"
+                  placeholder="Nama lengkap karyawan"
+                  className={inputClassName}
+                  disabled={loadingupdate}
+                />
+                <FieldError message={form.formState.errors.name?.message} />
+              </Field>
+{/* 
+              <Field className="gap-2 sm:col-span-2">
+                <Label htmlFor="email" className={labelClassName}>
+                  Email <span className="text-[#B3261E]">*</span>
+                </Label>
+                <Input
+                  type="email"
+                  inputMode="email"
+                  {...form.register("email")}
+                  id="email"
+                  placeholder="nama@perusahaan.com"
+                  className={inputClassName}
+                  disabled={loadingupdate}
+                />
+                <FieldError message={form.formState.errors.email?.message} />
+              </Field> */}
 
-          <Field>
-            <Label htmlFor="email">
-              Email <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              type="email"
-              {...form.register("email")}
-              id="email"
-              placeholder="nama@perusahaan.com"
-              disabled={loadingupdate}
-            />
-            <span className="text-red-500 text-sm">{form.formState.errors.email?.message}</span>
-          </Field>
+              <Field className="gap-2">
+                <Label htmlFor="division" className={labelClassName}>
+                  Division <span className="text-[#B3261E]">*</span>
+                </Label>
+                <select
+                  id="division"
+                  className={selectClassName}
+                  disabled={loadingupdate}
+                  {...form.register("division")}
+                >
+                  <option value="">-- Pilih Divisi --</option>
+                  <option value="GA">GA</option>
+                  <option value="INC-PMR">INC-PMR</option>
+                  <option value="INC-ER">INC-ER</option>
+                </select>
+                <FieldError message={form.formState.errors.division?.message} />
+              </Field>
 
-          {/* <Field>
-            <Label htmlFor="password">
-              Password <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              {...form.register("password")}
-              type="password"
-              id="password"
-              placeholder="••••••••"
-              disabled={loadingupdate}
-            />
-            <span className="text-red-500 text-sm">{form.formState.errors.password?.message}</span>
-          </Field> */}
+              <Field className="gap-2">
+                <Label htmlFor="position" className={labelClassName}>
+                  Position <span className="text-[#B3261E]">*</span>
+                </Label>
+                <select
+                  id="position"
+                  className={selectClassName}
+                  disabled={loadingupdate}
+                  {...form.register("position")}
+                >
+                  <option value="">-- Pilih Posisi --</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="Technician">Technician</option>
+                  <option value="Foreman">Foreman</option>
+                </select>
+                <FieldError message={form.formState.errors.position?.message} />
+              </Field>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field>
-              <Label htmlFor="division">
-                Division <span className="text-red-500">*</span>
-              </Label>
-              <select
-                id="division"
-                {...form.register("division")}
-              >
-                <option value="">-- Pilih Divisi --</option>
-                <option value="GA">GA</option>
-                <option value="INC-PMR">INC-PMR</option>
-                <option value="INC-ER">INC-ER</option>
-              </select>
+              <Field className="gap-2">
+                <Label htmlFor="status" className={labelClassName}>
+                  Status <span className="text-[#B3261E]">*</span>
+                </Label>
+                <select
+                  id="status"
+                  className={selectClassName}
+                  disabled={loadingupdate}
+                  {...form.register("status")}
+                >
+                  <option value="">-- Pilih Status --</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+                <FieldError message={form.formState.errors.status?.message} />
+              </Field>
 
-              <span className="text-red-500 text-sm">{form.formState.errors.division?.message}</span>
-            </Field>
+              <Field className="gap-2">
+                <FieldLabel htmlFor="picture" className={labelClassName}>
+                  Foto
+                </FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="file"
+                  render={({ field: { onChange, onBlur, name, ref } }) => (
+                    <Input
+                      key={fileKey}
+                      id="picture"
+                      name={name}
+                      ref={ref}
+                      onBlur={onBlur}
+                      type="file"
+                      accept="image/png, image/jpg, image/jpeg"
+                      disabled={loadingupdate}
+                      className={fileClassName}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] ?? null;
+                        setPreviewImage(file ? URL.createObjectURL(file) : null);
+                        onChange(file);
+                      }}
+                    />
+                  )}
+                />
+                <FieldDescription className="text-xs text-[#50688C]">Pilih gambar untuk diunggah.</FieldDescription>
+                <FieldError message={form.formState.errors.file?.message as string} />
+              </Field>
+            </FieldGroup>
 
-            <Field>
-              <Label htmlFor="position">
-                Position <span className="text-red-500">*</span>
-              </Label>
-              <select
-                id="position"
-                {...form.register("position")}
-              >
-                <option value="">-- Pilih Posisi --</option>
-                <option value="Supervisor">Supervisor</option>
-                <option value="Technician">Technician</option>
-                <option value="Foreman">Foreman</option>
-              </select>
-
-              <span className="text-red-500 text-sm">{form.formState.errors.position?.message}</span>
-            </Field>
-
-            <Field>
-              <Label htmlFor="status">
-                Status <span className="text-red-500">*</span>
-              </Label>
-              <select
-                id="status"
-                {...form.register("status")}
-              >
-                <option value="">-- Pilih Status --</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-              <span className="text-red-500 text-sm">{form.formState.errors.status?.message}</span>
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="picture">Foto</FieldLabel>
-              <Controller
-                control={form.control}
-                name="file"
-                render={({ field: { onChange, onBlur, name, ref } }) => (
-                  <Input
-                    id="picture"
-                    name={name}
-                    ref={ref}
-                    onBlur={onBlur}
-                    type="file"
-                    accept="image/png, image/jpg, image/jpeg"
+            {/* Preview */}
+            <div className="relative flex h-40 w-full items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-[#9DB2D3] bg-[#F9F7F7] sm:h-48">
+              {previewImage ? (
+                <>
+                  <img src={previewImage} alt="Preview" className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
                     disabled={loadingupdate}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0] ?? null;
-
-                      // langsung generate object URL dari file yang dipilih,
-                      // gak perlu useEffect terpisah + watch()
-                      if (file) {
-                        const objectUrl = URL.createObjectURL(file);
-                        setPreviewImage(objectUrl);
-                      } else {
-                        setPreviewImage(null);
-                      }
-
-                      onChange(file);
-                    }}
-                  />
-                )}
-              />
-              <FieldDescription>Pilih gambar untuk diunggah.</FieldDescription>
-              <span className="text-red-500 text-sm">{form.formState.errors.file?.message as string}</span>
-            </Field>
-          </div>
-        </FieldGroup>
-
-        <div className="relative mb-3 flex h-48 w-full items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-slate-200 bg-slate-50/50">
-          {previewImage ? (
-            <>
-              <img
-                src={previewImage}
-                alt="Preview"
-                className="h-full w-full object-cover"
-              />
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                disabled={loadingupdate}
-                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-black/80 disabled:opacity-50"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-2 text-center">
-              {/* <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                      <Upload className="h-5 w-5 text-blue-600" />
-                    </div> */}
-              <p className="text-xs text-slate-400">Belum ada gambar dipilih</p>
+                    aria-label="Hapus gambar"
+                    className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full bg-[#112D4E] text-white transition hover:bg-[#0B2240] active:scale-95 disabled:opacity-50"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center gap-2 px-4 text-center">
+                  <div className="grid h-12 w-12 place-items-center rounded-lg bg-[#DBE2EF]">
+                    <ImagePlus className="h-6 w-6 text-[#3F72AF]" />
+                  </div>
+                  <p className="text-xs text-[#50688C]">Belum ada gambar dipilih</p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {errorupdate && <p className="text-red-500 text-sm mt-2">{errorupdate}</p>}
-
-        <DialogFooter>
-          <DialogClose
-            render={
-              <Button
-                type="button"
-                variant="outline"
-                disabled={loadingupdate}
+            {errorupdate && (
+              <div
+                role="alert"
+                className="flex items-start gap-2 rounded-lg border border-[#F2B8B5] bg-[#FDECEA] px-3 py-2.5 text-sm text-[#B3261E]"
               >
-                Batal
-              </Button>
-            }
-          />
-          <Button
-            onClick={form.handleSubmit(onSubmit)}
-            type="button"
-            className="bg-blue-600 hover:bg-blue-700"
-            disabled={loadingupdate}
-          >
-            {loadingupdate ? "Menyimpan..." : "Update Karyawan"}
-          </Button>
-        </DialogFooter>
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <span className="min-w-0 break-words">{errorupdate}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <DialogFooter className="m-0 shrink-0 flex-col-reverse gap-2 rounded-none border-t border-[#DBE2EF] bg-[#F9F7F7] p-4 sm:flex-row sm:justify-end sm:gap-2 sm:px-6">
+            <DialogClose
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={loadingupdate}
+                  className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
+                >
+                  Batal
+                </Button>
+              }
+            />
+            <Button
+              type="submit"
+              disabled={loadingupdate}
+              className="h-11 w-full gap-2 rounded-lg bg-[#112D4E] px-5 font-bold text-white hover:bg-[#0B2240] disabled:opacity-60 sm:w-auto"
+            >
+              {loadingupdate ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Menyimpan...
+                </>
+              ) : (
+                "Update Karyawan"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
