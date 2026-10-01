@@ -42,10 +42,10 @@ const useSubmitStockKeluar = () => {
       for (const item of values.items) {
         await postTransactionItem({
           transactions_id: transaction.id,
-          items_id: item.items_id,
+          items_id: Number(item.items_id),
           qty: item.qty,
-          date: transaction.date,
-        }); 
+          date: values.date, // "2026-10-02", bukan transaction.date
+        });
       }
     } catch (err) {
       const message = (err as Error).message || "Gagal menyimpan salah satu barang";

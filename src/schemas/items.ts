@@ -1,4 +1,4 @@
-import {  z } from "zod";
+import { z } from "zod";
 
 export const itemsSchema = z.object({
   file: z.instanceof(File).optional().nullable(),
@@ -9,13 +9,13 @@ export const itemsSchema = z.object({
     message: "Pilih  Salah Satu Kategori ",
   }),
 
-  brand: z.string("Minimal 1 karakter dan 20 karakter").min(1).max(20).optional().or(z.literal("")),
+  brand: z.string("Minimal 1 karakter dan 20 karakter").min(1).max(50).optional().or(z.literal("")),
 
-  type: z.string("maksimal 20 karakter").max(20).optional().or(z.literal("")),
+  type: z.string("maksimal 50 karakter").max(50).optional().or(z.literal("")),
 
-min_stock: z.coerce.number("Masukkan Angka Bulat").optional().nullable(), 
+  min_stock: z.coerce.number("Masukkan Angka Bulat").optional().nullable(),
 
-  size: z.string( ).max(20).optional().or(z.literal("")),
+  part_number: z.string().max(50).optional().or(z.literal("")),
 
   // size: z.enum(["s", "m", "l", "xl", "xxl", "universal"], {
   //   message : "Pilih diantara satu kategori yang tersedia"
@@ -25,10 +25,9 @@ min_stock: z.coerce.number("Masukkan Angka Bulat").optional().nullable(),
     message: "Pilih diantara satu kategori yang tersedia",
   }),
 
- price: z.coerce.number().optional(),
+  price: z.coerce.number().optional(),
 
   description: z.string("Maksimal 200 karakter").max(200).optional().or(z.literal("")),
-
 });
 
 export type ItemsCreate = z.infer<typeof itemsSchema>;

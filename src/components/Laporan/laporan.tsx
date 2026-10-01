@@ -6,7 +6,9 @@ import { usePenerimaanStok, type StockHistoryItem } from "@/hooks/Laporan/peneri
 import useTransaction, { type TransactionData } from "@/hooks/Laporan/BaranngKeluar";
 import useLowStock, { type LowStockItem } from "@/hooks/Laporan/lowStock";
 import useExport from "@/hooks/Laporan/exportRecordPengeluaran";
+
 import { AlertCircle, Download, Inbox, Loader2, Info } from "lucide-react";
+import StockOnHandTab from "../StockonHandTab";
 
 /*
   Palet:
@@ -93,16 +95,18 @@ const TR = "text-[#112D4E] transition-colors hover:bg-[#F9F7F7]";
 // DAFTAR TAB
 // ============================================================
 
-type TabKey = "record-pengeluaran" | "penerimaan-stok" | "barang-keluar" | "stok-kritis";
+type TabKey = "record-pengeluaran" | "penerimaan-stok" | "barang-keluar" | "stok-kritis" | "stock-on-hand";
 
 const DAFTAR_TAB: { key: TabKey; label: string }[] = [
   { key: "record-pengeluaran", label: "Record Pengeluaran" },
   { key: "penerimaan-stok", label: "Penerimaan Stok" },
   { key: "barang-keluar", label: "Barang Keluar" },
   { key: "stok-kritis", label: "Stok Kritis" },
+  { key: "stock-on-hand", label: "Stock On Hand" },
 ];
 
-const EXPORT_CONFIG: Record<TabKey, { endpoint: string; filename: string }> = {
+// tab tanpa endpoint export (stock-on-hand) tidak ada di sini
+const EXPORT_CONFIG: Partial<Record<TabKey, { endpoint: string; filename: string }>> = {
   "record-pengeluaran": { endpoint: "/items/export-ranking", filename: "record-pengeluaran.xlsx" },
   "penerimaan-stok": { endpoint: "/stock-history/export-in", filename: "penerimaan-stok.xlsx" },
   "barang-keluar": { endpoint: "/transactions/export", filename: "barang-keluar.xlsx" },
@@ -135,9 +139,11 @@ export default function StockDashboardSection() {
 
   const { loadingExport, handleExport } = useExport();
 
+  const exportConfig = EXPORT_CONFIG[tabAktif];
+
   function exportTabAktif() {
-    const { endpoint, filename } = EXPORT_CONFIG[tabAktif];
-    handleExport(endpoint, filename, {
+    if (!exportConfig) return;
+    handleExport(exportConfig.endpoint, exportConfig.filename, {
       start: startDate || undefined,
       end: endDate || undefined,
     });
@@ -182,10 +188,11 @@ export default function StockDashboardSection() {
     if (tabAktif === "stok-kritis") {
       getStokKritis({});
     }
+    // stock-on-hand ambil datanya sendiri di dalam komponen StockOnHandTab
   }, [tabAktif, startDate, endDate]);
 
-  // Stok Kritis = snapshot kondisi sekarang, jadi tidak butuh filter tanggal
-  const tampilkanFilterTanggal = tabAktif !== "stok-kritis";
+  // Stok Kritis & Stock On Hand = snapshot kondisi sekarang, jadi tidak butuh filter tanggal
+  const tampilkanFilterTanggal = tabAktif !== "stok-kritis" && tabAktif !== "stock-on-hand";
 
   return (
     <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
@@ -259,16 +266,18 @@ export default function StockDashboardSection() {
             </p>
           )}
 
-          {/* Export */}
-          <button
-            type="button"
-            onClick={exportTabAktif}
-            disabled={loadingExport}
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#112D4E] px-5 text-sm font-semibold text-white transition hover:bg-[#0B2240] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-          >
-            {loadingExport ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-            {loadingExport ? "Mengunduh..." : "Export Excel"}
-          </button>
+          {/* Export (disembunyikan kalau tab belum punya endpoint export) */}
+          {exportConfig && (
+            <button
+              type="button"
+              onClick={exportTabAktif}
+              disabled={loadingExport}
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#112D4E] px-5 text-sm font-semibold text-white transition hover:bg-[#0B2240] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            >
+              {loadingExport ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              {loadingExport ? "Mengunduh..." : "Export Excel"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -284,6 +293,11 @@ export default function StockDashboardSection() {
       )}
       {tabAktif === "stok-kritis" && (
         <TabelStokKritis data={dataStokKritis} loading={loadingStokKritis} error={errorStokKritis} />
+      )}
+      {tabAktif === "stock-on-hand" && (
+        <div className="p-4 sm:p-6">
+          <StockOnHandTab />
+        </div>
       )}
     </div>
   );

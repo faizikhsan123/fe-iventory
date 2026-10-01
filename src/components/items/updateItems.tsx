@@ -100,7 +100,7 @@ const UpdateItems = () => {
       category: item.category,
       brand: item.brand ?? undefined,
       type: item.type ?? undefined,
-      size: item.size ?? undefined,
+      part_number: item.part_number ?? undefined,
       unit: item.unit,
       min_stock: item.min_stock ?? undefined,
       description: item.description ?? undefined,
@@ -296,17 +296,17 @@ const UpdateItems = () => {
 
                   <Field className="gap-2">
                     <Label htmlFor="size" className={labelClassName}>
-                      Size
+                      Part Number
                     </Label>
                     <Input
-                      {...form.register("size")}
+                      {...form.register("part_number")}
                       type="text"
-                      id="size"
-                      placeholder="S,X,40"
+                      id="part_number"
+                      placeholder="PN-12345"
                       className={inputClassName}
                       disabled={updateloading}
                     />
-                    <FieldError message={form.formState.errors.size?.message} />
+                    <FieldError message={form.formState.errors.part_number?.message} />
                   </Field>
                 </div>
 

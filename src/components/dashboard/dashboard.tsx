@@ -105,7 +105,10 @@ const Dashboard = () => {
   return (
     <div className="space-y-5 sm:space-y-6">
       {/* Banner sambutan */}
-      <section className="relative overflow-hidden rounded-lg bg-[#112D4E] sm:rounded-xl" style={gridStyle}>
+      <section
+        className="relative overflow-hidden rounded-lg bg-[#112D4E] sm:rounded-xl"
+        style={gridStyle}
+      >
         <div className="relative flex flex-col gap-4 p-5 pb-6 sm:flex-row sm:items-center sm:justify-between sm:p-7 sm:pb-8">
           <div className="min-w-0">
             <h2 className="text-xl font-extrabold leading-tight text-white sm:text-2xl lg:text-3xl">
@@ -127,7 +130,10 @@ const Dashboard = () => {
         </div>
 
         {/* Pita palet */}
-        <div className="absolute inset-x-0 bottom-0 flex h-1.5" aria-hidden="true">
+        <div
+          className="absolute inset-x-0 bottom-0 flex h-1.5"
+          aria-hidden="true"
+        >
           <span className="h-full flex-[4] bg-[#F9F7F7]" />
           <span className="h-full flex-[3] bg-[#DBE2EF]" />
           <span className="h-full flex-[2] bg-[#3F72AF]" />
@@ -136,10 +142,30 @@ const Dashboard = () => {
 
       {/* Card summary */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
-        <CardSummary icon={Package} tone="navy" label="Total Barang" value={summary.total_barang} />
-        <CardSummary icon={BarChart3} tone="azure" label="Stok Saat Ini" value={summary.current_stock} />
-        <CardSummary icon={ArrowDownCircle} tone="sky" label="Barang Keluar" value={summary.barang_keluar} />
-        <CardSummary icon={CheckCircle2} tone="ice" label="Barang Masuk" value={summary.barang_masuk} />
+        <CardSummary
+          icon={Package}
+          tone="navy"
+          label="Total Barang"
+          value={summary.total_barang}
+        />
+        <CardSummary
+          icon={BarChart3}
+          tone="azure"
+          label="Stok Saat Ini"
+          value={summary.current_stock}
+        />
+        <CardSummary
+          icon={ArrowDownCircle}
+          tone="sky"
+          label="Barang Keluar"
+          value={summary.barang_keluar}
+        />
+        <CardSummary
+          icon={CheckCircle2}
+          tone="ice"
+          label="Barang Masuk"
+          value={summary.barang_masuk}
+        />
         <CardSummary
           icon={XCircle}
           tone="danger"
@@ -242,7 +268,10 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   return (
     <div className="min-w-0 overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
       <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
-        <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
+        <span
+          className="h-4 w-1 rounded-full bg-[#3F72AF]"
+          aria-hidden="true"
+        />
         <h2 className="font-bold text-[#112D4E]">{title}</h2>
       </div>
       {children}
@@ -271,6 +300,7 @@ interface AktivitasStokItem {
   name: string;
   type: string;
   qty: number;
+
   user_name: string;
 }
 
@@ -287,7 +317,10 @@ function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
               const isIn = item.type === "in";
               const Icon = isIn ? ArrowDownToLine : ArrowUpFromLine;
               return (
-                <li key={index} className="flex gap-3 p-4">
+                <li
+                  key={index}
+                  className="flex gap-3 p-4"
+                >
                   <div
                     className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg ${
                       isIn ? "bg-[#DBE2EF] text-[#112D4E]" : "bg-[#FDECEA] text-[#B3261E]"
@@ -298,9 +331,7 @@ function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <p className="break-words text-sm font-semibold text-[#112D4E]">{item.name}</p>
-                      <span
-                        className={`shrink-0 text-sm font-extrabold ${isIn ? "text-[#112D4E]" : "text-[#B3261E]"}`}
-                      >
+                      <span className={`shrink-0 text-sm font-extrabold ${isIn ? "text-[#112D4E]" : "text-[#B3261E]"}`}>
                         {isIn ? "+" : "-"}
                         {item.qty}
                       </span>
@@ -325,14 +356,17 @@ function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
                   <th className="px-3 py-3 font-semibold">Nama Barang</th>
                   <th className="px-3 py-3 font-semibold">Aktivitas</th>
                   <th className="px-3 py-3 font-semibold">Qty</th>
-                  <th className="px-6 py-3 font-semibold">User</th>
+                  {/* <th className="px-6 py-3 font-semibold">User</th> */}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#DBE2EF]">
                 {data.map((item, index) => {
                   const isIn = item.type === "in";
                   return (
-                    <tr key={index} className="text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
+                    <tr
+                      key={index}
+                      className="text-[#112D4E] transition-colors hover:bg-[#F9F7F7]"
+                    >
                       <td className="whitespace-nowrap px-6 py-3.5 text-[#50688C]">{formatTanggalIndo(item.date)}</td>
                       <td className="whitespace-nowrap px-3 py-3.5 font-medium text-[#3F72AF]">{item.part_number}</td>
                       <td className="px-3 py-3.5 font-medium">{item.name}</td>
@@ -349,9 +383,11 @@ function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
                       </td>
                       <td className={`px-3 py-3.5 font-bold ${isIn ? "text-[#112D4E]" : "text-[#B3261E]"}`}>
                         {isIn ? "+" : "-"}
-                        {item.qty}
+                        <span>
+                          {item.qty}
+                        </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-3.5 text-[#50688C]">{item.user_name}</td>
+                      {/* <td className="whitespace-nowrap px-6 py-3.5 text-[#50688C]">{item.user_name}</td> */}
                     </tr>
                   );
                 })}
@@ -372,6 +408,7 @@ interface TransaksiTerbaruItem {
   transaction_number: string;
   employe_name: string;
   barang: string;
+  category: string;
   date: string;
 }
 
@@ -385,7 +422,10 @@ function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
           {/* Mobile: kartu */}
           <ul className="divide-y divide-[#DBE2EF] md:hidden">
             {data.map((trx, index) => (
-              <li key={index} className="p-4">
+              <li
+                key={index}
+                className="p-4"
+              >
                 <div className="flex items-start justify-between gap-2">
                   <p className="min-w-0 break-all text-sm font-bold text-[#112D4E]">{trx.transaction_number}</p>
                   <span className="shrink-0 text-xs text-[#50688C]">{formatTanggalIndo(trx.date)}</span>
@@ -401,20 +441,25 @@ function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
             <table className="w-full min-w-[520px] text-left text-sm">
               <thead>
                 <tr className="bg-[#DBE2EF] text-sm text-[#112D4E]">
-                  <th className="px-6 py-3 font-semibold">No. Transaksi</th>
+                  {/* <th className="px-6 py-3 font-semibold">No. Transaksi</th> */}
                   <th className="px-3 py-3 font-semibold">Karyawan</th>
                   <th className="px-3 py-3 font-semibold">Barang</th>
+                  <th className="px-3 py-3 font-semibold">Kategori</th>
                   <th className="px-6 py-3 font-semibold">Tanggal</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#DBE2EF]">
                 {data.map((trx, index) => (
-                  <tr key={index} className="text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
-                    <td className="whitespace-nowrap px-6 py-3.5 font-semibold text-[#112D4E]">
+                  <tr
+                    key={index}
+                    className="text-[#112D4E] transition-colors hover:bg-[#F9F7F7]"
+                  >
+                    {/* <td className="whitespace-nowrap px-6 py-3.5 font-semibold text-[#112D4E]">
                       {trx.transaction_number}
-                    </td>
+                    </td> */}
                     <td className="px-3 py-3.5 font-medium">{trx.employe_name}</td>
                     <td className="px-3 py-3.5 text-[#50688C]">{trx.barang || "—"}</td>
+                    <td className="px-3 py-3.5 text-[#50688C]">{trx.category || "—"}</td>
                     <td className="whitespace-nowrap px-6 py-3.5 text-[#50688C]">{formatTanggalIndo(trx.date)}</td>
                   </tr>
                 ))}
@@ -423,6 +468,17 @@ function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
           </div>
         </>
       )}
+
+
+
+
+
+
+      
     </Panel>
+
+
+
+
   );
 }

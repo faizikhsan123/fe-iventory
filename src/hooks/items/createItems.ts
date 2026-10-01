@@ -30,7 +30,7 @@ if (payload.brand) formData.append("brand", payload.brand);
 if (payload.type) formData.append("type", payload.type);
 if (payload.min_stock != null) formData.append("min_stock", String(payload.min_stock));
 if (payload.price != null) formData.append("price", String(payload.price));
-if (payload.size) formData.append("size", payload.size);
+if (payload.part_number) formData.append("part_number", payload.part_number);
 formData.append("unit", payload.unit);
 if (payload.description) formData.append("description", payload.description);
 

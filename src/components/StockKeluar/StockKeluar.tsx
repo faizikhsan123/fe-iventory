@@ -1,5 +1,5 @@
 // StockKeluar.tsx
-import { AlertCircle, CalendarDays, Check, CheckCircle2, Loader2, Plus, Trash2, User } from "lucide-react";
+import { AlertCircle, CalendarDays, Check,  Loader2, Plus, Trash2, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -57,7 +57,7 @@ const Row = ({ label, value }: { label: string; value: ReactNode }) => (
 const StockKeluar = () => {
   const { data: items, loading: loadingItems, getItems } = UsegetItems();
   const { data: employees, loading: loadingEmployees, getEmployesButton } = useGetEmployes();
-  const { submit, submitting, error, result } = useSubmitStockKeluar();
+  const { submit, submitting, error, } = useSubmitStockKeluar();
 
   const form = useForm<StockOut>({
     resolver: zodResolver(StockOutSchema),
@@ -265,7 +265,7 @@ const StockKeluar = () => {
 
         <div className="p-4 sm:p-6">
           <div className="space-y-3.5 rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-4 text-sm">
-            <div>
+            {/* <div>
               <p className="text-[#50688C]">No. Transaksi</p>
               <p
                 className={`flex items-center gap-1.5 break-all font-bold ${
@@ -275,7 +275,7 @@ const StockKeluar = () => {
                 {result?.transaction_number && <CheckCircle2 className="h-4 w-4 shrink-0 text-[#3F72AF]" />}
                 {result?.transaction_number ?? "Dibuat otomatis"}
               </p>
-            </div>
+            </div> */}
             <Row label="Karyawan" value={selectedEmployee?.user.name ?? "—"} />
             <Row
               label="Tanggal"

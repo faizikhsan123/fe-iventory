@@ -16,6 +16,7 @@ interface AktivitasStok {
   type: string;
   qty: number;
   user_name: string;
+  unit: string;
 }
 
 interface TransaksiTerbaru {

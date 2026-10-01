@@ -11,7 +11,6 @@ interface ItemInfo {
   category: string;
   brand: string;
   type: string;
-  size: string;
   unit: string;
   min_stock: string;
   price : string

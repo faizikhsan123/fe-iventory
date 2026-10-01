@@ -11,11 +11,10 @@ export interface Items {
   category: Category;
   brand?: string;
   type: string;
-  size: Size;
   unit: Unit;
   min_stock: number;
   current_stock: number;
   status: Status;
   price : string
   description: string;
-}
+} 

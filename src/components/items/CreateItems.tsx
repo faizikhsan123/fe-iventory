@@ -181,13 +181,13 @@ const CreateItems = () => {
               {/* Nama Barang */}
               <Field className="gap-2">
                 <Label htmlFor="nama" className={labelClassName}>
-                  Nama Barang <span className="text-[#B3261E]">*</span>
+                  Nama Barang  <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("name")}
                   type="text"
                   id="nama"
-                  placeholder="Safety Glases"
+                  placeholder="Safety Glases XL, 8"
                   className={inputClassName}
                   disabled={loadingCreate}
                 />
@@ -248,18 +248,18 @@ const CreateItems = () => {
                 </Field>
 
                 <Field className="gap-2">
-                  <Label htmlFor="size" className={labelClassName}>
-                    Size
+                  <Label htmlFor="part_number" className={labelClassName}>
+                    Part Number
                   </Label>
                   <Input
-                    {...form.register("size")}
+                    {...form.register("part_number")}
                     type="text"
-                    id="size"
-                    placeholder="S,X,40"
+                    id="part_number"
+                    placeholder="PART-001"
                     className={inputClassName}
                     disabled={loadingCreate}
                   />
-                  <FieldError message={form.formState.errors.size?.message} />
+                  <FieldError message={form.formState.errors.part_number?.message} />
                 </Field>
               </div>
 

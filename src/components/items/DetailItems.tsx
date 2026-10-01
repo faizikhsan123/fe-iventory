@@ -115,7 +115,7 @@ const DetailBarang = () => {
               />
               <InfoBox
                 label="Ukuran"
-                value={item.size || "-"}
+                value={item.part_number || "-"}
               />
               <InfoBox
                 label="Satuan"
@@ -127,8 +127,12 @@ const DetailBarang = () => {
                 highlight
               />
               <InfoBox
-                label="Minimum Stok"
+                label="Stok Minimum"
                 value={`${item.min_stock} unit`}
+              />
+              <InfoBox
+                label="part Number"
+                value={`${item.part_number}`}
               />
             </div>
           </div>
