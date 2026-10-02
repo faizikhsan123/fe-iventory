@@ -147,7 +147,7 @@ const SidebarComponent = () => {
           <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-[#112D4E]">
             <Shield size={16} className="text-white" />
           </div>
-          <span className="truncate font-extrabold text-[#112D4E]">PT. Vando</span>
+          <span className="truncate font-extrabold text-[#112D4E]">PT. Vando </span>
         </div>
 
         <div className="grid h-10 w-10 place-items-center rounded-full bg-[#DBE2EF] text-xs font-bold text-[#112D4E]">
@@ -175,11 +175,11 @@ const SidebarComponent = () => {
         <div className="flex shrink-0 items-center justify-between border-b border-[#25476F] px-4 py-4">
           <Link to="/dashboard" className="flex min-w-0 items-center gap-3">
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#F9F7F7]">
-              <Shield size={20} className="text-[#112D4E]" />
+            <img src="../../public/vando1.webp" alt="" />
             </div>
             <span className="min-w-0 leading-tight">
-              <span className="block truncate text-lg font-extrabold text-white">PT. Vando</span>
-              <span className="block truncate text-xs text-[#9DB2D3]">Inventory Gresik</span>
+              <span className="block truncate text-md font-extrabold text-white mt-2">PT. Vando Teknik Solusi</span>
+              <span className="block truncate text-xs text-[#9DB2D3] mt-1">Inventory Gresik</span>
             </span>
           </Link>
           <button

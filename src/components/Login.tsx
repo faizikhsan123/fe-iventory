@@ -68,7 +68,7 @@ export default function Login() {
         {/* Brand */}
         <div className="flex items-center gap-3">
           <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-[#F9F7F7]">
-            <Shield className="h-6 w-6 text-[#112D4E]" />
+           <img src="../../public/vando1.webp" alt="" />
           </div>
           <div className="leading-tight">
             <p className="text-xl font-extrabold text-white">PT. Vando Teknik Solusi</p>
