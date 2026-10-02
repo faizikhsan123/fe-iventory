@@ -36,7 +36,10 @@ const labelClassName = "text-sm font-semibold text-[#112D4E]";
 const Card = ({ title, children }: { title: string; children: ReactNode }) => (
   <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
     <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
-      <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
+      <span
+        className="h-4 w-1 rounded-full bg-[#3F72AF]"
+        aria-hidden="true"
+      />
       <h2 className="font-bold text-[#112D4E]">{title}</h2>
     </div>
     <div className="p-4 sm:p-6">{children}</div>
@@ -75,20 +78,27 @@ const UpdateItems = () => {
     setPreviewImage(null);
   };
 
-  const formatRupiah = (value: string | number) => {
-    const number = typeof value === "string" ? value.replace(/\D/g, "") : value;
-    if (!number) return "";
-    return new Intl.NumberFormat("id-ID").format(Number(number));
+  const formatRupiah = (value: string | number | null | undefined) => {
+    if (value === null || value === undefined || value === "") return "";
+    // Number("30000.00") = 30000, jadi desimal nggak ikut kebuang jadi digit
+    const num = typeof value === "number" ? value : Number(value);
+    if (Number.isNaN(num) || num === 0) return "";
+    return new Intl.NumberFormat("id-ID").format(Math.round(num));
   };
 
-  const [displayPrice, setDisplayPrice] = useState(formatRupiah(form.getValues("price") || ""));
+  const [displayPrice, setDisplayPrice] = useState("");
+
+  const watchedPrice = form.watch("price");
+  useEffect(() => {
+    setDisplayPrice(formatRupiah(watchedPrice));
+  }, [watchedPrice]);
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/\D/g, ""); // buang semua non-digit
+    const rawValue = e.target.value.replace(/\D/g, ""); // ini aman, karena input user cuma digit
     form.setValue("price", rawValue ? Number(rawValue) : 0, {
       shouldValidate: true,
+      shouldDirty: true,
     });
-    setDisplayPrice(formatRupiah(rawValue));
   };
 
   // isi ulang form begitu data lama (item) berhasil di-fetch
@@ -132,7 +142,10 @@ const UpdateItems = () => {
         </button>
 
         <div className="flex min-w-0 items-stretch gap-3">
-          <span className="w-1 shrink-0 rounded-full bg-[#3F72AF]" aria-hidden="true" />
+          <span
+            className="w-1 shrink-0 rounded-full bg-[#3F72AF]"
+            aria-hidden="true"
+          />
           <div className="min-w-0">
             <h1 className="text-xl font-extrabold tracking-tight text-[#112D4E] sm:text-2xl">Rubah Barang</h1>
             <p className="mt-0.5 text-xs leading-5 text-[#50688C] sm:text-sm">
@@ -182,7 +195,10 @@ const UpdateItems = () => {
               </div>
 
               <Field className="gap-2">
-                <FieldLabel htmlFor="file" className={labelClassName}>
+                <FieldLabel
+                  htmlFor="file"
+                  className={labelClassName}
+                >
                   Foto
                 </FieldLabel>
                 <Controller
@@ -227,7 +243,10 @@ const UpdateItems = () => {
               <div className="flex flex-col gap-4 sm:gap-5">
                 {/* Nama Barang */}
                 <Field className="gap-2">
-                  <Label htmlFor="nama" className={labelClassName}>
+                  <Label
+                    htmlFor="nama"
+                    className={labelClassName}
+                  >
                     Nama Barang <span className="text-[#B3261E]">*</span>
                   </Label>
                   <Input
@@ -244,7 +263,10 @@ const UpdateItems = () => {
                 {/* Kategori & Brand */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
                   <Field className="gap-2">
-                    <Label htmlFor="category" className={labelClassName}>
+                    <Label
+                      htmlFor="category"
+                      className={labelClassName}
+                    >
                       Kategori <span className="text-[#B3261E]">*</span>
                     </Label>
                     <select
@@ -262,7 +284,10 @@ const UpdateItems = () => {
                   </Field>
 
                   <Field className="gap-2">
-                    <Label htmlFor="brand" className={labelClassName}>
+                    <Label
+                      htmlFor="brand"
+                      className={labelClassName}
+                    >
                       Brand / Merk
                     </Label>
                     <Input
@@ -280,7 +305,10 @@ const UpdateItems = () => {
                 {/* Tipe/Model & Ukuran */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
                   <Field className="gap-2">
-                    <Label htmlFor="type" className={labelClassName}>
+                    <Label
+                      htmlFor="type"
+                      className={labelClassName}
+                    >
                       Tipe / Model
                     </Label>
                     <Input
@@ -295,7 +323,10 @@ const UpdateItems = () => {
                   </Field>
 
                   <Field className="gap-2">
-                    <Label htmlFor="size" className={labelClassName}>
+                    <Label
+                      htmlFor="size"
+                      className={labelClassName}
+                    >
                       Part Number
                     </Label>
                     <Input
@@ -313,7 +344,10 @@ const UpdateItems = () => {
                 {/* Satuan & Min Stock */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
                   <Field className="gap-2">
-                    <Label htmlFor="unit" className={labelClassName}>
+                    <Label
+                      htmlFor="unit"
+                      className={labelClassName}
+                    >
                       Unit <span className="text-[#B3261E]">*</span>
                     </Label>
                     <select
@@ -333,7 +367,10 @@ const UpdateItems = () => {
                   </Field>
 
                   <Field className="gap-2">
-                    <Label htmlFor="min_stock" className={labelClassName}>
+                    <Label
+                      htmlFor="min_stock"
+                      className={labelClassName}
+                    >
                       Min Stock
                     </Label>
                     <Input
@@ -354,7 +391,10 @@ const UpdateItems = () => {
 
                 {/* Harga */}
                 <Field className="gap-2">
-                  <Label htmlFor="price" className={labelClassName}>
+                  <Label
+                    htmlFor="price"
+                    className={labelClassName}
+                  >
                     Harga Perolehan
                   </Label>
                   <div className="relative">
@@ -377,7 +417,10 @@ const UpdateItems = () => {
 
                 {/* Deskripsi */}
                 <Field className="gap-2">
-                  <Label htmlFor="description" className={labelClassName}>
+                  <Label
+                    htmlFor="description"
+                    className={labelClassName}
+                  >
                     Deskripsi Barang
                   </Label>
                   <Textarea
