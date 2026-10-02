@@ -5,7 +5,7 @@ export const employeeCreateSchema = z.object({
   file: z.instanceof(File).optional().nullable(),
   // email: z.email("Format email tidak valid").max(50, "email terlalu panjang"),
   // password: z.string().min(8, "password terlalu sedikit").max(50, "password terlalu panjang"),
-  division: z.enum(["INC-PMR", "INC-ER", "GA"], {
+  division: z.enum(["I&C-PMR", "I&C-ER", "Gas Analyzer"], {
     message: "Division wajib dipilih",
   }),
   position: z.enum(["Supervisor", "Technician", "Foreman", "Safety"], {
@@ -29,7 +29,7 @@ export const employeeEditSchema = z.object({
   //   // kosongin aja kalau nggak mau ganti password
   //   .optional()
   //   .or(z.literal("")),
-  division: z.enum(["INC-PMR", "INC-ER", "GA"], {
+  division: z.enum(["I&C-PMR", "I&C-ER", "Gas Analyzer"], {
     message: "Division wajib dipilih",
   }),
   position: z.enum(["Supervisor", "Technician", "Foreman", "Safety"], {

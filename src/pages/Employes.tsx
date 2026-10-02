@@ -14,7 +14,7 @@ const Employes = () => {
       <Navbar title="Employes"></Navbar>
 
       <SambutanComponent
-        paragraf1="Master Employes"
+        paragraf1="Master Employees"
         paragraf2="Data karyawan yang dapat mengakses inventaris"
         button="+ Tambah Karyawan"
         onclick={() => setIsDialogOpen(true)}

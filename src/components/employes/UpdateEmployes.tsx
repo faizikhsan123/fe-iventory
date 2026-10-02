@@ -155,9 +155,9 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   {...form.register("division")}
                 >
                   <option value="">-- Pilih Divisi --</option>
-                  <option value="GA">GA</option>
-                  <option value="INC-PMR">INC-PMR</option>
-                  <option value="INC-ER">INC-ER</option>
+                  <option value="I&C-PMR">I&C-PMR</option>
+                  <option value="I&C-ER">I&C-ER</option>
+                  <option value="Gas Analyzer">Gas Analyzer</option>
                 </select>
                 <FieldError message={form.formState.errors.division?.message} />
               </Field>

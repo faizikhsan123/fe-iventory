@@ -9,7 +9,7 @@ const StockMasuk = () => {
 
   return (
     <div>
-      <Navbar title="Stock IN Barang"/>
+      <Navbar title="Barang Masuk"/>
 
       <TambahStock/>
 

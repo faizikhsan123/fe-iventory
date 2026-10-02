@@ -113,10 +113,10 @@ const DetailBarang = () => {
                 label="Tipe"
                 value={item.type || "-"}
               />
-              <InfoBox
+              {/* <InfoBox
                 label="Ukuran"
                 value={item.part_number || "-"}
-              />
+              /> */}
               <InfoBox
                 label="Satuan"
                 value={item.unit}

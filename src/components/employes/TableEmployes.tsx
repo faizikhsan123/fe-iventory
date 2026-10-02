@@ -319,7 +319,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Divisi</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Posisi</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Status</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Barang Dipinjam</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Barang Diberikan</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
