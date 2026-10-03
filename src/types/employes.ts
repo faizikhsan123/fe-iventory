@@ -1,4 +1,5 @@
-export type Division = "INC-PMR" | "INC-ER" | "GA";
+export type Division = "I&C-PMR" | "I&C-ER" | "Gas Analyzer";
+
 export type Position = "Supervisor" | "Technician" | "Foreman";
 export type Status = "active" | "inactive";
 

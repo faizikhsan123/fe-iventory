@@ -218,9 +218,9 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
             }}
           >
             <option value="all">Semua Divisi</option>
-            <option value="GA">GA</option>
-            <option value="INC-PMR">INC - PMR</option>
-            <option value="INC-ER">INC - ER</option>
+            <option value="Gas Analyzer">Gas Analyzer</option>
+            <option value="I&C-PMR">I&C - PMR</option>
+            <option value="I&C-ER">I&C - ER</option>
           </select>
 
           <select
