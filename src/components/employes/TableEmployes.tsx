@@ -236,6 +236,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
             <option value="Supervisor">Supervisor</option>
             <option value="Foreman">Foreman</option>
             <option value="Technician">Technician</option>
+            <option value="Safety">Safety</option>
           </select>
         </div>
       </div>
