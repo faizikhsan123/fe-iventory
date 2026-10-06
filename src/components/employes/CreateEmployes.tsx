@@ -109,6 +109,21 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                 <FieldError message={form.formState.errors.name?.message} />
               </Field>
 
+              <Field className="gap-2">
+                <Label htmlFor="id_number" className={labelClassName}>
+                  ID Karyawan <span className="text-[#B3261E]">*</span>
+                </Label>
+                <Input
+                  {...form.register("id_number")}
+                  type="text"
+                  id="id_number"
+                  placeholder="ID Karyawan"
+                  className={inputClassName}
+                  disabled={loadingCreate}
+                />
+                <FieldError message={form.formState.errors.id_number?.message} />
+              </Field>
+
               {/* <Field className="gap-2">
                 <Label htmlFor="email" className={labelClassName}>
                   Email <span className="text-[#B3261E]">*</span>
@@ -187,6 +202,51 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                 </select>
                 <FieldError message={form.formState.errors.position?.message} />
               </Field>
+              <Field className="gap-2 ">
+                <Label htmlFor="ktp_address" className={labelClassName}>
+                  Alamat Sesuai KTP 
+                </Label>
+                <Input
+                  {...form.register("ktp_address")}
+                  type="text"
+                  id="ktp_address"
+                  placeholder="Alamat sesuai KTP"
+                  className={inputClassName}
+                  disabled={loadingCreate}
+                />
+                <FieldError message={form.formState.errors.ktp_address?.message} />
+              </Field>
+
+              <Field className="gap-2 ">
+                <Label htmlFor="actual_address" className={labelClassName}>
+                  Alamat Domisili 
+                </Label>
+                <Input
+                  {...form.register("actual_address")}
+                  type="text"
+                  id="actual_address"
+                  placeholder="Alamat domisili"
+                  className={inputClassName}
+                  disabled={loadingCreate}
+                />
+                <FieldError message={form.formState.errors.actual_address?.message} />
+              </Field>
+
+              <Field className="gap-2 ">
+                <Label htmlFor="emergency_contact" className={labelClassName}>
+                  Kontak Darurat 
+                </Label>
+                <Input
+                  {...form.register("emergency_contact")}
+                  type="text"
+                  id="emergency_contact"
+                  placeholder="Kontak darurat"
+                  className={inputClassName}
+                  disabled={loadingCreate}
+                />
+                <FieldError message={form.formState.errors.emergency_contact?.message} />
+              </Field>
+            
 
               <Field className="gap-2 sm:col-span-2">
                 <FieldLabel htmlFor="picture" className={labelClassName}>

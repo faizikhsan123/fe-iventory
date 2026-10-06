@@ -19,6 +19,7 @@ const UseeditEmployes = () => {
       SetErrorupdate("");
 
       const formData = new FormData();
+      formData.append("id_number", payload.id_number);
       if (payload.file) formData.append("file", payload.file);
       formData.append("name", payload.name);
       // formData.append("email", payload.email); 
@@ -26,6 +27,9 @@ const UseeditEmployes = () => {
       formData.append("division", payload.division);
       formData.append("position", payload.position);
       formData.append("status", payload.status);
+      if (payload.ktp_address) formData.append("ktp_address", payload.ktp_address);
+      if (payload.actual_address) formData.append("actual_address", payload.actual_address);
+      if (payload.emergency_contact) formData.append("emergency_contact", payload.emergency_contact);
       formData.append("_method", "PATCH");
       // if (payload.brand) formData.append("brand", payload.brand);
       // if (payload.type) formData.append("type", payload.type);

@@ -11,11 +11,11 @@ const Employes = () => {
 
   return (
     <div>
-      <Navbar title="Employes"></Navbar>
+      <Navbar title="Employees"></Navbar>
 
       <SambutanComponent
         paragraf1="Master Employees"
-        paragraf2="Data karyawan yang dapat mengakses inventaris"
+        paragraf2="Kelola  Data karyawan "
         button="+ Tambah Karyawan"
         onclick={() => setIsDialogOpen(true)}
       />

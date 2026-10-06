@@ -21,11 +21,16 @@ const UseCreateEmployes = () => {
 
       const formData = new FormData();
       if (payload.file) formData.append("file", payload.file);
+      formData.append("id_number", payload.id_number);
       formData.append("name", payload.name);
       // formData.append("email", payload.email);
       // formData.append("password", payload.password);
       formData.append("division", payload.division);
       formData.append("position", payload.position);
+      if (payload.ktp_address) formData.append("ktp_address", payload.ktp_address);
+      if (payload.actual_address) formData.append("actual_address", payload.actual_address);
+      if (payload.emergency_contact) formData.append("emergency_contact", payload.emergency_contact);
+
       // if (payload.brand) formData.append("brand", payload.brand);
       // if (payload.type) formData.append("type", payload.type);
       // if (payload.min_stock) formData.append("min_stock", String(payload.min_stock));

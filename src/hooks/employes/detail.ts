@@ -8,6 +8,9 @@ interface EmployeInfo {
   position: string;
   status: string;
   file : string
+  ktp_address: string;
+  actual_address: string;
+  emergency_contact: string;
 }
 
 interface Statistik {

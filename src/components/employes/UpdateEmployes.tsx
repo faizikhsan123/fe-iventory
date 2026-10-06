@@ -77,11 +77,16 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
     if (!employes) return;
 
     form.reset({
+      id_number: employes.id_number,
       name: employes.user.name,
       email: employes.user.email,
       division: employes.division,
       position: employes.position,
       status: employes.status,
+      ktp_address: employes.ktp_address,
+      actual_address: employes.actual_address,
+      emergency_contact: employes.emergency_contact,
+      file: null,
     });
     setFileKey((k) => k + 1);
   }, [employes]);
@@ -92,7 +97,10 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
   }, [employes?.file, employes?.id]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <DialogContent className="flex max-h-[92dvh] w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-xl border border-[#DBE2EF] bg-white p-0 shadow-[0_10px_30px_rgb(17,45,78,0.18)] sm:max-w-2xl">
         {/* Header */}
         <DialogHeader className="shrink-0 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-4 pr-12 sm:px-6">
@@ -109,12 +117,18 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
           </div>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex min-h-0 flex-1 flex-col"
+        >
           {/* Isi form (scroll sendiri kalau layar pendek) */}
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-6">
             <FieldGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field className="gap-2 sm:col-span-2">
-                <Label htmlFor="nama" className={labelClassName}>
+                <Label
+                  htmlFor="nama"
+                  className={labelClassName}
+                >
                   Nama Karyawan <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
@@ -127,7 +141,24 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                 />
                 <FieldError message={form.formState.errors.name?.message} />
               </Field>
-{/* 
+              <Field className="gap-2 sm:col-span-2">
+                <Label
+                  htmlFor="id_number"
+                  className={labelClassName}
+                >
+                  ID Karyawan <span className="text-[#B3261E]">*</span>
+                </Label>
+                <Input
+                  {...form.register("id_number")}
+                  type="text"
+                  id="id_number"
+                  placeholder="ID karyawan"
+                  className={inputClassName}
+                  disabled={loadingupdate}
+                />
+                <FieldError message={form.formState.errors.id_number?.message} />
+              </Field>
+              {/* 
               <Field className="gap-2 sm:col-span-2">
                 <Label htmlFor="email" className={labelClassName}>
                   Email <span className="text-[#B3261E]">*</span>
@@ -145,7 +176,10 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               </Field> */}
 
               <Field className="gap-2">
-                <Label htmlFor="division" className={labelClassName}>
+                <Label
+                  htmlFor="division"
+                  className={labelClassName}
+                >
                   Division <span className="text-[#B3261E]">*</span>
                 </Label>
                 <select
@@ -162,8 +196,11 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                 <FieldError message={form.formState.errors.division?.message} />
               </Field>
 
-              <Field className="gap-2">
-                <Label htmlFor="position" className={labelClassName}>
+             <Field className="gap-2">
+                <Label
+                  htmlFor="position"
+                  className={labelClassName}
+                >
                   Position <span className="text-[#B3261E]">*</span>
                 </Label>
                 <select
@@ -181,8 +218,71 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                 <FieldError message={form.formState.errors.position?.message} />
               </Field>
 
+              <Field className="gap-2 ">
+                <Label
+                  htmlFor="actual_address"
+                  className={labelClassName}
+                >
+                  Alamat Domisili
+                </Label>
+                <Input
+                  {...form.register("actual_address")}
+                  type="text"
+                  id="actual_address"
+                  placeholder="Alamat domisili"
+                  className={inputClassName}
+                  disabled={loadingupdate}
+                />
+                <FieldError message={form.formState.errors.actual_address?.message} />
+              </Field>
+
+
+
+                 <Field className="gap-2 ">
+                <Label
+                  htmlFor="ktp_address"
+                  className={labelClassName}
+                >
+                  Alamat Sesuai KTP
+                </Label>
+                <Input
+                  {...form.register("ktp_address")}
+                  type="text"
+                  id="ktp_address"
+                  placeholder="Alamat sesuai KTP"
+                  className={inputClassName}
+                  disabled={loadingupdate}
+                />
+                <FieldError message={form.formState.errors.ktp_address?.message} />
+              </Field>
+
+
+              
+              <Field className="gap-2 ">
+                <Label
+                  htmlFor="emergency_contact"
+                  className={labelClassName}
+                >
+                  Kontak Darurat
+                </Label>
+                <Input
+                  {...form.register("emergency_contact")}
+                  type="text"
+                  id="emergency_contact"
+                  placeholder="Kontak darurat"
+                  className={inputClassName}
+                  disabled={loadingupdate}
+                />
+                <FieldError message={form.formState.errors.emergency_contact?.message} />
+              </Field>
+
+            
+
               <Field className="gap-2">
-                <Label htmlFor="status" className={labelClassName}>
+                <Label
+                  htmlFor="status"
+                  className={labelClassName}
+                >
                   Status <span className="text-[#B3261E]">*</span>
                 </Label>
                 <select
@@ -199,7 +299,10 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               </Field>
 
               <Field className="gap-2">
-                <FieldLabel htmlFor="picture" className={labelClassName}>
+                <FieldLabel
+                  htmlFor="picture"
+                  className={labelClassName}
+                >
                   Foto
                 </FieldLabel>
                 <Controller
@@ -233,7 +336,11 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
             <div className="relative flex h-40 w-full items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-[#9DB2D3] bg-[#F9F7F7] sm:h-48">
               {previewImage ? (
                 <>
-                  <img src={previewImage} alt="Preview" className="h-full w-full object-cover" />
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
                   <button
                     type="button"
                     onClick={handleRemoveImage}

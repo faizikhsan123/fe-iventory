@@ -8,6 +8,11 @@ export type employes = {
   file : string
   division: Division;
   position: Position;
+  ktp_address: string;
+  actual_address: string;
+  emergency_contact: string;
+
+  
   status: Status;
   given_items_count: number;
   items?: {
