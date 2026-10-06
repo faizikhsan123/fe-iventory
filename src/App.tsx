@@ -16,6 +16,7 @@ import LaporanPage from "./pages/Laporan";
 import DashboardPage from "./pages/Dashboard";
 import DetailBarang from "./components/items/DetailItems";
 import DetailKaryawan from "./components/employes/DetailEmployes";
+import GroupPages from "./pages/Group";
 
 function App() {
   return (
@@ -85,6 +86,11 @@ function App() {
           <Route
             path="/dashboard"
             element={<DashboardPage />}
+          />
+
+          <Route
+            path="/groups"
+            element={<GroupPages />}
           />
 
           <Route path="/employes/:id" element={<DetailKaryawan />} />

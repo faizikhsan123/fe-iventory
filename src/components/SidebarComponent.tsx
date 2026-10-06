@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   Shield,
+  Users,
   UserStar,
   X,
   type LucideIcon,
@@ -38,6 +39,7 @@ const mainMenu: MenuItem[] = [
   { to: "/items", label: "Master Barang", icon: BoxIcon, also: ["/create-items", "/update-items"] },
   { to: "/supplier", label: "Master Supplier", icon: BookUser },
   { to: "/employes", label: "Master Karyawan", icon: UserStar },
+  { to: "/groups", label: "Master Groups", icon: Users },
 ];
 
 const trxMenu: MenuItem[] = [
