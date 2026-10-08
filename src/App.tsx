@@ -16,7 +16,10 @@ import LaporanPage from "./pages/Laporan";
 import DashboardPage from "./pages/Dashboard";
 import DetailBarang from "./components/items/DetailItems";
 import DetailKaryawan from "./components/employes/DetailEmployes";
+
+import TrainingPages from "./pages/TrainingPages";
 import GroupPages from "./pages/Group";
+import TrainingDetailPages from "./components/Trainings/TrainingDetailPages";
 
 function App() {
   return (
@@ -93,7 +96,13 @@ function App() {
             element={<GroupPages />}
           />
 
+          <Route
+            path="/trainings"
+            element={<TrainingPages />}
+          />
+
           <Route path="/employes/:id" element={<DetailKaryawan />} />
+          <Route path="/trainings/:id" element={<TrainingDetailPages />} />
         </Route>
       </Route>
 

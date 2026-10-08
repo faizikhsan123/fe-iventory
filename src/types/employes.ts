@@ -11,8 +11,6 @@ export type employes = {
   ktp_address: string;
   actual_address: string;
   emergency_contact: string;
-
-  
   status: Status;
   given_items_count: number;
   items?: {
@@ -31,4 +29,13 @@ export type employes = {
     created_at?: string;
     updated_at?: string;
   };
+  
 };
+
+  // export interface EmployeTraining {
+  //   id: number;
+  //   id_training: string;
+  //   name_training: string;
+  //   division_training: string;
+  //   file: string | null; // path PDF
+  // }

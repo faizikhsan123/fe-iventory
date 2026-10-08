@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   Shield,
+  Train,
   Users,
   UserStar,
   X,
@@ -40,6 +41,7 @@ const mainMenu: MenuItem[] = [
   { to: "/supplier", label: "Master Supplier", icon: BookUser },
   { to: "/employes", label: "Master Karyawan", icon: UserStar },
   { to: "/groups", label: "Master Groups", icon: Users },
+  { to: "/trainings", label: "Master Training", icon: Train },
 ];
 
 const trxMenu: MenuItem[] = [

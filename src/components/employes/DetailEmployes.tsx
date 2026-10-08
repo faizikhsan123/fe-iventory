@@ -188,7 +188,7 @@ function TabelRiwayatDiberikan({ data }: { data: RiwayatDiberikanItem[] }) {
             <div className="mt-2 flex items-start justify-between gap-3 text-xs">
               <span className="min-w-0 break-words text-[#50688C]">{row.note || "-"}</span>
               <span className="shrink-0 text-[#50688C]">{formatTanggalIndo(row.date)}</span>
-            </div>
+            </div>z
           </li>
         ))}
       </ul>
