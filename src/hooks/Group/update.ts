@@ -12,8 +12,6 @@ const UpdateGroupsHooks = () => {
     try {
       await AxiosInstance.put(`/groups/${id}`, {
         name_group: data.group_name,
-        start_time: data.start_time,
-        end_time: data.end_time,
         employes_ids: data.employes_ids,
       });
       return true;

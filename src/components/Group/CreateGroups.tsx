@@ -49,8 +49,8 @@ const initials = (name?: string | null) => (name ? name.trim().slice(0, 2).toUpp
 
 const emptyValues: GroupsForm = {
   group_name: "",
-  start_time: "",
-  end_time: "",
+  // start_time: "",
+  // end_time: "",
   employes_ids: [],
 };
 
@@ -131,7 +131,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
                   <FieldError message={form.formState.errors.group_name?.message} />
                 </Field>
 
-                <Field className="gap-2">
+                {/* <Field className="gap-2">
                   <Label htmlFor="start_time" className={labelClassName}>
                     Waktu Mulai <span className="text-[#B3261E]">*</span>
                   </Label>
@@ -157,7 +157,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
                     disabled={loadingCreate}
                   />
                   <FieldError message={form.formState.errors.end_time?.message} />
-                </Field>
+                </Field> */}
               </FieldGroup>
             </section>
 

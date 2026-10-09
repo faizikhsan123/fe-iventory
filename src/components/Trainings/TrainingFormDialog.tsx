@@ -40,7 +40,7 @@ const emptyValues: TrainingForm = {
   id_training: "",
   division_training: "Gas Analyzer",
   name_training: "",
-  created_by: "",
+  by: "",
 //   date: "",
 };
 
@@ -68,7 +68,7 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
             id_training: training.id_training,
             division_training: training.division_training,
             name_training: training.name_training,
-            created_by: training.created_by,
+            by: training.by,
             // date: training.date_raw,
           }
         : emptyValues,
@@ -153,17 +153,17 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
               </Field>
 
               <Field className="gap-2">
-                <Label htmlFor="created_by" className={labelClassName}>
-                  Dibuat Oleh <span className="text-[#B3261E]">*</span>
+                <Label htmlFor="by" className={labelClassName}>
+                  By <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
-                  {...form.register("created_by")}
-                  id="created_by"
+                  {...form.register("by")}
+                  id="by"
                   placeholder="Nama pembuat"
                   className={inputClassName}
                   disabled={loading}
                 />
-                <FieldError message={form.formState.errors.created_by?.message} />
+                <FieldError message={form.formState.errors.by?.message} />
               </Field>
 {/* 
               <Field className="gap-2">

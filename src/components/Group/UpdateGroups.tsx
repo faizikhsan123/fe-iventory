@@ -39,8 +39,6 @@ const FieldError = ({ message }: { message?: string }) =>
 
 const emptyValues: GroupsForm = {
   group_name: "",
-  start_time: "",
-  end_time: "",
   employes_ids: [],
 };
 
@@ -67,8 +65,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
       if (!g) return;
       form.reset({
         group_name: g.group_name,
-        start_time: g.start_time.slice(0, 5), // "07:00:00" -> "07:00"
-        end_time: g.end_time.slice(0, 5),
+      
         employes_ids: (g.employees ?? []).map((e) => e.id),
       });
     });
@@ -137,7 +134,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
                 <FieldError message={form.formState.errors.group_name?.message} />
               </Field>
 
-              <Field className="gap-2">
+              {/* <Field className="gap-2">
                 <Label htmlFor="start_time" className={labelClassName}>
                   Waktu Mulai <span className="text-[#B3261E]">*</span>
                 </Label>
@@ -149,9 +146,9 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
                   disabled={busy}
                 />
                 <FieldError message={form.formState.errors.start_time?.message} />
-              </Field>
+              </Field> */}
 
-              <Field className="gap-2">
+              {/* <Field className="gap-2">
                 <Label htmlFor="end_time" className={labelClassName}>
                   Waktu Selesai <span className="text-[#B3261E]">*</span>
                 </Label>
@@ -163,8 +160,8 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
                   disabled={busy}
                 />
                 <FieldError message={form.formState.errors.end_time?.message} />
-              </Field>
-            </FieldGroup>
+              </Field> */}
+            </FieldGroup> 
 
             <FieldSet>
               <FieldLegend variant="label">Pilih Karyawan yang akan terlibat</FieldLegend>

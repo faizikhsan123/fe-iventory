@@ -1,4 +1,4 @@
-import { AlertCircle, Clock, Search, SquarePen, Trash2, Users, X } from "lucide-react";
+import { AlertCircle,  Search, SquarePen, Trash2, Users, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -17,16 +17,16 @@ const searchClass =
 const actionBtnClass =
   "h-10 w-10 rounded-lg border border-[#BFCCE3] bg-white p-0 text-[#112D4E] hover:bg-[#DBE2EF] disabled:opacity-50";
 
-const formatTime = (t?: string | null) => (t ? t.slice(0, 5) : "-");
+// const formatTime = (t?: string | null) => (t ? t.slice(0, 5) : "-");
 
-function BadgeJam({ start, end }: { start: string; end: string }) {
-  return (
-    <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-[#DBE2EF] px-2.5 py-0.5 text-xs font-semibold text-[#112D4E] ring-1 ring-inset ring-[#BFCCE3]">
-      <Clock size={12} className="text-[#3F72AF]" />
-      {formatTime(start)} - {formatTime(end)}
-    </span>
-  );
-}
+// function BadgeJam({ start, end }: { start: string; end: string }) {
+//   return (
+//     <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-[#DBE2EF] px-2.5 py-0.5 text-xs font-semibold text-[#112D4E] ring-1 ring-inset ring-[#BFCCE3]">
+//       <Clock size={12} className="text-[#3F72AF]" />
+//       {formatTime(start)} - {formatTime(end)}
+//     </span>
+//   );
+// }
 
 function BadgeAnggota({ count }: { count: number }) {
   return (
@@ -213,7 +213,7 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
                         <p className="text-xs font-medium text-[#50688C]">#{index + 1}</p>
                         <p className="break-words text-sm font-bold text-[#112D4E]">{group.group_name}</p>
                       </div>
-                      <BadgeJam start={group.start_time} end={group.end_time} />
+                      {/* <BadgeJam start={group.start_time} end={group.end_time} /> */}
                     </div>
 
                     <div className="mt-3 rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-3">
@@ -236,9 +236,9 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
                   <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                     <TableHead className="w-12 px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
                     <TableHead className="px-4 font-bold text-[#112D4E]">Nama Group</TableHead>
-                    <TableHead className="px-4 font-bold text-[#112D4E]">Jam Kerja</TableHead>
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Jumlah</TableHead>
+                    {/* <TableHead className="px-4 font-bold text-[#112D4E]">Jam Kerja</TableHead> */}
                     <TableHead className="px-4 font-bold text-[#112D4E]">Anggota</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Jumlah</TableHead>
                     {hasActions && (
                       <TableHead className="px-4 text-center font-bold text-[#112D4E]">Aksi</TableHead>
                     )}
@@ -255,13 +255,13 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
                       >
                         <TableCell className="px-4 py-4 text-[#50688C] lg:px-6">{index + 1}</TableCell>
                         <TableCell className="px-4 py-4 font-medium">{group.group_name}</TableCell>
-                        <TableCell className="px-4 py-4">
+                        {/* <TableCell className="px-4 py-4">
                           <BadgeJam start={group.start_time} end={group.end_time} />
-                        </TableCell>
-                        <TableCell className="px-4 py-4 text-center font-bold">{names.length}</TableCell>
+                        </TableCell> */}
                         <TableCell className="px-4 py-4">
                           <ListAnggota names={names} />
                         </TableCell>
+                        <TableCell className="px-4 py-4 text-center font-bold">{names.length}</TableCell>
                         {hasActions && (
                           <TableCell className="px-4 py-4">
                             <div className="flex justify-center">{renderActions(group.id, group.group_name)}</div>

@@ -78,7 +78,7 @@ const TrainingDetailPages = () => {
               <InfoItem label="ID Training" value={training?.id_training} />
               <InfoItem label="Nama" value={training?.name_training} />
               <InfoItem label="Divisi" value={training?.division_training} />
-              <InfoItem label="Dibuat Oleh" value={training?.created_by} />
+              <InfoItem label="By" value={training?.by} />
             </div>
           )}
         </div>

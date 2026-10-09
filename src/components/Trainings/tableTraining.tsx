@@ -26,7 +26,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
     const k = q.trim().toLowerCase();
     if (!k) return data;
     return data.filter((t) =>
-      `${t.id_training} ${t.name_training} ${t.division_training} ${t.created_by}`.toLowerCase().includes(k),
+      `${t.id_training} ${t.name_training} ${t.division_training} ${t.by}`.toLowerCase().includes(k),
     );
   }, [data, q]);
 
@@ -62,7 +62,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
               <TableHead className="font-bold text-[#112D4E]">ID Training</TableHead>
               <TableHead className="font-bold text-[#112D4E]">Nama Training</TableHead>
               <TableHead className="font-bold text-[#112D4E]">Divisi</TableHead>
-              <TableHead className="font-bold text-[#112D4E]">Dibuat Oleh</TableHead>
+              <TableHead className="font-bold text-[#112D4E]">By</TableHead>
               {/* <TableHead className="font-bold text-[#112D4E]">Tanggal</TableHead> */}
               <TableHead className="text-right font-bold text-[#112D4E]">Aksi</TableHead>
             </TableRow>
@@ -90,7 +90,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
                       {t.division_training}
                     </span>
                   </TableCell>
-                  <TableCell className="text-[#50688C]">{t.created_by}</TableCell>
+                  <TableCell className="text-[#50688C]">{t.by}</TableCell>
                   {/* <TableCell className="whitespace-nowrap text-[#50688C]">{t.date}</TableCell> */}
                   <TableCell>
                     <div className="flex justify-end gap-1">

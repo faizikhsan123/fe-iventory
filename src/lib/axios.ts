@@ -1,11 +1,11 @@
     import axios from "axios";
 
     export const  AxiosInstance = axios.create({
-        baseURL: "http://127.0.0.1:8000/api/"
+        baseURL: "http://127.0.0.1:8001/api/"
     })
 
     // endpoint storage link laravel
-    export const STORAGE_URL = "http://127.0.0.1:8000/storage/"
+    export const STORAGE_URL = "http://127.0.0.1:8001/storage/"
 
     // ini agar token bisa dikirim ke backend setiap kali melakukan request
     AxiosInstance.interceptors.request.use((config) => {

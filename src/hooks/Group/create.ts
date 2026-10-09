@@ -14,8 +14,6 @@ const CreateGroupsHooks = () => {
     try {
       await AxiosInstance.post("/groups", {
         name_group: data.group_name,
-        start_time: data.start_time,
-        end_time: data.end_time,
         employes_ids: data.employes_ids,
       });
       return true;
