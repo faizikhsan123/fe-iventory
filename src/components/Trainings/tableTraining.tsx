@@ -6,6 +6,8 @@ import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import UseGetTrainings from "@/hooks/Training/get";
 import type { Training } from "@/types/Training";
+import { DIVISIONS } from "@/lib/divisions";
+import { selectClass } from "@/lib/formStyles";
 
 type Props = {
   refreshKey: number;
@@ -17,6 +19,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
   const navigate = useNavigate();
   const { data, loading, error, getTrainings } = UseGetTrainings();
   const [q, setQ] = useState("");
+  const [division, setDivision] = useState("all");
 
   useEffect(() => {
     getTrainings();
@@ -24,15 +27,17 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
 
   const filtered = useMemo(() => {
     const k = q.trim().toLowerCase();
-    if (!k) return data;
-    return data.filter((t) =>
+    const byDivision = division === "all" ? data : data.filter((t) => t.division_training === division);
+    if (!k) return byDivision;
+    return byDivision.filter((t) =>
       `${t.id_training} ${t.name_training} ${t.division_training} ${t.by}`.toLowerCase().includes(k),
     );
-  }, [data, q]);
+  }, [data, q, division]);
 
   return (
     <div className="space-y-3 p-4 sm:p-6">
-      <div className="relative max-w-sm">
+      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="relative w-full sm:max-w-sm">
         <Search
           className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#3F72AF]"
           size={15}
@@ -43,6 +48,20 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
           placeholder="Cari training..."
           className="h-11 w-full rounded-lg border border-[#BFCCE3] bg-white pl-9 text-sm text-[#112D4E] outline-none focus-visible:border-[#3F72AF] focus-visible:ring-4 focus-visible:ring-[#DBE2EF]"
         />
+      </div>
+        <select
+          className={`${selectClass} sm:w-48`}
+          value={division}
+          aria-label="Filter divisi"
+          onChange={(e) => setDivision(e.target.value)}
+        >
+          <option value="all">Semua Divisi</option>
+          {DIVISIONS.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
       </div>
 
       {error && (

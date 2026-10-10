@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { DIVISIONS } from "@/lib/divisions";
+import { cpdSchema, ppeSchemaShape } from "@/schemas/cpd";
 
 const employeeBaseSchema = {
   id_number: z.string().min(4, "ID Number terlalu pendek").max(20, "ID Number terlalu panjang"),
@@ -15,7 +17,7 @@ const employeeBaseSchema = {
     .optional()
     .nullable(),
 
-  division: z.enum(["I&C-PMR", "I&C-ER", "Gas Analyzer"], {
+  division: z.enum(DIVISIONS, {
     message: "Division wajib dipilih",
   }),
 
@@ -48,11 +50,16 @@ const employeeBaseSchema = {
     .refine((value) => value === "" || value.length >= 10, "Kontak darurat minimal 10 karakter")
     .optional()
     .nullable(),
+
+  ...ppeSchemaShape,
 };
 
 export const employeeCreateSchema = z
   .object({
     ...employeeBaseSchema,
+
+    // data CPD (opsional), dikirim sebagai cpd[...]
+    cpd: cpdSchema.optional(),
 
     // wajib saat tambah karyawan
     contract_start: z.string().min(1, "Contract When Joined wajib diisi"),

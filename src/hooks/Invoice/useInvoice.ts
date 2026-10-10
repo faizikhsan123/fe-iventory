@@ -3,6 +3,7 @@ import { AxiosInstance } from "@/lib/axios";
 import { getErrorMessage } from "@/lib/errors";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import type { PageMeta } from "@/components/common/Pagination";
+import type { SortDirection } from "@/lib/invoice";
 
 export type InvoiceLog = {
   id: number;
@@ -15,7 +16,9 @@ export type InvoiceLog = {
 export type Invoice = {
   id: number;
   invoice_number: string | null;
-  title: string;
+  service_name: string;
+  service_date: string | null;
+  service_description: string | null;
   division: string;
   client: string | null;
   amount: number | null;
@@ -32,7 +35,9 @@ export type InvoiceSummary = {
 
 export type InvoiceForm = {
   invoice_number: string;
-  title: string;
+  service_name: string;
+  service_date: string;
+  service_description: string;
   division: string;
   client: string;
   amount: string;
@@ -40,7 +45,13 @@ export type InvoiceForm = {
   notes: string;
 };
 
-export type InvoiceFilters = { search: string; division: string; status: string; page: number };
+export type InvoiceFilters = {
+  search: string;
+  division: string;
+  status: string;
+  sort_status: SortDirection | "";
+  page: number;
+};
 
 // ---------- daftar ----------
 export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
@@ -52,6 +63,7 @@ export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
           search: filters.search || undefined,
           division: filters.division || undefined,
           status: filters.status || undefined,
+          sort_status: filters.sort_status || undefined,
           page: filters.page,
         },
         signal,
@@ -62,7 +74,7 @@ export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
         summary: res.data.summary as InvoiceSummary,
       };
     },
-    [filters.search, filters.division, filters.status, filters.page, refreshKey],
+    [filters.search, filters.division, filters.status, filters.sort_status, filters.page, refreshKey],
     { errorMessage: "Gagal mengambil data invoice" },
   );
 
@@ -96,7 +108,9 @@ export const useInvoiceActions = () => {
 
   const toPayload = (f: InvoiceForm) => ({
     invoice_number: f.invoice_number.trim() || null,
-    title: f.title.trim(),
+    service_name: f.service_name.trim(),
+    service_date: f.service_date || null,
+    service_description: f.service_description.trim() || null,
     division: f.division,
     client: f.client.trim() || null,
     amount: f.amount === "" ? null : Number(f.amount),

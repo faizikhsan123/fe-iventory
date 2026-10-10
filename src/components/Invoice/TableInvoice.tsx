@@ -1,13 +1,13 @@
 import { memo, useState } from "react";
-import { Eye, Receipt, SquarePen, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Receipt, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import SearchBar from "../common/SearchBar";
 import Pagination from "../common/Pagination";
 import { ListEmpty, ListError, ListSkeleton } from "../common/ListStates";
 import InvoiceStepper from "./InvoiceStepper";
-import { useInvoiceList, type Invoice } from "@/hooks/Invoice/useInvoice";
-import { INVOICE_DIVISIONS, INVOICE_STATUSES, rupiah, statusBadgeClass, statusLabel } from "@/lib/invoice";
+import { useInvoiceList, type Invoice, type InvoiceFilters } from "@/hooks/Invoice/useInvoice";
+import { INVOICE_DIVISIONS, INVOICE_STATUSES, rupiah, statusBadgeClass, statusLabel, type SortDirection } from "@/lib/invoice";
 import { formatTanggalIndo } from "@/lib/tanggal";
 import { dangerIconButtonClass, iconButtonClass } from "@/lib/formStyles";
 
@@ -17,6 +17,18 @@ type Props = {
   onEdit?: (invoice: Invoice) => void;
   onDelete?: (invoice: Invoice) => void;
 };
+
+// siklus klik header: urut naik -> turun -> tanpa urutan
+const nextSort = (s: SortDirection | ""): SortDirection | "" => (s === "" ? "asc" : s === "asc" ? "desc" : "");
+
+function SortIcon({ sort }: { sort: SortDirection | "" }) {
+  if (sort === "asc") return <ArrowUp size={14} aria-hidden="true" />;
+  if (sort === "desc") return <ArrowDown size={14} aria-hidden="true" />;
+  return <ArrowUpDown size={14} className="opacity-50" aria-hidden="true" />;
+}
+
+const sortLabel = (s: SortDirection | "") =>
+  s === "asc" ? "Urut status: tahap awal dulu" : s === "desc" ? "Urut status: tahap akhir dulu" : "Urutkan berdasarkan status";
 
 const th = "px-4 text-center font-bold text-[#112D4E]";
 const td = "px-4 py-4 text-center align-middle";
@@ -38,7 +50,7 @@ function Actions({ invoice, onDetail, onEdit, onDelete }: { invoice: Invoice } &
         size="icon"
         variant="outline"
         className={iconButtonClass}
-        aria-label={`Detail ${invoice.title}`}
+        aria-label={`Detail ${invoice.service_name}`}
         onClick={() => onDetail(invoice)}
       >
         <Eye size={16} />
@@ -48,7 +60,7 @@ function Actions({ invoice, onDetail, onEdit, onDelete }: { invoice: Invoice } &
           size="icon"
           variant="outline"
           className={iconButtonClass}
-          aria-label={`Edit ${invoice.title}`}
+          aria-label={`Edit ${invoice.service_name}`}
           onClick={() => onEdit(invoice)}
         >
           <SquarePen size={16} />
@@ -59,7 +71,7 @@ function Actions({ invoice, onDetail, onEdit, onDelete }: { invoice: Invoice } &
           size="icon"
           variant="outline"
           className={dangerIconButtonClass}
-          aria-label={`Hapus ${invoice.title}`}
+          aria-label={`Hapus ${invoice.service_name}`}
           onClick={() => onDelete(invoice)}
         >
           <Trash2 size={16} className="text-[#B3261E]" />
@@ -80,7 +92,11 @@ const InvoiceRow = memo(function InvoiceRow({
     <TableRow className="border-[#DBE2EF] text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
       <TableCell className={`${td} text-[#50688C]`}>{number}</TableCell>
       <TableCell className={td}>{inv.invoice_number || "-"}</TableCell>
-      <TableCell className={`${td} max-w-60 whitespace-normal break-words font-medium`}>{inv.title}</TableCell>
+      <TableCell className={`${td} max-w-60 whitespace-normal break-words font-medium`}>{inv.service_name}
+        {inv.service_date && (
+          <span className="block text-xs font-normal text-[#50688C]">{formatTanggalIndo(inv.service_date)}</span>
+        )}
+      </TableCell>
       <TableCell className={td}>{inv.division}</TableCell>
       <TableCell className={td}>{inv.client || "-"}</TableCell>
       <TableCell className={`${td} whitespace-nowrap`}>{rupiah(inv.amount)}</TableCell>
@@ -101,7 +117,7 @@ const InvoiceRow = memo(function InvoiceRow({
 });
 
 const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => {
-  const [filters, setFilters] = useState({ search: "", division: "", status: "", page: 1 });
+  const [filters, setFilters] = useState<InvoiceFilters>({ search: "", division: "", status: "", sort_status: "", page: 1 });
   const { data, meta, summary, loading, error, isFetching } = useInvoiceList(filters, refreshKey);
   const offset = ((meta?.current_page ?? 1) - 1) * (meta?.per_page ?? 10);
 
@@ -111,7 +127,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
   return (
     <div className="space-y-4">
       {/* Ringkasan per tahapan (klik untuk filter) */}
-      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {INVOICE_STATUSES.map((s) => {
           const active = filters.status === s.value;
           return (
@@ -155,6 +171,14 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
             ))}
           </div>
 
+          <button
+            type="button"
+            onClick={() => patch({ sort_status: nextSort(filters.sort_status) })}
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#BFCCE3] bg-white px-4 text-sm font-semibold text-[#112D4E] hover:bg-[#F9F7F7] md:hidden"
+          >
+            <SortIcon sort={filters.sort_status} /> {sortLabel(filters.sort_status)}
+          </button>
+
           <SearchBar
             placeholder="Cari no. invoice, jasa, atau client..."
             busy={isFetching}
@@ -181,7 +205,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                 <li key={inv.id} className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="break-words text-sm font-bold text-[#112D4E]">{inv.title}</p>
+                      <p className="break-words text-sm font-bold text-[#112D4E]">{inv.service_name}</p>
                       <p className="text-xs text-[#50688C]">
                         {inv.division}
                         {inv.invoice_number ? ` · ${inv.invoice_number}` : ""}
@@ -195,7 +219,8 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                   </div>
                   <p className="mt-2 text-xs text-[#50688C]">
                     {rupiah(inv.amount)}
-                    {inv.invoice_date ? ` · ${formatTanggalIndo(inv.invoice_date)}` : ""}
+                    {inv.service_date ? ` · Jasa ${formatTanggalIndo(inv.service_date)}` : ""}
+                    {inv.invoice_date ? ` · Submit ${formatTanggalIndo(inv.invoice_date)}` : ""}
                   </p>
                   <div className="mt-3 flex">
                     <Actions invoice={inv} onDetail={onDetail} onEdit={onEdit} onDelete={onDelete} />
@@ -215,8 +240,22 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                     <TableHead className={th}>Divisi</TableHead>
                     <TableHead className={th}>Client</TableHead>
                     <TableHead className={th}>Nilai</TableHead>
-                    <TableHead className={th}>Tanggal</TableHead>
-                    <TableHead className={th}>Progress</TableHead>
+                    <TableHead className={th}>Tgl Invoice Submit</TableHead>
+                    <TableHead
+                      className={th}
+                      aria-sort={
+                        filters.sort_status === "asc" ? "ascending" : filters.sort_status === "desc" ? "descending" : "none"
+                      }
+                    >
+                      <button
+                        type="button"
+                        onClick={() => patch({ sort_status: nextSort(filters.sort_status) })}
+                        title={sortLabel(filters.sort_status)}
+                        className="inline-flex items-center gap-1.5 rounded px-1 font-bold hover:text-[#3F72AF] focus-visible:outline-2 focus-visible:outline-[#3F72AF]"
+                      >
+                        Status <SortIcon sort={filters.sort_status} />
+                      </button>
+                    </TableHead>
                     <TableHead className={th}>Aksi</TableHead>
                   </TableRow>
                 </TableHeader>

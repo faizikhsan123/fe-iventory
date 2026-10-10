@@ -15,6 +15,7 @@ export type Mcu = {
   mcu_name: string | null;
   mcu_date: string;
   document: string | null;
+  document_2?: string | null;
   summary: string | null;
   allergies: string | null;
   next_mcu_date: string | null;
@@ -30,7 +31,13 @@ export type McuForm = {
   allergies: string;
   summary: string;
   document: File | null;
+  document_2: File | null;
+  remove_document: boolean;
+  remove_document_2: boolean;
 };
+
+export const MCU_DOC_MAX_BYTES = 5 * 1024 * 1024;
+export const MCU_DOC_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 
 export type EmployeeOption = { id: number; id_number: string; name: string };
 
@@ -68,6 +75,10 @@ export const useMcuActions = () => {
       fd.append("allergies", form.allergies);
       fd.append("summary", form.summary);
       if (form.document) fd.append("document", form.document);
+      if (form.document_2) fd.append("document_2", form.document_2);
+      // hapus file lama (hanya bila tidak sedang diganti file baru); boolean dikirim sebagai 1
+      if (id && form.remove_document && !form.document) fd.append("remove_document", "1");
+      if (id && form.remove_document_2 && !form.document_2) fd.append("remove_document_2", "1");
 
       const config = { headers: { "Content-Type": "multipart/form-data" } };
       if (id) {

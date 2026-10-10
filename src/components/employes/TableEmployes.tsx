@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertCircle, ChevronLeft, ChevronRight, Eye, Search, SquarePen, Trash2, X } from "lucide-react";
+import { DIVISIONS } from "@/lib/divisions";
 import useGetEmployes from "@/hooks/employes/getEmployes";
 import { useDeleteEmployes } from "@/hooks/employes/deleteEmployes";
 import UpdateEmployes from "./UpdateEmployes";
@@ -157,15 +158,6 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
     </div>
   );
 
-  const renderItemCount = (emp: employes) => {
-    const itemCount = Number(emp.given_items_count);
-    return itemCount < 1 ? (
-      <span className="text-[#7B8FAE]">—</span>
-    ) : (
-      <span className="font-bold text-[#112D4E]">{itemCount} item</span>
-    );
-  };
-
   return (
     <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
       {/* ================= TOOLBAR ================= */}
@@ -219,9 +211,11 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
             }}
           >
             <option value="all">Semua Divisi</option>
-            <option value="Gas Analyzer">Gas Analyzer</option>
-            <option value="I&C-PMR">I&C - PMR</option>
-            <option value="I&C-ER">I&C - ER</option>
+            {DIVISIONS.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
           </select>
 
           <select
@@ -304,10 +298,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                   </div>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] px-3 py-2">
-                  <div className="text-xs text-[#50688C]">
-                    Barang dipinjam: <span className="text-sm">{renderItemCount(emp)}</span>
-                  </div>
+                <div className="mt-3 flex items-center justify-end rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] px-3 py-2">
                   {renderAksi(emp)}
                 </div>
               </li>
@@ -316,7 +307,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
 
           {/* Tablet & desktop: tabel */}
           <div className="hidden w-full overflow-x-auto md:block">
-            <Table className="min-w-[860px]">
+            <Table className="min-w-[720px]">
               <TableHeader>
                 <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
@@ -324,7 +315,6 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Divisi</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Posisi</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Status</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Barang Diberikan</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
@@ -362,8 +352,6 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                         {emp.status}
                       </span>
                     </TableCell>
-
-                    <TableCell className="px-4 py-4 lg:px-6">{renderItemCount(emp)}</TableCell>
 
                     <TableCell className="px-4 py-4 lg:px-6">{renderAksi(emp)}</TableCell>
                   </TableRow>

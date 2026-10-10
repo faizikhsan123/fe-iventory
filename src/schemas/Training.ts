@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-export const DIVISIONS = ["Gas Analyzer", "I&C-PMR", "I&C-ER", "Safety"] as const;
+import { DIVISIONS } from "@/lib/divisions";
+
+export { DIVISIONS };
 
 export const TrainingSchema = z.object({
   id_training: z.string().min(1, "ID training wajib diisi").max(255, "ID terlalu panjang"),

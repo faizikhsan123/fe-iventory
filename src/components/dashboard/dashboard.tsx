@@ -493,7 +493,7 @@ function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
 }
 
 // ============================================================
-// KONTRAK SEGERA BERAKHIR (<= 14 hari, termasuk yang sudah lewat)
+// KONTRAK SEGERA BERAKHIR (<= 30 hari, termasuk yang sudah lewat)
 // ============================================================
 
 interface KontrakBerakhirItem {
@@ -515,7 +515,9 @@ function KontrakBerakhirCard({ data }: { data: KontrakBerakhirItem[] }) {
       <div className="flex items-center justify-between gap-3 border-b border-[#F2B8B5] bg-[#FDECEA] px-4 py-3.5 sm:px-6 sm:py-4">
         <div className="flex items-center gap-2.5">
           <CalendarClock className="h-5 w-5 text-[#B3261E]" />
-          <h3 className="font-bold text-[#B3261E]">Kontrak Segera Berakhir</h3>
+          <h3 className="font-bold text-[#B3261E]">
+            Kontrak Segera Berakhir <span className="text-xs font-semibold">(30 hari)</span>
+          </h3>
           <span className="rounded-full bg-[#B3261E] px-2 py-0.5 text-xs font-bold text-white">{data.length}</span>
         </div>
         <Link to="/contracts" className="text-sm font-semibold text-[#B3261E] underline-offset-2 hover:underline">
@@ -550,7 +552,7 @@ function KontrakBerakhirCard({ data }: { data: KontrakBerakhirItem[] }) {
 }
 
 // ============================================================
-// MCU SEGERA JATUH TEMPO (<= 14 hari, termasuk yang sudah lewat)
+// MCU SEGERA JATUH TEMPO (<= 30 hari, termasuk yang sudah lewat)
 // ============================================================
 
 interface McuBerikutnyaItem {
@@ -574,7 +576,9 @@ function McuBerikutnyaCard({ data }: { data: McuBerikutnyaItem[] }) {
       <div className="flex items-center justify-between gap-3 border-b border-[#F2B8B5] bg-[#FDECEA] px-4 py-3.5 sm:px-6 sm:py-4">
         <div className="flex items-center gap-2.5">
           <Stethoscope className="h-5 w-5 text-[#B3261E]" />
-          <h3 className="font-bold text-[#B3261E]">MCU Segera Jatuh Tempo</h3>
+          <h3 className="font-bold text-[#B3261E]">
+            MCU Segera Jatuh Tempo <span className="text-xs font-semibold">(30 hari)</span>
+          </h3>
           <span className="rounded-full bg-[#B3261E] px-2 py-0.5 text-xs font-bold text-white">{data.length}</span>
         </div>
         <Link to="/mcu" className="text-sm font-semibold text-[#B3261E] underline-offset-2 hover:underline">

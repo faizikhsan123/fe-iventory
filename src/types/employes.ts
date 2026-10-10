@@ -1,4 +1,6 @@
-export type Division = "I&C-PMR" | "I&C-ER" | "Gas Analyzer";
+import type { Division } from "@/lib/divisions";
+
+export type { Division };
 
 export type Position = "Supervisor" | "Technician" | "Foreman";
 export type Status = "active" | "inactive";
@@ -18,7 +20,13 @@ export type employes = {
   left_at?: string | null;
   contract_renewals?: number;
   latest_performance?: number | null;
-  given_items_count: number;
+  // ukuran APD (bila API list menyertakannya)
+  ppe_shoes?: string | null;
+  ppe_coverall?: string | null;
+  ppe_wearpack?: string | null;
+  ppe_respirator?: string | null;
+  ppe_vest?: string | null;
+  ppe_gloves?: string | null;
   items?: {
     item_name: string;
     qty: number;

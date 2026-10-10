@@ -1,5 +1,6 @@
 import { AxiosInstance } from "@/lib/axios";
 import type { EmployeeEditForm } from "@/schemas/employes";
+import { PPE_FIELDS } from "@/schemas/cpd";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -33,6 +34,11 @@ const UseeditEmployes = () => {
       if (payload.ktp_address) formData.append("ktp_address", payload.ktp_address);
       if (payload.actual_address) formData.append("actual_address", payload.actual_address);
       if (payload.emergency_contact) formData.append("emergency_contact", payload.emergency_contact);
+      // ppe: undefined = tidak diubah (tidak dikirim), string kosong = dikosongkan
+      for (const { name } of PPE_FIELDS) {
+        const value = payload[name];
+        if (value !== undefined && value !== null) formData.append(name, value);
+      }
       formData.append("_method", "PATCH");
       // if (payload.brand) formData.append("brand", payload.brand);
       // if (payload.type) formData.append("type", payload.type);

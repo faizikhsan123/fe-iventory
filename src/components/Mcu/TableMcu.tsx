@@ -25,17 +25,24 @@ const fmt = (d: string | null) => (d ? formatTanggalIndo(d) : "-");
 // hanya MCU terbaru tiap karyawan yang jadwalnya dianggap aktif (penanda merah)
 const isDue = (m: Mcu) => m.is_latest !== false && isExpiring(m.next_mcu_date);
 
-function DocLink({ path }: { path: string | null }) {
-  if (!path) return <span className="text-[#7B8FAE]">-</span>;
+// Dua dokumen: tampilkan tiap link yang ada, "-" bila keduanya kosong
+function DocLinks({ mcu }: { mcu: Mcu }) {
+  const docs = [mcu.document, mcu.document_2].filter((d): d is string => Boolean(d));
+  if (docs.length === 0) return <span className="text-[#7B8FAE]">-</span>;
   return (
-    <a
-      href={`${STORAGE_URL}${path}`}
-      target="_blank"
-      rel="noreferrer"
-      className="inline-flex items-center gap-1 text-sm font-semibold text-[#3F72AF] underline-offset-2 hover:underline"
-    >
-      Lihat <ExternalLink size={13} />
-    </a>
+    <span className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+      {docs.map((d, i) => (
+        <a
+          key={d}
+          href={`${STORAGE_URL}${d}`}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 text-sm font-semibold text-[#3F72AF] underline-offset-2 hover:underline"
+        >
+          {docs.length > 1 ? `Dokumen ${i + 1}` : "Lihat"} <ExternalLink size={13} />
+        </a>
+      ))}
+    </span>
   );
 }
 
@@ -109,7 +116,7 @@ const McuRow = memo(function McuRow({
       <TableCell className={td}>{m.allergies || "-"}</TableCell>
       <TableCell className={`${td} max-w-64 whitespace-normal break-words text-sm`}>{m.summary || "-"}</TableCell>
       <TableCell className={td}>
-        <DocLink path={m.document} />
+        <DocLinks mcu={m} />
       </TableCell>
       <TableCell className={td}>
         <NextMcu mcu={m} />
@@ -176,7 +183,7 @@ const TableMcu = ({ refreshKey = 0, onEdit, onDelete }: Props) => {
                     MCU berikutnya: <NextMcu mcu={m} />
                   </p>
                   <p className="text-xs">
-                    Dokumen: <DocLink path={m.document} />
+                    Dokumen: <DocLinks mcu={m} />
                   </p>
                 </div>
                 {hasActions && (

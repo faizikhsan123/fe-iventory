@@ -36,7 +36,7 @@ const InvoicePage = () => {
     async (inv: Invoice) => {
       const ok = await Swal.fire({
         title: "Hapus invoice?",
-        text: `Invoice "${inv.title}" (${inv.division}) beserta riwayat statusnya akan dihapus.`,
+        text: `Invoice "${inv.service_name}" (${inv.division}) beserta riwayat statusnya akan dihapus.`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Hapus",
@@ -57,7 +57,7 @@ const InvoicePage = () => {
 
       <SambutanComponent
         paragraf1="Status Invoicing"
-        paragraf2="Pantau invoice jasa PMR, ER, Gas, dan Dryer sudah sampai tahap mana"
+        paragraf2="Pantau invoice jasa tiap divisi sudah sampai tahap mana"
         button={isAdmin ? "+ Tambah Invoice" : undefined}
         onclick={isAdmin ? openCreate : undefined}
       />

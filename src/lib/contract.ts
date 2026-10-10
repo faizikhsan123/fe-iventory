@@ -1,5 +1,5 @@
-// Aturan kontrak: berakhir <= 14 hari lagi (atau sudah lewat) ditandai merah di semua halaman
-export const EXPIRING_DAYS = 14;
+// Aturan kontrak: berakhir <= 30 hari lagi (atau sudah lewat) ditandai merah di semua halaman
+export const EXPIRING_DAYS = 30;
 
 // sisa hari sampai contract_end (YYYY-MM-DD); negatif = sudah lewat; null = tidak ada tanggal
 export const daysLeft = (end?: string | null): number | null => {

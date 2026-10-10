@@ -12,13 +12,15 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { employeeCreateSchema, type EmployeeCreateForm } from "@/schemas/employes";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { DIVISIONS } from "@/lib/divisions";
 import UseCreateEmployes from "@/hooks/employes/createEmployes";
 import { useState } from "react";
-import { AlertCircle, ImagePlus, Loader2, UserPlus, X } from "lucide-react";
+import { CpdFields, PpeFields, SectionTitle } from "./PpeCpdFields";
+import { AlertCircle, ChevronDown, ImagePlus, Loader2, UserPlus, X } from "lucide-react";
 
 /*
   Palet:
@@ -90,6 +92,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
           </div>
         </DialogHeader>
 
+        <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(handleButton)} className="flex min-h-0 flex-1 flex-col">
           {/* Isi form (scroll sendiri kalau layar pendek) */}
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-6">
@@ -177,9 +180,11 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                   {...form.register("division")}
                 >
                   <option value="">-- Pilih Divisi --</option>
-                  <option value="I&C-PMR">I&C-PMR</option>
-                  <option value="I&C-ER">I&C-ER</option>
-                  <option value="Gas Analyzer">Gas Analyzer</option>
+                  {DIVISIONS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
                 </select>
                 <FieldError message={form.formState.errors.division?.message} />
               </Field>
@@ -307,6 +312,20 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                 </FieldDescription>
                 <FieldError message={form.formState.errors.file?.message as string} />
               </Field>
+
+              <PpeFields disabled={loadingCreate} />
+
+              {/* CPD: opsional, dilipat supaya form tetap ringkas */}
+              <details className="group rounded-lg border border-[#BFCCE3] sm:col-span-2">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-4 py-2 text-sm font-bold text-[#112D4E] hover:bg-[#F9F7F7] [&::-webkit-details-marker]:hidden">
+                  Data CPD (opsional)
+                  <ChevronDown className="h-4 w-4 transition group-open:rotate-180" aria-hidden="true" />
+                </summary>
+                <div className="grid grid-cols-1 gap-4 border-t border-[#DBE2EF] p-4 sm:grid-cols-2">
+                  <SectionTitle>Data Pribadi dan Kontrak</SectionTitle>
+                  <CpdFields disabled={loadingCreate} />
+                </div>
+              </details>
             </FieldGroup>
 
             {/* Preview */}
@@ -375,6 +394,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
             </Button>
           </DialogFooter>
         </form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

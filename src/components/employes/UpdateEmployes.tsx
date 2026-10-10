@@ -12,13 +12,16 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { employes } from "@/types/employes";
 import { useEffect, useState } from "react";
+import { DIVISIONS } from "@/lib/divisions";
 import UseeditEmployes from "@/hooks/employes/editEmployes";
+import { PPE_FIELDS } from "@/schemas/cpd";
 import { employeeEditSchema, type EmployeeEditForm } from "@/schemas/employes";
+import { PpeFields } from "./PpeCpdFields";
 import { AlertCircle, ImagePlus, Loader2, UserCog, X } from "lucide-react";
 import { STORAGE_URL } from "@/lib/axios";
 
@@ -59,7 +62,11 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
 
   const onSubmit = async (data: EmployeeEditForm) => {
     if (!employes) return;
-    handleUpdate(employes.id, data, () => {
+    // APD yang tidak disentuh tidak dikirim, supaya nilai lama tidak terhapus bila API list tidak menyertakannya
+    const dirty = form.formState.dirtyFields;
+    const payload = { ...data };
+    for (const { name } of PPE_FIELDS) if (!dirty[name]) payload[name] = undefined;
+    handleUpdate(employes.id, payload, () => {
       form.reset();
       onOpenChange(false);
       onSuccess?.();
@@ -79,7 +86,6 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
     form.reset({
       id_number: employes.id_number,
       name: employes.user.name,
-      email: employes.user.email,
       division: employes.division,
       position: employes.position,
       status: employes.status,
@@ -89,6 +95,12 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
       ktp_address: employes.ktp_address,
       actual_address: employes.actual_address,
       emergency_contact: employes.emergency_contact,
+      ppe_shoes: employes.ppe_shoes ?? "",
+      ppe_coverall: employes.ppe_coverall ?? "",
+      ppe_wearpack: employes.ppe_wearpack ?? "",
+      ppe_respirator: employes.ppe_respirator ?? "",
+      ppe_vest: employes.ppe_vest ?? "",
+      ppe_gloves: employes.ppe_gloves ?? "",
       file: null,
     });
     setFileKey((k) => k + 1);
@@ -120,6 +132,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
           </div>
         </DialogHeader>
 
+        <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex min-h-0 flex-1 flex-col"
@@ -192,9 +205,11 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   {...form.register("division")}
                 >
                   <option value="">-- Pilih Divisi --</option>
-                  <option value="I&C-PMR">I&C-PMR</option>
-                  <option value="I&C-ER">I&C-ER</option>
-                  <option value="Gas Analyzer">Gas Analyzer</option>
+                  {DIVISIONS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
                 </select>
                 <FieldError message={form.formState.errors.division?.message} />
               </Field>
@@ -378,6 +393,8 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                 <FieldDescription className="text-xs text-[#50688C]">Pilih gambar untuk diunggah.</FieldDescription>
                 <FieldError message={form.formState.errors.file?.message as string} />
               </Field>
+
+              <PpeFields disabled={loadingupdate} />
             </FieldGroup>
 
             {/* Preview */}
@@ -450,6 +467,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
             </Button>
           </DialogFooter>
         </form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

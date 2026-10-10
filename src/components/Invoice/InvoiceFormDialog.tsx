@@ -10,7 +10,9 @@ import { fieldBase, inputClass, labelClass, selectClass } from "@/lib/formStyles
 
 const emptyForm: InvoiceForm = {
   invoice_number: "",
-  title: "",
+  service_name: "",
+  service_date: "",
+  service_description: "",
   division: "",
   client: "",
   amount: "",
@@ -22,7 +24,9 @@ const toForm = (invoice: Invoice | null): InvoiceForm =>
   invoice
     ? {
         invoice_number: invoice.invoice_number ?? "",
-        title: invoice.title,
+        service_name: invoice.service_name,
+        service_date: invoice.service_date ?? "",
+        service_description: invoice.service_description ?? "",
         division: invoice.division,
         client: invoice.client ?? "",
         amount: invoice.amount != null ? String(invoice.amount) : "",
@@ -57,7 +61,7 @@ function InvoiceFormBody({
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title.trim() || !form.division) {
+    if (!form.service_name.trim() || !form.division) {
       setError("Nama jasa dan divisi wajib diisi");
       return;
     }
@@ -96,8 +100,8 @@ function InvoiceFormBody({
               </span>
               <Input
                 className={inputClass}
-                value={form.title}
-                onChange={(e) => set("title", e.target.value)}
+                value={form.service_name}
+                onChange={(e) => set("service_name", e.target.value)}
                 placeholder="Contoh: Service rutin analyzer"
                 disabled={saving}
               />
@@ -158,13 +162,35 @@ function InvoiceFormBody({
               />
             </label>
 
-            <label className="space-y-2 sm:col-span-2">
-              <span className={labelClass}>Tanggal Invoice</span>
+            <label className="space-y-2">
+              <span className={labelClass}>Tanggal Jasa</span>
+              <Input
+                type="date"
+                className={inputClass}
+                value={form.service_date}
+                onChange={(e) => set("service_date", e.target.value)}
+                disabled={saving}
+              />
+            </label>
+
+            <label className="space-y-2">
+              <span className={labelClass}>Tanggal invoice submit</span>
               <Input
                 type="date"
                 className={inputClass}
                 value={form.invoice_date}
                 onChange={(e) => set("invoice_date", e.target.value)}
+                disabled={saving}
+              />
+            </label>
+
+            <label className="space-y-2 sm:col-span-2">
+              <span className={labelClass}>Deskripsi Jasa</span>
+              <textarea
+                className={`min-h-20 py-2 ${fieldBase}`}
+                value={form.service_description}
+                onChange={(e) => set("service_description", e.target.value)}
+                maxLength={2000}
                 disabled={saving}
               />
             </label>

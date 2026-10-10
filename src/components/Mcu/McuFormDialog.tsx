@@ -5,7 +5,14 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import FormAlert from "../common/FormAlert";
 import { STORAGE_URL } from "@/lib/axios";
-import { useEmployeeOptions, useMcuActions, type Mcu, type McuForm } from "@/hooks/Mcu/useMcu";
+import {
+  MCU_DOC_MAX_BYTES,
+  MCU_DOC_TYPES,
+  useEmployeeOptions,
+  useMcuActions,
+  type Mcu,
+  type McuForm,
+} from "@/hooks/Mcu/useMcu";
 import { fileClass, inputClass, labelClass, selectClass, textareaClass } from "@/lib/formStyles";
 
 const emptyForm: McuForm = {
@@ -17,6 +24,9 @@ const emptyForm: McuForm = {
   allergies: "",
   summary: "",
   document: null,
+  document_2: null,
+  remove_document: false,
+  remove_document_2: false,
 };
 
 const toForm = (mcu: Mcu | null): McuForm =>
@@ -30,6 +40,9 @@ const toForm = (mcu: Mcu | null): McuForm =>
         allergies: mcu.allergies ?? "",
         summary: mcu.summary ?? "",
         document: null,
+        document_2: null,
+        remove_document: false,
+        remove_document_2: false,
       }
     : emptyForm;
 
@@ -39,6 +52,70 @@ type Props = {
   mcu: Mcu | null; // null = tambah, ada isi = edit
   onSuccess: () => void;
 };
+
+// Satu slot dokumen: link file lama, opsi hapus, dan input file baru (opsional).
+function DocField({
+  label,
+  current,
+  file,
+  remove,
+  disabled,
+  onFile,
+  onRemove,
+}: {
+  label: string;
+  current: string | null;
+  file: File | null;
+  remove: boolean;
+  disabled: boolean;
+  onFile: (file: File | null) => void;
+  onRemove: (remove: boolean) => void;
+}) {
+  return (
+    <div className="space-y-2 sm:col-span-2">
+      <label className="block space-y-2">
+        <span className={labelClass}>{label}</span>
+        <Input
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          className={fileClass}
+          disabled={disabled}
+          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+        />
+      </label>
+      <p className="text-xs text-[#50688C]">
+        PDF / JPG / PNG, maksimal 5 MB, opsional.
+        {current && (
+          <>
+            {" "}
+            File saat ini:{" "}
+            <a
+              href={`${STORAGE_URL}${current}`}
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-[#3F72AF] underline"
+            >
+              lihat
+            </a>
+            {file ? ". Akan diganti file baru." : ". Pilih file baru untuk mengganti."}
+          </>
+        )}
+      </p>
+      {current && !file && (
+        <label className="flex min-h-9 cursor-pointer items-center gap-2 text-sm text-[#112D4E]">
+          <input
+            type="checkbox"
+            className="h-4 w-4 accent-[#B3261E]"
+            checked={remove}
+            disabled={disabled}
+            onChange={(e) => onRemove(e.target.checked)}
+          />
+          Hapus file saat ini
+        </label>
+      )}
+    </div>
+  );
+}
 
 // Form dipasang di dalam DialogContent: terpasang saat dialog dibuka, sehingga state awal
 // selalu segar dari props (tanpa effect untuk reset).
@@ -56,6 +133,17 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
     if (!form.employes_id || !form.place_name.trim() || !form.mcu_date) {
       setError("Karyawan, nama tempat, dan tanggal MCU wajib diisi");
       return;
+    }
+    for (const file of [form.document, form.document_2]) {
+      if (!file) continue;
+      if (!MCU_DOC_TYPES.includes(file.type)) {
+        setError("Dokumen harus berupa PDF, JPG, atau PNG");
+        return;
+      }
+      if (file.size > MCU_DOC_MAX_BYTES) {
+        setError("Ukuran dokumen maksimal 5 MB");
+        return;
+      }
     }
     if (form.next_mcu_date && form.next_mcu_date < form.mcu_date) {
       setError("Tanggal MCU berikutnya tidak boleh sebelum tanggal MCU");
@@ -180,34 +268,27 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
               />
             </label>
 
-            <label className="space-y-2 sm:col-span-2">
-              <span className={labelClass}>Dokumen Pendukung</span>
-              <Input
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                className={fileClass}
-                disabled={saving}
-                onChange={(e) => set("document", e.target.files?.[0] ?? null)}
-              />
-              <p className="text-xs text-[#50688C]">
-                PDF / JPG / PNG, maksimal 5 MB.
-                {isEdit && mcu?.document && (
-                  <>
-                    {" "}
-                    Dokumen saat ini:{" "}
-                    <a
-                      href={`${STORAGE_URL}${mcu.document}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-semibold text-[#3F72AF] underline"
-                    >
-                      lihat
-                    </a>
-                    . Pilih file baru untuk mengganti.
-                  </>
-                )}
-              </p>
-            </label>
+            <DocField
+              label="Dokumen Pendukung 1"
+              current={mcu?.document ?? null}
+              file={form.document}
+              remove={form.remove_document}
+              disabled={saving}
+              onFile={(f) => setForm((p) => ({ ...p, document: f, remove_document: f ? false : p.remove_document }))}
+              onRemove={(v) => set("remove_document", v)}
+            />
+
+            <DocField
+              label="Dokumen Pendukung 2"
+              current={mcu?.document_2 ?? null}
+              file={form.document_2}
+              remove={form.remove_document_2}
+              disabled={saving}
+              onFile={(f) =>
+                setForm((p) => ({ ...p, document_2: f, remove_document_2: f ? false : p.remove_document_2 }))
+              }
+              onRemove={(v) => set("remove_document_2", v)}
+            />
           </div>
 
           <FormAlert message={error} />

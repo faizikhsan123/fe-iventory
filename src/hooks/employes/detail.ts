@@ -1,4 +1,6 @@
 import { AxiosInstance } from "@/lib/axios";
+import type { Cpd } from "@/hooks/employes/cpd";
+import type { PpeSizes } from "@/schemas/cpd";
 import { useCallback, useState } from "react";
 
 interface EmployeInfo {
@@ -15,6 +17,20 @@ interface EmployeInfo {
   ktp_address: string;
   actual_address: string;
   emergency_contact: string;
+  ppe_sizes?: PpeSizes | null;
+  cpd?: Cpd | null;
+}
+
+export interface EmployeTraining {
+  participant_id: number;
+  training_id: number;
+  id_training: string;
+  name_training: string;
+  division_training: string;
+  by: string | null;
+  date: string | null;
+  notes: string | null;
+  file: string | null;
 }
 
 interface Statistik {
@@ -33,6 +49,9 @@ import type { Mcu } from "@/hooks/Mcu/useMcu";
 
 interface EmployeDetailData {
   mcus: Mcu[];
+  trainings?: EmployeTraining[];
+  cpd?: Cpd | null;
+  ppe_sizes?: PpeSizes | null;
   employe: EmployeInfo;
   statistik: Statistik;
   riwayat_diberikan: RiwayatDiberikan[];

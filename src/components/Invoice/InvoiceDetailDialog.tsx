@@ -96,7 +96,7 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
     <>
       <DialogHeader className="shrink-0 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-4 pr-12 sm:px-6">
         <DialogTitle className="break-words text-lg font-extrabold text-[#112D4E]">
-          {invoice?.title ?? "Detail Invoice"}
+          {invoice?.service_name ?? "Detail Invoice"}
         </DialogTitle>
         <DialogDescription className="text-sm text-[#50688C]">
           {invoice ? `${invoice.division}${invoice.invoice_number ? ` · ${invoice.invoice_number}` : ""}` : "Memuat..."}
@@ -108,16 +108,15 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
 
         {invoice && (
           <>
-            <div className="overflow-x-auto pb-1">
-              <InvoiceStepper status={invoice.status} />
-            </div>
+            <InvoiceStepper status={invoice.status} />
 
             <dl className="grid grid-cols-2 gap-3 text-sm">
               {[
                 ["Status", statusLabel(invoice.status)],
                 ["Client", invoice.client || "-"],
                 ["Nilai", rupiah(invoice.amount)],
-                ["Tanggal Invoice", invoice.invoice_date ? formatTanggalIndo(invoice.invoice_date) : "-"],
+                ["Tanggal Jasa", invoice.service_date ? formatTanggalIndo(invoice.service_date) : "-"],
+                ["Tanggal invoice submit", invoice.invoice_date ? formatTanggalIndo(invoice.invoice_date) : "-"],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-3">
                   <dt className="text-xs text-[#50688C]">{k}</dt>
@@ -125,6 +124,13 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
                 </div>
               ))}
             </dl>
+
+            {invoice.service_description && (
+              <div>
+                <p className="mb-1 text-xs font-semibold text-[#50688C]">Deskripsi Jasa</p>
+                <p className="whitespace-pre-line break-words text-sm text-[#112D4E]">{invoice.service_description}</p>
+              </div>
+            )}
 
             {invoice.notes && <p className="whitespace-pre-line text-sm text-[#112D4E]">{invoice.notes}</p>}
 

@@ -1,5 +1,7 @@
 import { AxiosInstance } from "@/lib/axios";
 import type { EmployeeCreateForm } from "@/schemas/employes";
+import { PPE_FIELDS } from "@/schemas/cpd";
+import { appendCpd } from "@/hooks/employes/cpd";
 import type { employes } from "@/types/employes";
 import { isAxiosError } from "axios";
 import { useState } from "react";
@@ -32,6 +34,11 @@ const UseCreateEmployes = () => {
       if (payload.ktp_address) formData.append("ktp_address", payload.ktp_address);
       if (payload.actual_address) formData.append("actual_address", payload.actual_address);
       if (payload.emergency_contact) formData.append("emergency_contact", payload.emergency_contact);
+      for (const { name } of PPE_FIELDS) {
+        const value = payload[name];
+        if (value) formData.append(name, value);
+      }
+      appendCpd(formData, payload.cpd);
 
       // if (payload.brand) formData.append("brand", payload.brand);
       // if (payload.type) formData.append("type", payload.type);

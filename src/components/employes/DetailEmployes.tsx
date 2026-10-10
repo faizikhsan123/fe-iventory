@@ -1,11 +1,14 @@
 // DetailKaryawan.tsx
 import { useEffect, type CSSProperties } from "react";
 import { useParams, useNavigate } from "react-router"; // sebelumnya "react-router-dom"
-import { AlertCircle, ArrowLeft, Inbox, Package, RefreshCw, User } from "lucide-react";
-import useEmployeDetail from "@/hooks/employes/detail";
+import { AlertCircle, ArrowLeft, GraduationCap, Inbox, Package, RefreshCw, User } from "lucide-react";
+import useEmployeDetail, { type EmployeTraining } from "@/hooks/employes/detail";
 import { formatTanggalIndo } from "@/lib/tanggal";
 import { STORAGE_URL } from "@/lib/axios";
 import { expiringLabel, isExpiring } from "@/lib/contract";
+import { useAuth } from "@/hooks/auth/useAuth";
+import { PPE_FIELDS } from "@/schemas/cpd";
+import CpdSection from "./CpdSection";
 
 /*
   Palet:
@@ -26,6 +29,8 @@ const DetailKaryawan = () => {
   const navigate = useNavigate();
 
   const { data, loading, error, handleGet } = useEmployeDetail();
+  const { user } = useAuth();
+  const isAdmin = Boolean(user?.roles?.includes("admin"));
 
   useEffect(() => {
     if (id) {
@@ -169,6 +174,36 @@ const DetailKaryawan = () => {
       </div>
 
 
+      {/* ================= UKURAN APD ================= */}
+      <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
+        <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
+          <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
+          <h3 className="font-bold text-[#112D4E]">Ukuran APD</h3>
+        </div>
+        <dl className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 sm:p-6 lg:grid-cols-6">
+          {PPE_FIELDS.map((f) => (
+            <div key={f.key} className="rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-3">
+              <dt className="text-xs text-[#50688C]">{f.label}</dt>
+              <dd className="mt-0.5 break-words text-sm font-bold text-[#112D4E]">
+                {(employe.ppe_sizes ?? data.ppe_sizes)?.[f.key] || "-"}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      {/* ================= CPD ================= */}
+      <CpdSection employeId={employe.id} cpd={employe.cpd ?? data.cpd} canEdit={isAdmin} onSaved={() => id && handleGet(id)} />
+
+      {/* ================= RIWAYAT TRAINING ================= */}
+      <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
+        <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
+          <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
+          <h3 className="font-bold text-[#112D4E]">Riwayat Training</h3>
+        </div>
+        <TabelRiwayatTraining data={data.trainings ?? []} />
+      </div>
+
       {/* ================= MCU ================= */}
       <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
         <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
@@ -198,19 +233,19 @@ const DetailKaryawan = () => {
                   {m.is_latest !== false && expiringLabel(m.next_mcu_date) && (
                     <span className="ml-1.5 font-semibold text-[#B3261E]">({expiringLabel(m.next_mcu_date)})</span>
                   )}
-                  {m.document && (
-                    <>
+                  {[m.document, m.document_2].filter(Boolean).map((doc, i, arr) => (
+                    <span key={doc}>
                       {" · "}
                       <a
-                        href={`${STORAGE_URL}${m.document}`}
+                        href={`${STORAGE_URL}${doc}`}
                         target="_blank"
                         rel="noreferrer"
                         className="font-semibold text-[#3F72AF] underline"
                       >
-                        Dokumen
+                        {arr.length > 1 ? `Dokumen ${i + 1}` : "Dokumen"}
                       </a>
-                    </>
-                  )}
+                    </span>
+                  ))}
                 </p>
               </li>
             ))}
@@ -297,6 +332,88 @@ function TabelRiwayatDiberikan({ data }: { data: RiwayatDiberikanItem[] }) {
                 <td className="px-4 py-3.5 font-medium">{row.barang}</td>
                 <td className="whitespace-nowrap px-4 py-3.5 font-bold">{row.qty} unit</td>
                 <td className="px-6 py-3.5 text-[#50688C]">{row.note || "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+// ============================================================
+// TABEL RIWAYAT TRAINING
+// ============================================================
+
+function TrainingFileLink({ file }: { file: string | null }) {
+  if (!file) return <span className="text-[#7B8FAE]">-</span>;
+  return (
+    <a href={`${STORAGE_URL}${file}`} target="_blank" rel="noreferrer" className="font-semibold text-[#3F72AF] underline">
+      Lihat file
+    </a>
+  );
+}
+
+function TabelRiwayatTraining({ data }: { data: EmployeTraining[] }) {
+  if (data.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-2 px-4 py-12 text-center">
+        <div className="grid h-14 w-14 place-items-center rounded-xl bg-[#DBE2EF]">
+          <GraduationCap className="h-6 w-6 text-[#3F72AF]" />
+        </div>
+        <p className="text-sm text-[#50688C]">Belum ada riwayat training untuk karyawan ini</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* Mobile: kartu */}
+      <ul className="divide-y divide-[#DBE2EF] md:hidden">
+        {data.map((t) => (
+          <li key={t.participant_id} className="space-y-1 p-4">
+            <p className="break-words text-sm font-semibold text-[#112D4E]">{t.name_training}</p>
+            <p className="break-all text-xs font-semibold text-[#3F72AF]">
+              {t.id_training} · {t.division_training}
+            </p>
+            <p className="text-xs text-[#50688C]">
+              {t.date ? formatTanggalIndo(t.date) : "-"}
+              {t.by ? ` · oleh ${t.by}` : ""}
+            </p>
+            {t.notes && <p className="break-words text-xs text-[#112D4E]">{t.notes}</p>}
+            <p className="text-xs">
+              <TrainingFileLink file={t.file} />
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      {/* Tablet & desktop: tabel */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[720px] text-left text-sm">
+          <thead>
+            <tr className="bg-[#F9F7F7] text-xs uppercase tracking-wide text-[#50688C]">
+              <th className="px-6 py-3 font-semibold">ID Training</th>
+              <th className="px-4 py-3 font-semibold">Nama Training</th>
+              <th className="px-4 py-3 font-semibold">Divisi</th>
+              <th className="px-4 py-3 font-semibold">Tanggal</th>
+              <th className="px-4 py-3 font-semibold">By</th>
+              <th className="px-4 py-3 font-semibold">Catatan</th>
+              <th className="px-6 py-3 font-semibold">File</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#DBE2EF]">
+            {data.map((t) => (
+              <tr key={t.participant_id} className="text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
+                <td className="whitespace-nowrap px-6 py-3.5 font-semibold">{t.id_training}</td>
+                <td className="px-4 py-3.5 font-medium">{t.name_training}</td>
+                <td className="whitespace-nowrap px-4 py-3.5 text-[#50688C]">{t.division_training}</td>
+                <td className="whitespace-nowrap px-4 py-3.5 text-[#50688C]">{t.date ? formatTanggalIndo(t.date) : "-"}</td>
+                <td className="px-4 py-3.5 text-[#50688C]">{t.by || "-"}</td>
+                <td className="px-4 py-3.5 text-[#50688C]">{t.notes || "-"}</td>
+                <td className="px-6 py-3.5">
+                  <TrainingFileLink file={t.file} />
+                </td>
               </tr>
             ))}
           </tbody>

@@ -1,4 +1,7 @@
-import { daysLeft, EXPIRING_DAYS } from "@/lib/contract";
+import { daysLeft } from "@/lib/contract";
+
+// ambang RFQ dipisah dari kontrak/MCU (EXPIRING_DAYS = 30); nilai RFQ tetap 14 hari seperti sebelumnya
+export const RFQ_DUE_DAYS = 14;
 
 // Daftar prioritas (kode, guide, PIC) datang dari backend (/rfqs/options), satu sumber kebenaran.
 // Di sini hanya label & warna tampilan.
@@ -41,11 +44,11 @@ export const priorityBadgeClass: Record<string, string> = {
   E: "bg-[#FDECEA] text-[#B3261E] ring-[#F2B8B5]",
 };
 
-// RFQ pending yang deadline-nya <= 14 hari (atau lewat) ditandai merah, sama seperti kontrak dan MCU
+// RFQ pending yang deadline-nya <= RFQ_DUE_DAYS hari (atau lewat) ditandai merah
 export const isRfqDue = (status: string, deadline?: string | null): boolean => {
   if (status !== "pending") return false;
   const n = daysLeft(deadline);
-  return n !== null && n <= EXPIRING_DAYS;
+  return n !== null && n <= RFQ_DUE_DAYS;
 };
 
 export const monthYear = (d?: string | null) =>
