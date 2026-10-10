@@ -12,6 +12,12 @@ export type employes = {
   actual_address: string;
   emergency_contact: string;
   status: Status;
+  id_number?: string;
+  contract_start?: string | null;
+  contract_end?: string | null;
+  left_at?: string | null;
+  contract_renewals?: number;
+  latest_performance?: number | null;
   given_items_count: number;
   items?: {
     item_name: string;

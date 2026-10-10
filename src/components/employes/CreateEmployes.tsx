@@ -202,9 +202,37 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                 </select>
                 <FieldError message={form.formState.errors.position?.message} />
               </Field>
+              <Field className="gap-2">
+                <Label htmlFor="contract_start" className={labelClassName}>
+                  Contract When Joined <span className="text-[#B3261E]">*</span>
+                </Label>
+                <Input
+                  {...form.register("contract_start")}
+                  type="date"
+                  id="contract_start"
+                  className={inputClassName}
+                  disabled={loadingCreate}
+                />
+                <FieldError message={form.formState.errors.contract_start?.message} />
+              </Field>
+
+              <Field className="gap-2">
+                <Label htmlFor="contract_end" className={labelClassName}>
+                  Contract Expired <span className="text-[#B3261E]">*</span>
+                </Label>
+                <Input
+                  {...form.register("contract_end")}
+                  type="date"
+                  id="contract_end"
+                  className={inputClassName}
+                  disabled={loadingCreate}
+                />
+                <FieldError message={form.formState.errors.contract_end?.message} />
+              </Field>
+
               <Field className="gap-2 ">
                 <Label htmlFor="ktp_address" className={labelClassName}>
-                  Alamat Sesuai KTP 
+                  Alamat Sesuai KTP
                 </Label>
                 <Input
                   {...form.register("ktp_address")}

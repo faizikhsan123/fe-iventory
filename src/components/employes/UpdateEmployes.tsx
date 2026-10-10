@@ -83,6 +83,9 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
       division: employes.division,
       position: employes.position,
       status: employes.status,
+      left_at: employes.left_at ?? "",
+      contract_start: employes.contract_start ?? "",
+      contract_end: employes.contract_end ?? "",
       ktp_address: employes.ktp_address,
       actual_address: employes.actual_address,
       emergency_contact: employes.emergency_contact,
@@ -217,6 +220,33 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                 </select>
                 <FieldError message={form.formState.errors.position?.message} />
               </Field>
+              <Field className="gap-2">
+                <Label htmlFor="contract_start" className={labelClassName}>
+                  Contract When Joined
+                </Label>
+                <Input
+                  {...form.register("contract_start")}
+                  type="date"
+                  id="contract_start"
+                  className={inputClassName}
+                  disabled={loadingupdate}
+                />
+                <FieldError message={form.formState.errors.contract_start?.message} />
+              </Field>
+
+              <Field className="gap-2">
+                <Label htmlFor="contract_end" className={labelClassName}>
+                  Contract Expired
+                </Label>
+                <Input
+                  {...form.register("contract_end")}
+                  type="date"
+                  id="contract_end"
+                  className={inputClassName}
+                  disabled={loadingupdate}
+                />
+                <FieldError message={form.formState.errors.contract_end?.message} />
+              </Field>
 
               <Field className="gap-2 ">
                 <Label
@@ -297,6 +327,24 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                 </select>
                 <FieldError message={form.formState.errors.status?.message} />
               </Field>
+
+              {form.watch("status") === "inactive" && (
+                <Field className="gap-2">
+                  <Label htmlFor="left_at" className={labelClassName}>
+                    Tanggal Keluar
+                  </Label>
+                  <Input
+                    {...form.register("left_at")}
+                    type="date"
+                    id="left_at"
+                    className={inputClassName}
+                    disabled={loadingupdate}
+                  />
+                  <FieldDescription className="text-xs text-[#50688C]">
+                    Dipakai untuk turn over rate. Kosongkan untuk memakai hari ini.
+                  </FieldDescription>
+                </Field>
+              )}
 
               <Field className="gap-2">
                 <FieldLabel

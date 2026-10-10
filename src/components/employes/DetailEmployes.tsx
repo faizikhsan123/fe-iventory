@@ -5,6 +5,7 @@ import { AlertCircle, ArrowLeft, Inbox, Package, RefreshCw, User } from "lucide-
 import useEmployeDetail from "@/hooks/employes/detail";
 import { formatTanggalIndo } from "@/lib/tanggal";
 import { STORAGE_URL } from "@/lib/axios";
+import { expiringLabel, isExpiring } from "@/lib/contract";
 
 /*
   Palet:
@@ -132,6 +133,89 @@ const DetailKaryawan = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ================= KONTRAK ================= */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {(
+          [
+            { label: "Group", value: employe.group_name ?? "Belum masuk group" },
+            {
+              label: "Contract When Joined",
+              value: employe.contract_start ? formatTanggalIndo(employe.contract_start) : "-",
+            },
+            {
+              label: "Contract Expired",
+              value: employe.contract_end ? formatTanggalIndo(employe.contract_end) : "-",
+              danger: isExpiring(employe.contract_end),
+              hint: expiringLabel(employe.contract_end),
+            },
+            { label: "Perpanjangan Kontrak", value: `${employe.contract_renewals ?? 0}x` },
+          ] as { label: string; value: string; danger?: boolean; hint?: string | null }[]
+        ).map(({ label, value, danger, hint }) => (
+          <div
+            key={label}
+            className={`rounded-lg border p-4 shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl ${
+              danger ? "border-[#F2B8B5] bg-[#FDECEA]" : "border-[#DBE2EF] bg-white"
+            }`}
+          >
+            <p className="text-xs text-[#50688C]">{label}</p>
+            <p className={`mt-1 break-words text-lg font-extrabold ${danger ? "text-[#B3261E]" : "text-[#112D4E]"}`}>
+              {value}
+            </p>
+            {hint && <p className="mt-0.5 text-xs font-semibold text-[#B3261E]">{hint}</p>}
+          </div>
+        ))}
+      </div>
+
+
+      {/* ================= MCU ================= */}
+      <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
+        <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
+          <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
+          <h3 className="font-bold text-[#112D4E]">Riwayat MCU</h3>
+        </div>
+        {(data.mcus ?? []).length === 0 ? (
+          <p className="px-4 py-10 text-center text-sm text-[#50688C]">Belum ada data MCU untuk karyawan ini</p>
+        ) : (
+          <ul className="divide-y divide-[#DBE2EF]">
+            {data.mcus.map((m) => (
+              <li key={m.id} className="space-y-1 p-4 sm:px-6">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-bold text-[#112D4E]">
+                    {m.place_name}
+                    {m.mcu_name ? ` · ${m.mcu_name}` : ""}
+                  </p>
+                  <p className="text-xs font-semibold text-[#50688C]">{formatTanggalIndo(m.mcu_date)}</p>
+                </div>
+                <p className="text-xs text-[#50688C]">Alergi: {m.allergies || "-"}</p>
+                {m.summary && <p className="text-sm text-[#112D4E]">{m.summary}</p>}
+                <p className="text-xs">
+                  <span className="text-[#50688C]">MCU berikutnya: </span>
+                  <span className={m.is_latest !== false && isExpiring(m.next_mcu_date) ? "font-semibold text-[#B3261E]" : "text-[#112D4E]"}>
+                    {m.next_mcu_date ? formatTanggalIndo(m.next_mcu_date) : "-"}
+                  </span>
+                  {m.is_latest !== false && expiringLabel(m.next_mcu_date) && (
+                    <span className="ml-1.5 font-semibold text-[#B3261E]">({expiringLabel(m.next_mcu_date)})</span>
+                  )}
+                  {m.document && (
+                    <>
+                      {" · "}
+                      <a
+                        href={`${STORAGE_URL}${m.document}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-semibold text-[#3F72AF] underline"
+                      >
+                        Dokumen
+                      </a>
+                    </>
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* ================= RIWAYAT ================= */}

@@ -26,10 +26,36 @@ interface TransaksiTerbaru {
   date: string;
 }
 
+interface KontrakBerakhir {
+  id: number;
+  name: string;
+  id_number: string;
+  division: string;
+  position: string;
+  group_name: string | null;
+  contract_end: string;
+  days_left: number;
+}
+
+interface McuBerikutnya {
+  id: number;
+  employes_id: number;
+  name: string;
+  id_number: string;
+  division: string;
+  position: string;
+  group_name: string | null;
+  place_name: string;
+  next_mcu_date: string;
+  days_left: number;
+}
+
 interface DashboardData {
   summary: Summary;
   aktivitas_stok: AktivitasStok[];
   transaksi_terbaru: TransaksiTerbaru[];
+  kontrak_berakhir: KontrakBerakhir[];
+  mcu_berikutnya: McuBerikutnya[];
 }
 
 const useDashboard = () => {

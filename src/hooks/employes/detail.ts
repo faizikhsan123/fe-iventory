@@ -7,6 +7,10 @@ interface EmployeInfo {
   division: string;
   position: string;
   status: string;
+  group_name: string | null;
+  contract_renewals: number;
+  contract_start: string | null;
+  contract_end: string | null;
   file : string
   ktp_address: string;
   actual_address: string;
@@ -25,7 +29,10 @@ interface RiwayatDiberikan {
   note: string | null;
 }
 
+import type { Mcu } from "@/hooks/Mcu/useMcu";
+
 interface EmployeDetailData {
+  mcus: Mcu[];
   employe: EmployeInfo;
   statistik: Statistik;
   riwayat_diberikan: RiwayatDiberikan[];

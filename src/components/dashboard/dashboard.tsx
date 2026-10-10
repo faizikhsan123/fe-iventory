@@ -8,6 +8,8 @@ import {
   ArrowUpFromLine,
   BarChart3,
   CheckCircle2,
+  CalendarClock,
+  Stethoscope,
   FileBarChart,
   Inbox,
   Package,
@@ -18,6 +20,8 @@ import {
 import useDashboard from "@/hooks/dashboard/get";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { formatTanggalIndo } from "@/lib/tanggal";
+import { expiringLabel } from "@/lib/contract";
+import TurnoverCard from "./TurnoverCard";
 
 /*
   Palet:
@@ -100,7 +104,7 @@ const Dashboard = () => {
 
   if (!data) return null;
 
-  const { summary, aktivitas_stok, transaksi_terbaru } = data;
+  const { summary, aktivitas_stok, transaksi_terbaru, kontrak_berakhir = [], mcu_berikutnya = [] } = data;
 
   return (
     <div className="space-y-5 sm:space-y-6">
@@ -175,6 +179,11 @@ const Dashboard = () => {
           className="col-span-2 sm:col-span-1"
         />
       </div>
+
+      <KontrakBerakhirCard data={kontrak_berakhir} />
+      <McuBerikutnyaCard data={mcu_berikutnya} />
+
+      <TurnoverCard />
 
       {/* Tabel: tumpuk ke bawah, baru 2 kolom di layar sangat lebar */}
       <div className="grid grid-cols-1 gap-5 sm:gap-6 2xl:grid-cols-2">
@@ -480,5 +489,122 @@ function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
 
 
 
+  );
+}
+
+// ============================================================
+// KONTRAK SEGERA BERAKHIR (<= 14 hari, termasuk yang sudah lewat)
+// ============================================================
+
+interface KontrakBerakhirItem {
+  id: number;
+  name: string;
+  id_number: string;
+  division: string;
+  position: string;
+  group_name: string | null;
+  contract_end: string;
+  days_left: number;
+}
+
+function KontrakBerakhirCard({ data }: { data: KontrakBerakhirItem[] }) {
+  if (data.length === 0) return null;
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-[#F2B8B5] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
+      <div className="flex items-center justify-between gap-3 border-b border-[#F2B8B5] bg-[#FDECEA] px-4 py-3.5 sm:px-6 sm:py-4">
+        <div className="flex items-center gap-2.5">
+          <CalendarClock className="h-5 w-5 text-[#B3261E]" />
+          <h3 className="font-bold text-[#B3261E]">Kontrak Segera Berakhir</h3>
+          <span className="rounded-full bg-[#B3261E] px-2 py-0.5 text-xs font-bold text-white">{data.length}</span>
+        </div>
+        <Link to="/contracts" className="text-sm font-semibold text-[#B3261E] underline-offset-2 hover:underline">
+          Lihat semua
+        </Link>
+      </div>
+
+      <ul className="divide-y divide-[#F2B8B5]/60">
+        {data.map((k) => (
+          <li key={k.id}>
+            <Link
+              to={`/contracts/${k.id}`}
+              className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 transition-colors hover:bg-[#FDECEA] sm:px-6"
+            >
+              <div className="min-w-0">
+                <p className="break-words text-sm font-bold text-[#B3261E]">{k.name}</p>
+                <p className="text-xs text-[#50688C]">
+                  {k.id_number} · {k.position} · {k.division}
+                  {k.group_name ? ` · ${k.group_name}` : ""}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-semibold text-[#B3261E]">{formatTanggalIndo(k.contract_end)}</p>
+                <p className="text-xs font-bold text-[#B3261E]">{expiringLabel(k.contract_end)}</p>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// ============================================================
+// MCU SEGERA JATUH TEMPO (<= 14 hari, termasuk yang sudah lewat)
+// ============================================================
+
+interface McuBerikutnyaItem {
+  id: number;
+  employes_id: number;
+  name: string;
+  id_number: string;
+  division: string;
+  position: string;
+  group_name: string | null;
+  place_name: string;
+  next_mcu_date: string;
+  days_left: number;
+}
+
+function McuBerikutnyaCard({ data }: { data: McuBerikutnyaItem[] }) {
+  if (data.length === 0) return null;
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-[#F2B8B5] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
+      <div className="flex items-center justify-between gap-3 border-b border-[#F2B8B5] bg-[#FDECEA] px-4 py-3.5 sm:px-6 sm:py-4">
+        <div className="flex items-center gap-2.5">
+          <Stethoscope className="h-5 w-5 text-[#B3261E]" />
+          <h3 className="font-bold text-[#B3261E]">MCU Segera Jatuh Tempo</h3>
+          <span className="rounded-full bg-[#B3261E] px-2 py-0.5 text-xs font-bold text-white">{data.length}</span>
+        </div>
+        <Link to="/mcu" className="text-sm font-semibold text-[#B3261E] underline-offset-2 hover:underline">
+          Lihat semua
+        </Link>
+      </div>
+
+      <ul className="divide-y divide-[#F2B8B5]/60">
+        {data.map((m) => (
+          <li key={m.id}>
+            <Link
+              to={`/employes/${m.employes_id}`}
+              className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 transition-colors hover:bg-[#FDECEA] sm:px-6"
+            >
+              <div className="min-w-0">
+                <p className="break-words text-sm font-bold text-[#B3261E]">{m.name}</p>
+                <p className="text-xs text-[#50688C]">
+                  {m.id_number} · {m.position} · {m.division}
+                  {m.group_name ? ` · ${m.group_name}` : ""}
+                </p>
+                <p className="text-xs text-[#50688C]">MCU terakhir di {m.place_name}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-semibold text-[#B3261E]">{formatTanggalIndo(m.next_mcu_date)}</p>
+                <p className="text-xs font-bold text-[#B3261E]">{expiringLabel(m.next_mcu_date)}</p>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

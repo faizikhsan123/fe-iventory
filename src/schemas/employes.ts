@@ -23,6 +23,11 @@ const employeeBaseSchema = {
     message: "Position wajib dipilih",
   }),
 
+  contract_start: z.string().optional().nullable(),
+
+  contract_end: z.string().optional().nullable(),
+
+
   ktp_address: z
     .string()
     .max(200, "Alamat KTP terlalu panjang")
@@ -45,14 +50,25 @@ const employeeBaseSchema = {
     .nullable(),
 };
 
-export const employeeCreateSchema = z.object({
-  ...employeeBaseSchema,
-});
+export const employeeCreateSchema = z
+  .object({
+    ...employeeBaseSchema,
+
+    // wajib saat tambah karyawan
+    contract_start: z.string().min(1, "Contract When Joined wajib diisi"),
+    contract_end: z.string().min(1, "Contract Expired wajib diisi"),
+  })
+  .refine((d) => d.contract_end >= d.contract_start, {
+    path: ["contract_end"],
+    message: "Contract Expired tidak boleh sebelum Contract When Joined",
+  });
 
 export type EmployeeCreateForm = z.infer<typeof employeeCreateSchema>;
 
 export const employeeEditSchema = z.object({
   ...employeeBaseSchema,
+
+  left_at: z.string().optional().nullable(),
 
   status: z.enum(["active", "inactive"], {
     message: "Status wajib dipilih",

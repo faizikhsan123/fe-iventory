@@ -4,6 +4,7 @@ import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import UsegetGroups from "@/hooks/Group/get";
+import { isExpiring } from "@/lib/contract";
 
 type TableGroupsProps = {
   refreshKey?: number;
@@ -37,28 +38,49 @@ function BadgeAnggota({ count }: { count: number }) {
   );
 }
 
-function ListAnggota({ names, max = 4 }: { names: string[]; max?: number }) {
-  if (names.length === 0) return <span className="text-sm text-[#7B8FAE]">Belum ada anggota</span>;
+type Member = {
+  name: string;
+  division: string;
+  position: string;
+  performance: number | null;
+  expiring: boolean;
+};
 
-  const shown = names.slice(0, max);
-  const rest = names.length - shown.length;
+const EMPTY_MEMBERS = <span className="text-sm text-[#7B8FAE]">Belum ada anggota</span>;
 
+// satu kolom (nama / division / position), data tersusun ke bawah; tinggi baris sama agar sejajar antar kolom
+function MemberColumn({ values, classes }: { values: string[]; classes?: string[] }) {
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {shown.map((name, i) => (
-        <span
-          key={`${name}-${i}`}
-          className="rounded-full border border-[#DBE2EF] bg-[#F9F7F7] px-2.5 py-0.5 text-xs font-medium text-[#112D4E]"
-        >
-          {name}
-        </span>
+    <ul className="divide-y divide-[#EBEFF6]">
+      {values.map((v, i) => (
+        <li key={i} className={`flex h-9 items-center justify-center text-sm font-medium text-[#112D4E] ${classes?.[i] ?? ""}`}>
+          {v}
+        </li>
       ))}
-      {rest > 0 && (
-        <span className="rounded-full bg-[#DBE2EF] px-2.5 py-0.5 text-xs font-semibold text-[#50688C]">
-          +{rest} lainnya
-        </span>
-      )}
-    </div>
+    </ul>
+  );
+}
+
+// mobile: tiap anggota satu blok ke bawah
+function ListAnggota({ members }: { members: Member[] }) {
+  if (members.length === 0) return EMPTY_MEMBERS;
+  return (
+    <ul className="divide-y divide-[#DBE2EF]">
+      {members.map((m, i) => (
+        <li key={`${m.name}-${i}`} className="py-2 text-center first:pt-0 last:pb-0">
+          <p className={`text-sm font-semibold ${m.expiring ? "text-[#B3261E]" : "text-[#112D4E]"}`}>
+            {m.name}
+            {m.expiring && " · kontrak hampir habis"}
+          </p>
+          <p className="text-xs text-[#50688C]">
+            {m.division} · {m.position}
+          </p>
+          <p className="text-xs text-[#50688C]">
+            Performa {m.performance ?? "-"}
+          </p>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -75,7 +97,14 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
     getGroups();
   }, [getGroups, refreshKey]);
 
-  const getNames = (group: (typeof data)[number]) => (group.employees ?? []).map((e) => e.user?.name ?? "-");
+  const getMembers = (group: (typeof data)[number]): Member[] =>
+    (group.employees ?? []).map((e) => ({
+      name: e.user?.name ?? "-",
+      division: e.division || "-",
+      position: e.position || "-",
+      performance: e.latest_performance ?? null,
+      expiring: isExpiring(e.contract_end),
+    }));
 
   // search client-side: nama group atau nama anggota
   const filtered = useMemo(() => {
@@ -205,7 +234,7 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
             {/* Mobile: kartu */}
             <ul className="divide-y divide-[#DBE2EF] md:hidden">
               {filtered.map((group, index) => {
-                const names = getNames(group);
+                const members = getMembers(group);
                 return (
                   <li key={group.id} className="p-4">
                     <div className="flex items-start justify-between gap-2">
@@ -218,9 +247,9 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
 
                     <div className="mt-3 rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-3">
                       <div className="mb-2">
-                        <BadgeAnggota count={names.length} />
+                        <BadgeAnggota count={members.length} />
                       </div>
-                      <ListAnggota names={names} />
+                      <ListAnggota members={members} />
                     </div>
 
                     {hasActions && <div className="mt-3">{renderActions(group.id, group.group_name)}</div>}
@@ -231,13 +260,16 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
 
             {/* Tablet & desktop: tabel */}
             <div className="hidden w-full overflow-x-auto md:block">
-              <Table className="min-w-[860px]">
+              <Table className="min-w-[960px]">
                 <TableHeader>
                   <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
-                    <TableHead className="w-12 px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
-                    <TableHead className="px-4 font-bold text-[#112D4E]">Nama Group</TableHead>
-                    {/* <TableHead className="px-4 font-bold text-[#112D4E]">Jam Kerja</TableHead> */}
-                    <TableHead className="px-4 font-bold text-[#112D4E]">Anggota</TableHead>
+                    <TableHead className="w-12 px-4 text-center font-bold text-[#112D4E] lg:px-6">No</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Nama Group</TableHead>
+                    {/* <TableHead className="px-4 text-center font-bold text-[#112D4E]">Jam Kerja</TableHead> */}
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Anggota</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Division</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Position</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Performa</TableHead>
                     <TableHead className="px-4 text-center font-bold text-[#112D4E]">Jumlah</TableHead>
                     {hasActions && (
                       <TableHead className="px-4 text-center font-bold text-[#112D4E]">Aksi</TableHead>
@@ -247,23 +279,35 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
 
                 <TableBody>
                   {filtered.map((group, index) => {
-                    const names = getNames(group);
+                    const members = getMembers(group);
                     return (
                       <TableRow
                         key={group.id}
                         className="border-[#DBE2EF] text-[#112D4E] transition-colors hover:bg-[#F9F7F7]"
                       >
-                        <TableCell className="px-4 py-4 text-[#50688C] lg:px-6">{index + 1}</TableCell>
-                        <TableCell className="px-4 py-4 font-medium">{group.group_name}</TableCell>
-                        {/* <TableCell className="px-4 py-4">
+                        <TableCell className="px-4 py-4 text-center align-top text-[#50688C] lg:px-6">{index + 1}</TableCell>
+                        <TableCell className="px-4 py-4 text-center align-top font-medium">{group.group_name}</TableCell>
+                        {/* <TableCell className="px-4 py-4 align-top">
                           <BadgeJam start={group.start_time} end={group.end_time} />
                         </TableCell> */}
-                        <TableCell className="px-4 py-4">
-                          <ListAnggota names={names} />
+                        <TableCell className="px-4 py-2 text-center align-top">
+                          {members.length === 0 ? EMPTY_MEMBERS : <MemberColumn
+                              values={members.map((m) => m.name)}
+                              classes={members.map((m) => (m.expiring ? "text-[#B3261E]! font-bold" : ""))}
+                            />}
                         </TableCell>
-                        <TableCell className="px-4 py-4 text-center font-bold">{names.length}</TableCell>
+                        <TableCell className="px-4 py-2 text-center align-top">
+                          <MemberColumn values={members.map((m) => m.division)} />
+                        </TableCell>
+                        <TableCell className="px-4 py-2 text-center align-top">
+                          <MemberColumn values={members.map((m) => m.position)} />
+                        </TableCell>
+                        <TableCell className="px-4 py-2 text-center align-top">
+                          <MemberColumn values={members.map((m) => (m.performance != null ? m.performance.toFixed(2) : "-"))} />
+                        </TableCell>
+                        <TableCell className="px-4 py-4 text-center align-top font-bold">{members.length}</TableCell>
                         {hasActions && (
-                          <TableCell className="px-4 py-4">
+                          <TableCell className="px-4 py-4 align-top">
                             <div className="flex justify-center">{renderActions(group.id, group.group_name)}</div>
                           </TableCell>
                         )}

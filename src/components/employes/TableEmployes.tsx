@@ -8,6 +8,7 @@ import useGetEmployes from "@/hooks/employes/getEmployes";
 import { useDeleteEmployes } from "@/hooks/employes/deleteEmployes";
 import UpdateEmployes from "./UpdateEmployes";
 import type { employes } from "@/types/employes";
+import { expiringBadgeClass, expiringLabel, isExpiring } from "@/lib/contract";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { STORAGE_URL } from "@/lib/axios";
@@ -281,7 +282,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
           {/* Mobile: kartu */}
           <ul className="divide-y divide-[#DBE2EF] md:hidden">
             {data.map((emp) => (
-              <li key={emp.id} className="p-4">
+              <li key={emp.id} className={`p-4 ${isExpiring(emp.contract_end) ? "bg-[#FDECEA]" : ""}`}>
                 <div className="flex items-start gap-3">
                   <Avatar name={emp.user.name} file={emp.file} />
                   <div className="min-w-0 flex-1">
@@ -294,6 +295,9 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                       </span>
                     </div>
                     <p className="truncate text-xs text-[#50688C]">{emp.user.email}</p>
+                    {expiringLabel(emp.contract_end) && (
+                      <span className={`${expiringBadgeClass} mt-1`}>Kontrak {expiringLabel(emp.contract_end)}</span>
+                    )}
                     <p className="mt-1 text-sm text-[#112D4E]">
                       {emp.position} · {emp.division}
                     </p>
@@ -329,7 +333,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                 {data.map((emp, index) => (
                   <TableRow
                     key={emp.id}
-                    className="border-[#DBE2EF] text-[#112D4E] transition-colors hover:bg-[#F9F7F7]"
+                    className={`border-[#DBE2EF] text-[#112D4E] transition-colors ${isExpiring(emp.contract_end) ? "bg-[#FDECEA] hover:bg-[#FBE0DD]" : "hover:bg-[#F9F7F7]"}`}
                   >
                     <TableCell className="px-4 py-4 text-[#50688C] lg:px-6">
                       {(page - 1) * perPage + index + 1}
@@ -341,6 +345,9 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                         <div className="min-w-0">
                           <p className="font-semibold">{emp.user.name}</p>
                           <p className="truncate text-xs text-[#50688C]">{emp.user.email}</p>
+                          {expiringLabel(emp.contract_end) && (
+                            <span className={`${expiringBadgeClass} mt-1`}>Kontrak {expiringLabel(emp.contract_end)}</span>
+                          )}
                         </div>
                       </div>
                     </TableCell>

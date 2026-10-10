@@ -27,6 +27,8 @@ const UseCreateEmployes = () => {
       // formData.append("password", payload.password);
       formData.append("division", payload.division);
       formData.append("position", payload.position);
+      if (payload.contract_start) formData.append("contract_start", payload.contract_start);
+      if (payload.contract_end) formData.append("contract_end", payload.contract_end);
       if (payload.ktp_address) formData.append("ktp_address", payload.ktp_address);
       if (payload.actual_address) formData.append("actual_address", payload.actual_address);
       if (payload.emergency_contact) formData.append("emergency_contact", payload.emergency_contact);
