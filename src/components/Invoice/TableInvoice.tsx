@@ -91,7 +91,14 @@ const InvoiceRow = memo(function InvoiceRow({
   return (
     <TableRow className="border-[#DBE2EF] text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
       <TableCell className={`${td} text-[#50688C]`}>{number}</TableCell>
-      <TableCell className={td}>{inv.invoice_number || "-"}</TableCell>
+      <TableCell className={td}>
+        {inv.invoice_number || "-"}
+        {inv.documents && (
+          <span className="block text-xs text-[#50688C]">
+            {Object.values(inv.documents).filter((d) => d?.has_file).length}/3 dokumen
+          </span>
+        )}
+      </TableCell>
       <TableCell className={`${td} max-w-60 whitespace-normal break-words font-medium`}>{inv.service_name}
         {inv.service_date && (
           <span className="block text-xs font-normal text-[#50688C]">{formatTanggalIndo(inv.service_date)}</span>
@@ -127,7 +134,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
   return (
     <div className="space-y-4">
       {/* Ringkasan per tahapan (klik untuk filter) */}
-      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         {INVOICE_STATUSES.map((s) => {
           const active = filters.status === s.value;
           return (

@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { AlertCircle, ArrowLeft, Inbox, Loader2, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, Inbox, Loader2, LogOut, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import Swal from "sweetalert2";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import FormAlert from "../common/FormAlert";
 import PerformanceReviewSection from "../employes/PerformanceReviewSection";
@@ -14,6 +18,10 @@ import { expiringLabel, isExpiring } from "@/lib/contract";
 import { compactInputClass } from "@/lib/formStyles";
 
 const fmt = (d?: string | null) => (d ? formatTanggalIndo(d) : "-");
+const todayStr = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
 const score = (n?: number | null) => (n != null ? n.toFixed(2) : "-");
 
 function StatCard({ label, value, hint, danger }: { label: string; value: string; hint?: string; danger?: boolean }) {
@@ -114,6 +122,106 @@ function RenewalForm({
 }
 
 // ============================================================
+// FORM RESIGN (react-hook-form + zod)
+// ============================================================
+const resignSchema = z.object({
+  resign_date: z.string().min(1, "Tanggal resign wajib diisi"),
+  reason: z.string().trim().min(1, "Alasan wajib diisi").max(255, "Maksimal 255 karakter"),
+});
+type ResignValues = z.infer<typeof resignSchema>;
+
+function ResignForm({
+  name,
+  saving,
+  onSubmit,
+  onClose,
+}: {
+  name: string;
+  saving: boolean;
+  onSubmit: (payload: ResignValues) => Promise<string | null>;
+  onClose: () => void;
+}) {
+  const [serverError, setServerError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResignValues>({ resolver: zodResolver(resignSchema), defaultValues: { resign_date: "", reason: "" } });
+
+  const submit = handleSubmit(async (values) => {
+    setServerError("");
+    const ok = await Swal.fire({
+      title: `Resign-kan ${name}?`,
+      text:
+        values.resign_date > todayStr()
+          ? "Resign dijadwalkan; status berubah menjadi Deactive saat tanggal tiba."
+          : "Karyawan akan langsung berstatus Deactive.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, proses",
+      cancelButtonText: "Batal",
+    });
+    if (!ok.isConfirmed) return;
+    const err = await onSubmit({ resign_date: values.resign_date, reason: values.reason.trim() });
+    if (err) setServerError(err);
+    else onClose();
+  });
+
+  return (
+    <>
+      <DialogHeader className="border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-4 pr-12 sm:px-6">
+        <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Resign Karyawan</DialogTitle>
+        <DialogDescription className="text-sm text-[#50688C]">{name}</DialogDescription>
+      </DialogHeader>
+      <form onSubmit={submit} noValidate className="space-y-4 p-4 sm:p-6">
+        <label className="block space-y-1.5">
+          <span className="text-sm font-semibold text-[#112D4E]">Tanggal Resign *</span>
+          <Input
+            type="date"
+            className={compactInputClass}
+            aria-invalid={Boolean(errors.resign_date)}
+            {...register("resign_date")}
+          />
+          {errors.resign_date && <span className="text-xs text-[#B3261E]">{errors.resign_date.message}</span>}
+        </label>
+        <label className="block space-y-1.5">
+          <span className="text-sm font-semibold text-[#112D4E]">Alasan *</span>
+          <Textarea rows={3} maxLength={255} aria-invalid={Boolean(errors.reason)} {...register("reason")} />
+          {errors.reason && <span className="text-xs text-[#B3261E]">{errors.reason.message}</span>}
+        </label>
+
+        <FormAlert message={serverError} />
+
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={saving}
+            onClick={onClose}
+            className="h-11 rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
+          >
+            Batal
+          </Button>
+          <Button
+            type="submit"
+            disabled={saving}
+            className="h-11 gap-2 rounded-lg bg-[#B3261E] px-5 font-bold text-white hover:bg-[#8F1F18]"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Memproses...
+              </>
+            ) : (
+              "Resign"
+            )}
+          </Button>
+        </div>
+      </form>
+    </>
+  );
+}
+
+// ============================================================
 // HALAMAN DETAIL CONTRACT
 // ============================================================
 const ContractDetail = () => {
@@ -121,8 +229,9 @@ const ContractDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = Boolean(user?.roles?.includes("admin"));
-  const { data, loading, error, saving, reload, addRenewal, deleteRenewal } = useContractDetail(id);
+  const { data, loading, error, saving, reload, addRenewal, deleteRenewal, resign } = useContractDetail(id);
   const [renewOpen, setRenewOpen] = useState(false);
+  const [resignOpen, setResignOpen] = useState(false);
 
   const handleDeleteRenewal = async (renewalId: number) => {
     const ok = await Swal.fire({
@@ -177,16 +286,63 @@ const ContractDetail = () => {
     );
   }
 
+  const isActive = String(data.status).toLowerCase() === "active";
+  const canResign = isAdmin && isActive && !data.left_at;
+  const isScheduled = Boolean(data.left_at) && data.left_at!.slice(0, 10) > todayStr();
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>{BackButton}</div>
 
       {/* ============ PROFIL ============ */}
       <div className="rounded-lg border border-[#DBE2EF] bg-white p-4 shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl sm:p-6">
-        <h2 className="break-words text-xl font-extrabold text-[#112D4E] sm:text-2xl">{data.name}</h2>
-        <p className="text-sm text-[#50688C]">
-          {data.id_number} · {data.position} · {data.division}
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="break-words text-xl font-extrabold text-[#112D4E] sm:text-2xl">{data.name}</h2>
+            <p className="text-sm text-[#50688C]">
+              {data.id_number} · {data.position} · {data.division}
+            </p>
+          </div>
+          {canResign && (
+            <Button
+              onClick={() => setResignOpen(true)}
+              variant="outline"
+              className="h-9 gap-1.5 rounded-lg border-[#F2B8B5] bg-white px-3 text-sm font-semibold text-[#B3261E] hover:bg-[#FDECEA]"
+            >
+              <LogOut size={16} /> Resign
+            </Button>
+          )}
+        </div>
+        {(data.left_at || data.exit_type === "contract_ended") && (
+          <div className="mt-4 space-y-2 rounded-lg border border-[#F2B8B5] bg-[#FDECEA] p-3 text-sm text-[#112D4E]">
+            <div className="flex flex-wrap items-center gap-2">
+              {data.left_at && (
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                    isScheduled ? "bg-[#FFF4D6] text-[#8A5A00]" : "bg-[#B3261E] text-white"
+                  }`}
+                >
+                  {isScheduled ? "Resign terjadwal" : "Deactive"}
+                </span>
+              )}
+              {data.exit_type === "contract_ended" && (
+                <span className="rounded-full bg-[#DBE2EF] px-2.5 py-0.5 text-xs font-bold text-[#112D4E]">
+                  Kontrak tidak diperpanjang
+                </span>
+              )}
+            </div>
+            {data.left_at && (
+              <p>
+                <span className="font-semibold">Tanggal keluar:</span> {fmt(data.left_at)}
+              </p>
+            )}
+            {data.resign_reason && (
+              <p className="break-words">
+                <span className="font-semibold">Alasan:</span> {data.resign_reason}
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ============ RINGKASAN ============ */}
@@ -274,6 +430,12 @@ const ContractDetail = () => {
             onSubmit={addRenewal}
             onClose={() => setRenewOpen(false)}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={resignOpen} onOpenChange={setResignOpen}>
+        <DialogContent className="w-[calc(100%-1.5rem)] gap-0 overflow-hidden rounded-xl border border-[#DBE2EF] bg-white p-0 sm:max-w-md">
+          <ResignForm name={data.name} saving={saving} onSubmit={resign} onClose={() => setResignOpen(false)} />
         </DialogContent>
       </Dialog>
     </div>

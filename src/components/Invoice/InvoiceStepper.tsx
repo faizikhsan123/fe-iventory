@@ -3,7 +3,7 @@ import { INVOICE_STATUSES, statusIndex } from "@/lib/invoice";
 
 // posisi invoice di tahapan: langkah yang sudah lewat terisi, langkah sekarang disorot.
 // compact: lingkaran kecil tanpa label (tabel/kartu). Penuh: tiap langkah berbagi lebar sama, label membungkus,
-// jadi 5 tahap tetap muat di layar HP tanpa scroll horizontal.
+// jadi 6 tahap tetap muat di layar HP tanpa scroll horizontal.
 const InvoiceStepper = ({ status, compact = false }: { status: string; compact?: boolean }) => {
   const current = statusIndex(status);
 

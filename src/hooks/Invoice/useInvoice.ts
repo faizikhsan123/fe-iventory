@@ -3,7 +3,10 @@ import { AxiosInstance } from "@/lib/axios";
 import { getErrorMessage } from "@/lib/errors";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import type { PageMeta } from "@/components/common/Pagination";
-import type { SortDirection } from "@/lib/invoice";
+import type { InvoiceDocType, SortDirection } from "@/lib/invoice";
+
+export type InvoiceDocument = { name: string; has_file: boolean } | null;
+export type InvoiceDocuments = Partial<Record<InvoiceDocType, InvoiceDocument>>;
 
 export type InvoiceLog = {
   id: number;
@@ -26,6 +29,7 @@ export type Invoice = {
   invoice_date: string | null;
   notes: string | null;
   logs?: InvoiceLog[];
+  documents?: InvoiceDocuments;
 };
 
 export type InvoiceSummary = {
@@ -149,4 +153,57 @@ export const useInvoiceActions = () => {
   };
 
   return { saving, save, remove, updateStatus };
+};
+
+// ---------- dokumen pendukung ----------
+// Semua aksi return pesan error kalau gagal, null kalau berhasil.
+export const useInvoiceDocuments = (invoiceId: number) => {
+  const [busy, setBusy] = useState<InvoiceDocType | null>(null);
+
+  const run = async (type: InvoiceDocType, action: () => Promise<unknown>, fallback: string) => {
+    setBusy(type);
+    try {
+      await action();
+      return null;
+    } catch (e) {
+      return getErrorMessage(e, fallback);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const upload = (type: InvoiceDocType, file: File) => {
+    const body = new FormData();
+    body.append("type", type);
+    body.append("file", file);
+    return run(type, () => AxiosInstance.post(`/invoices/${invoiceId}/documents`, body), "Gagal mengunggah dokumen");
+  };
+
+  const removeDoc = (type: InvoiceDocType) =>
+    run(type, () => AxiosInstance.delete(`/invoices/${invoiceId}/documents/${type}`), "Gagal menghapus dokumen");
+
+  // Unduh sebagai blob (butuh auth); PDF/gambar dibuka di tab baru bila view, selain itu disimpan.
+  const download = (type: InvoiceDocType, fileName: string, view: boolean) =>
+    run(
+      type,
+      async () => {
+        const res = await AxiosInstance.get(`/invoices/${invoiceId}/documents/${type}`, { responseType: "blob" });
+        const blob = res.data as Blob;
+        const url = URL.createObjectURL(blob);
+        if (view && (blob.type === "application/pdf" || blob.type.startsWith("image/"))) {
+          window.open(url, "_blank", "noopener");
+        } else {
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      },
+      "Gagal mengunduh dokumen",
+    );
+
+  return { busy, upload, removeDoc, download };
 };

@@ -9,6 +9,7 @@ import { expiringLabel, isExpiring } from "@/lib/contract";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { PPE_FIELDS } from "@/schemas/cpd";
 import CpdSection from "./CpdSection";
+import { employeeStatusLabel } from "@/lib/employeeStatus";
 
 /*
   Palet:
@@ -116,7 +117,7 @@ const DetailKaryawan = () => {
                 }`}
               >
                 <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-[#8FB0DC]" : "bg-[#9DB2D3]"}`} />
-                {employe.status}
+                {employeeStatusLabel(employe.status)}
               </span>
               <h2 className="mt-1 break-words text-xl font-extrabold text-[#112D4E] sm:text-2xl">{employe.name}</h2>
               <p className="text-sm text-[#50688C]">

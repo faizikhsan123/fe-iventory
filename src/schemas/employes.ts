@@ -44,13 +44,6 @@ const employeeBaseSchema = {
     .optional()
     .nullable(),
 
-  emergency_contact: z
-    .string()
-    .max(20, "Kontak darurat terlalu panjang")
-    .refine((value) => value === "" || value.length >= 10, "Kontak darurat minimal 10 karakter")
-    .optional()
-    .nullable(),
-
   ...ppeSchemaShape,
 };
 

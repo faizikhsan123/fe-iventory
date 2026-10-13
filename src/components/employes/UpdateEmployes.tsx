@@ -94,7 +94,6 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
       contract_end: employes.contract_end ?? "",
       ktp_address: employes.ktp_address,
       actual_address: employes.actual_address,
-      emergency_contact: employes.emergency_contact,
       ppe_shoes: employes.ppe_shoes ?? "",
       ppe_coverall: employes.ppe_coverall ?? "",
       ppe_wearpack: employes.ppe_wearpack ?? "",
@@ -303,23 +302,6 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
 
 
               
-              <Field className="gap-2 ">
-                <Label
-                  htmlFor="emergency_contact"
-                  className={labelClassName}
-                >
-                  Kontak Darurat
-                </Label>
-                <Input
-                  {...form.register("emergency_contact")}
-                  type="text"
-                  id="emergency_contact"
-                  placeholder="Kontak darurat"
-                  className={inputClassName}
-                  disabled={loadingupdate}
-                />
-                <FieldError message={form.formState.errors.emergency_contact?.message} />
-              </Field>
 
             
 
@@ -338,7 +320,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                 >
                   <option value="">-- Pilih Status --</option>
                   <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="inactive">Deactive</option>
                 </select>
                 <FieldError message={form.formState.errors.status?.message} />
               </Field>

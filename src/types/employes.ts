@@ -12,7 +12,7 @@ export type employes = {
   position: Position;
   ktp_address: string;
   actual_address: string;
-  emergency_contact: string;
+  emergency_contact?: string | null;
   status: Status;
   id_number?: string;
   contract_start?: string | null;

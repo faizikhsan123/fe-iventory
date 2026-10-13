@@ -265,20 +265,6 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                 <FieldError message={form.formState.errors.actual_address?.message} />
               </Field>
 
-              <Field className="gap-2 ">
-                <Label htmlFor="emergency_contact" className={labelClassName}>
-                  Kontak Darurat 
-                </Label>
-                <Input
-                  {...form.register("emergency_contact")}
-                  type="text"
-                  id="emergency_contact"
-                  placeholder="Kontak darurat"
-                  className={inputClassName}
-                  disabled={loadingCreate}
-                />
-                <FieldError message={form.formState.errors.emergency_contact?.message} />
-              </Field>
             
 
               <Field className="gap-2 sm:col-span-2">

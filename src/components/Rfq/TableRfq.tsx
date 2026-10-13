@@ -1,10 +1,11 @@
 import { memo, useState } from "react";
-import { ClipboardList, Eye, SquarePen, Trash2 } from "lucide-react";
+import { ClipboardList, Download, Eye, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import SearchBar from "../common/SearchBar";
 import Pagination from "../common/Pagination";
 import { ListEmpty, ListError, ListSkeleton } from "../common/ListStates";
+import useExport from "@/hooks/Laporan/exportRecordPengeluaran";
 import { PriorityBadge, StatusBadge } from "./RfqBadges";
 import { useRfqList, type Rfq, type RfqOptions } from "@/hooks/Rfq/useRfq";
 import { PRIORITY_GROUPS, RFQ_STATUSES, isRfqDue, monthYear, priorityGroupLabel } from "@/lib/rfq";
@@ -119,6 +120,7 @@ const RfqRow = memo(function RfqRow({
 const TableRfq = ({ refreshKey = 0, options, onDetail, onEdit, onDelete }: Props) => {
   const [filters, setFilters] = useState({ search: "", priority: "", status: "", type: "", page: 1 });
   const { data, meta, summary, loading, error, isFetching } = useRfqList(filters, refreshKey);
+  const { loadingExport, handleExport } = useExport();
   const offset = ((meta?.current_page ?? 1) - 1) * (meta?.per_page ?? 10);
 
   // setiap filter berubah, kembali ke halaman 1
@@ -183,6 +185,23 @@ const TableRfq = ({ refreshKey = 0, options, onDetail, onEdit, onDelete }: Props
                 </option>
               ))}
             </select>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11 gap-2 rounded-lg border-[#9DB2D3] bg-white px-4 font-semibold text-[#112D4E] hover:bg-[#F9F7F7]"
+              disabled={loadingExport}
+              onClick={() =>
+                handleExport("/rfqs/export", `log-rfq-${new Date().toISOString().slice(0, 10)}.xlsx`, {
+                  status: filters.status || undefined,
+                  type: filters.type || undefined,
+                  priority: filters.priority || undefined,
+                  search: filters.search || undefined,
+                })
+              }
+            >
+              <Download size={16} aria-hidden="true" />
+              {loadingExport ? "Mengunduh..." : "Export Excel"}
+            </Button>
           </div>
         </div>
 

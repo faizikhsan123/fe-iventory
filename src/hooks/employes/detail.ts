@@ -16,7 +16,7 @@ interface EmployeInfo {
   file : string
   ktp_address: string;
   actual_address: string;
-  emergency_contact: string;
+  emergency_contact?: string | null;
   ppe_sizes?: PpeSizes | null;
   cpd?: Cpd | null;
 }

@@ -1,12 +1,21 @@
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { Download, Eye, FileText, Loader2, Trash2, Upload } from "lucide-react";
+import Swal from "sweetalert2";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import FormAlert from "../common/FormAlert";
 import InvoiceStepper from "./InvoiceStepper";
-import { useInvoiceActions, useInvoiceDetail, type Invoice } from "@/hooks/Invoice/useInvoice";
-import { INVOICE_STATUSES, rupiah, statusLabel } from "@/lib/invoice";
+import { useInvoiceActions, useInvoiceDetail, useInvoiceDocuments, type Invoice } from "@/hooks/Invoice/useInvoice";
+import {
+  INVOICE_DOC_ACCEPT,
+  INVOICE_DOC_TYPES,
+  INVOICE_STATUSES,
+  rupiah,
+  statusLabel,
+  validateInvoiceDoc,
+  type InvoiceDocType,
+} from "@/lib/invoice";
 import { formatTanggalIndo } from "@/lib/tanggal";
 import { compactInputClass } from "@/lib/formStyles";
 
@@ -76,6 +85,113 @@ function StatusForm({ invoice, onUpdated }: { invoice: Invoice; onUpdated: () =>
   );
 }
 
+const docBtn = "h-8 gap-1.5 rounded-lg border-[#BFCCE3] px-2.5 text-xs font-semibold text-[#112D4E]";
+
+function DocumentsSection({ invoice, canEdit, onChanged }: { invoice: Invoice; canEdit: boolean; onChanged: () => void }) {
+  const { busy, upload, removeDoc, download } = useInvoiceDocuments(invoice.id);
+  const [error, setError] = useState("");
+  const inputs = useRef<Partial<Record<InvoiceDocType, HTMLInputElement | null>>>({});
+
+  const handleFile = async (type: InvoiceDocType, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    const invalid = validateInvoiceDoc(file);
+    if (invalid) {
+      setError(invalid);
+      return;
+    }
+    setError("");
+    const err = await upload(type, file);
+    if (err) setError(err);
+    else onChanged();
+  };
+
+  const handleDownload = async (type: InvoiceDocType, name: string, view: boolean) => {
+    setError("");
+    const err = await download(type, name, view);
+    if (err) setError(err);
+  };
+
+  const handleDelete = async (type: InvoiceDocType, label: string) => {
+    const ok = await Swal.fire({
+      title: `Hapus dokumen ${label}?`,
+      text: "File akan dihapus permanen.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, hapus",
+      cancelButtonText: "Batal",
+    });
+    if (!ok.isConfirmed) return;
+    setError("");
+    const err = await removeDoc(type);
+    if (err) setError(err);
+    else onChanged();
+  };
+
+  return (
+    <div>
+      <p className="mb-2 text-sm font-bold text-[#112D4E]">Dokumen Pendukung</p>
+      <ul className="space-y-2">
+        {INVOICE_DOC_TYPES.map(({ value, label }) => {
+          const doc = invoice.documents?.[value];
+          const has = !!doc?.has_file;
+          const name = doc?.name ?? label;
+          const disabled = busy !== null;
+          return (
+            <li key={value} className="flex flex-wrap items-center gap-2 rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-3">
+              <FileText className="h-4 w-4 shrink-0 text-[#50688C]" aria-hidden="true" />
+              <div className="min-w-0 flex-1 basis-40">
+                <p className="text-xs text-[#50688C]">{label}</p>
+                <p className="break-all text-sm font-semibold text-[#112D4E]">{has ? name : "Belum ada file"}</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {busy === value && <Loader2 className="h-4 w-4 animate-spin text-[#3F72AF]" aria-label="Memproses" />}
+                {has && (
+                  <>
+                    <Button type="button" variant="outline" className={docBtn} disabled={disabled} onClick={() => handleDownload(value, name, true)}>
+                      <Eye className="h-3.5 w-3.5" /> Lihat
+                    </Button>
+                    <Button type="button" variant="outline" className={docBtn} disabled={disabled} onClick={() => handleDownload(value, name, false)}>
+                      <Download className="h-3.5 w-3.5" /> Unduh
+                    </Button>
+                  </>
+                )}
+                {canEdit && (
+                  <>
+                    <input
+                      ref={(el) => {
+                        inputs.current[value] = el;
+                      }}
+                      type="file"
+                      accept={INVOICE_DOC_ACCEPT}
+                      className="hidden"
+                      aria-label={`Pilih file ${label}`}
+                      onChange={(e) => handleFile(value, e)}
+                    />
+                    <Button type="button" variant="outline" className={docBtn} disabled={disabled} onClick={() => inputs.current[value]?.click()}>
+                      <Upload className="h-3.5 w-3.5" /> {has ? "Ganti" : "Upload"}
+                    </Button>
+                    {has && (
+                      <Button type="button" variant="outline" className={`${docBtn} text-red-600`} disabled={disabled} onClick={() => handleDelete(value, label)}>
+                        <Trash2 className="h-3.5 w-3.5" /> Hapus
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-1.5 text-xs text-[#50688C]">Format: PDF, JPG, PNG, DOC(X), XLS(X). Maksimal 5 MB.</p>
+      <div className="mt-2">
+        <FormAlert message={error} />
+      </div>
+    </div>
+  );
+}
+
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -135,6 +251,8 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
             {invoice.notes && <p className="whitespace-pre-line text-sm text-[#112D4E]">{invoice.notes}</p>}
 
             {canEdit && <StatusForm key={invoice.status} invoice={invoice} onUpdated={handleUpdated} />}
+
+            <DocumentsSection invoice={invoice} canEdit={canEdit} onChanged={handleUpdated} />
 
             <div>
               <p className="mb-2 text-sm font-bold text-[#112D4E]">Riwayat Status</p>

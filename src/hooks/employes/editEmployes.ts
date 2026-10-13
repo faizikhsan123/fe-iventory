@@ -33,7 +33,6 @@ const UseeditEmployes = () => {
       if (payload.contract_end) formData.append("contract_end", payload.contract_end);
       if (payload.ktp_address) formData.append("ktp_address", payload.ktp_address);
       if (payload.actual_address) formData.append("actual_address", payload.actual_address);
-      if (payload.emergency_contact) formData.append("emergency_contact", payload.emergency_contact);
       // ppe: undefined = tidak diubah (tidak dikirim), string kosong = dikosongkan
       for (const { name } of PPE_FIELDS) {
         const value = payload[name];

@@ -10,7 +10,7 @@ const useExport = () => {
   const handleExport = async (
     endpoint: string, // contoh: "/items/export-ranking"
     filename: string, // nama file hasil download
-    params?: { start?: string; end?: string } // filter tanggal (opsional)
+    params?: Record<string, string | undefined> // filter (tanggal, status, dll; opsional)
   ) => {
     try {
       setLoadingExport(true);

@@ -118,6 +118,10 @@ function InvoiceFormBody({
                 disabled={saving}
               >
                 <option value="">-- Pilih Divisi --</option>
+                {/* invoice lama berdivisi Safety tetap bisa tampil agar select tidak kosong */}
+                {form.division && !(INVOICE_DIVISIONS as readonly string[]).includes(form.division) && (
+                  <option value={form.division}>{form.division} (lama)</option>
+                )}
                 {INVOICE_DIVISIONS.map((d) => (
                   <option key={d} value={d}>
                     {d}

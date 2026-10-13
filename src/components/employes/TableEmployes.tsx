@@ -13,6 +13,7 @@ import { expiringBadgeClass, expiringLabel, isExpiring } from "@/lib/contract";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { STORAGE_URL } from "@/lib/axios";
+import { employeeStatusLabel } from "@/lib/employeeStatus";
 
 /*
   Palet:
@@ -79,6 +80,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
   const [page, setPage] = useState(1);
   const [division, setDivision] = useState("all");
   const [position, setPosition] = useState("all");
+  const [status, setStatus] = useState("all");
 
   const perPage = 10;
   const navigate = useNavigate();
@@ -89,6 +91,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
     search,
     division: division === "all" ? "" : division,
     position: position === "all" ? "" : position,
+    status: status === "all" ? "" : status,
     page,
     per_page: perPage,
   });
@@ -96,7 +99,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
   // fetch ulang kalau filter/page berubah ATAU refreshKey dari parent naik
   useEffect(() => {
     getEmployesButton(params());
-  }, [search, division, page, getEmployesButton, position, refreshKey]);
+  }, [search, division, page, getEmployesButton, position, status, refreshKey]);
 
   const refresh = () => getEmployesButton(params());
 
@@ -200,7 +203,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
           </Button>
         </form>
 
-        <div className="grid grid-cols-2 gap-2 lg:flex">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:flex">
           <select
             className={selectClassName}
             value={division}
@@ -232,6 +235,20 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
             <option value="Foreman">Foreman</option>
             <option value="Technician">Technician</option>
             <option value="Safety">Safety</option>
+          </select>
+
+          <select
+            className={selectClassName}
+            value={status}
+            aria-label="Filter status"
+            onChange={(e) => {
+              setStatus(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="all">Semua</option>
+            <option value="active">Active</option>
+            <option value="inactive">Deactive</option>
           </select>
         </div>
       </div>
@@ -285,7 +302,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                       <span
                         className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ring-1 ring-inset ${statusBadge(emp.status)}`}
                       >
-                        {emp.status}
+                        {employeeStatusLabel(emp.status)}
                       </span>
                     </div>
                     <p className="truncate text-xs text-[#50688C]">{emp.user.email}</p>
@@ -349,7 +366,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                       <span
                         className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ring-1 ring-inset ${statusBadge(emp.status)}`}
                       >
-                        {emp.status}
+                        {employeeStatusLabel(emp.status)}
                       </span>
                     </TableCell>
 

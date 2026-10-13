@@ -16,6 +16,9 @@ export type ContractSummary = {
   renewals_count: number;
   reviews_count: number;
   average_score: number | null;
+  left_at?: string | null;
+  resign_reason?: string | null;
+  exit_type?: "resigned" | "contract_ended" | null;
 };
 
 export type ContractRenewal = {
@@ -87,5 +90,18 @@ export const useContractDetail = (id?: string) => {
     }
   };
 
-  return { data, loading, error, saving, reload, addRenewal, deleteRenewal };
+  const resign = async (payload: { resign_date: string; reason: string }): Promise<string | null> => {
+    setSaving(true);
+    try {
+      await AxiosInstance.post(`/contracts/${id}/resign`, payload);
+      reload();
+      return null;
+    } catch (e) {
+      return getErrorMessage(e, "Gagal memproses resign");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return { data, loading, error, saving, reload, addRenewal, deleteRenewal, resign };
 };

@@ -7,7 +7,8 @@ type Params = {
   page?: number;
   per_page?: number;
   division?: string;
-  position? : string
+  position? : string;
+  status?: string;
 };
 
 type Meta = {

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { AlertCircle, UserMinus, UserPlus, Users } from "lucide-react";
+import { AlertCircle, ChevronDown, UserMinus, UserPlus, Users } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import useTurnover from "@/hooks/dashboard/turnover";
 import { formatTanggalIndo } from "@/lib/tanggal";
 
@@ -11,6 +12,48 @@ const MONTH_NAMES = [
 
 const selectClass =
   "h-10 rounded-lg border border-[#BFCCE3] bg-white px-3 text-sm font-semibold text-[#112D4E] outline-none transition hover:border-[#3F72AF] focus-visible:border-[#3F72AF] focus-visible:ring-4 focus-visible:ring-[#DBE2EF]";
+
+function MonthMultiSelect({ value, onChange }: { value: number[]; onChange: (v: number[]) => void }) {
+  const toggle = (m: number) =>
+    onChange(value.includes(m) ? value.filter((x) => x !== m) : [...value, m].sort((a, b) => a - b));
+  const text =
+    value.length === 0 ? "Per tahun" : value.length <= 2 ? value.map((m) => MONTHS[m - 1]).join(", ") : `${value.length} bulan`;
+
+  return (
+    <Popover>
+      <PopoverTrigger aria-label="Pilih bulan" className={`${selectClass} inline-flex min-w-36 items-center justify-between gap-2`}>
+        <span className="truncate">{text}</span>
+        <ChevronDown className="h-4 w-4 shrink-0" />
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-56 p-2">
+        <div className="mb-1 flex items-center justify-between px-1">
+          <span className="text-xs font-semibold text-[#50688C]">Pilih bulan</span>
+          <button
+            type="button"
+            onClick={() => onChange([])}
+            disabled={value.length === 0}
+            className="text-xs font-semibold text-[#3F72AF] hover:underline disabled:opacity-40"
+          >
+            Semua / Reset
+          </button>
+        </div>
+        <div className="grid grid-cols-2 gap-0.5">
+          {MONTH_NAMES.map((name, i) => (
+            <label key={name} className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-[#112D4E] hover:bg-[#F9F7F7]">
+              <input
+                type="checkbox"
+                className="h-4 w-4 accent-[#112D4E]"
+                checked={value.includes(i + 1)}
+                onChange={() => toggle(i + 1)}
+              />
+              {name}
+            </label>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 const pct = (n: number | null | undefined) => (n == null ? "-" : `${n.toFixed(2)}%`);
 
@@ -30,8 +73,8 @@ function Stat({ icon: Icon, label, value }: { icon: typeof Users; label: string;
 
 const TurnoverCard = () => {
   const [year, setYear] = useState(() => new Date().getFullYear());
-  const [month, setMonth] = useState<number | null>(null); // null = per tahun
-  const { data, error, isFetching } = useTurnover(year, month);
+  const [months, setMonths] = useState<number[]>([]); // kosong = per tahun
+  const { data, error, isFetching } = useTurnover(year, months);
 
   const years = data?.years?.length ? data.years : [year];
   const maxRate = Math.max(1, ...(data?.monthly ?? []).map((m) => m.turnover_rate ?? 0));
@@ -51,19 +94,7 @@ const TurnoverCard = () => {
               </option>
             ))}
           </select>
-          <select
-            aria-label="Bulan"
-            className={selectClass}
-            value={month ?? ""}
-            onChange={(e) => setMonth(e.target.value ? Number(e.target.value) : null)}
-          >
-            <option value="">Per tahun</option>
-            {MONTH_NAMES.map((name, i) => (
-              <option key={name} value={i + 1}>
-                {name}
-              </option>
-            ))}
-          </select>
+          <MonthMultiSelect value={months} onChange={setMonths} />
         </div>
       </div>
 
@@ -94,19 +125,23 @@ const TurnoverCard = () => {
             <Stat icon={Users} label="Rata-rata headcount" value={String(data.summary.average_headcount)} />
           </div>
 
-          {/* Per bulan dalam tahun terpilih (klik bar untuk pilih bulan) */}
+          {/* Per bulan dalam tahun terpilih (klik bar untuk pilih/batal pilih bulan) */}
           <div>
             <p className="mb-2 text-xs font-semibold text-[#50688C]">Turn over rate per bulan, {data.period.year}</p>
             <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">
               {data.monthly.map((m) => {
                 const h = m.turnover_rate ? Math.max(6, (m.turnover_rate / maxRate) * 64) : 3;
-                const active = month === m.month;
+                const active = months.includes(m.month);
                 return (
                   <button
                     key={m.month}
                     type="button"
                     disabled={m.future}
-                    onClick={() => setMonth(active ? null : m.month)}
+                    onClick={() =>
+                      setMonths((prev) =>
+                        prev.includes(m.month) ? prev.filter((x) => x !== m.month) : [...prev, m.month].sort((a, b) => a - b),
+                      )
+                    }
                     aria-pressed={active}
                     aria-label={`${MONTH_NAMES[m.month - 1]}: ${pct(m.turnover_rate)}, ${m.left} keluar`}
                     className={`flex flex-col items-center gap-1 rounded-lg border px-1 py-2 text-center transition disabled:cursor-not-allowed disabled:opacity-40 ${
