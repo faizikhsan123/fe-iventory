@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useGetStockOnHand from "./items/getStockOnHand";
+import { ITEM_CATEGORIES, categoryLabel } from "@/lib/itemCategory";
 
 
 const rupiah = (n: number) =>
@@ -48,9 +49,11 @@ const StockOnHandTab = () => {
         />
         <select value={category} onChange={(e) => setCategory(e.target.value)} className={`${fieldClass} sm:w-48`}>
           <option value="">Semua kategori</option>
-          <option value="apd">APD</option>
-          <option value="tools">Tools</option>
-          <option value="others">Others</option>
+          {ITEM_CATEGORIES.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -84,7 +87,7 @@ const StockOnHandTab = () => {
               data.map((row) => (
                 <tr key={row.id} className="text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
                   <td className="px-4 py-3 font-medium">{row.name}</td>
-                  <td className="px-3 py-3 uppercase text-[#50688C]">{row.category}</td>
+                  <td className="px-3 py-3 text-[#50688C]">{categoryLabel(row.category)}</td>
                   <td className="px-3 py-3 font-semibold">{`${row.current_stock.toLocaleString("id-ID")} ${row.unit}`}</td>
                   <td className="px-4 py-3 text-right font-bold">{rupiah(row.stock_value)}</td>
                 </tr>

@@ -12,6 +12,7 @@ import { itemsSchema, type ItemsCreate } from "@/schemas/items";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import UsecreateItems from "@/hooks/items/createItems";
+import { ITEM_CATEGORIES } from "@/lib/itemCategory";
 
 /*
   Palet:
@@ -207,9 +208,11 @@ const CreateItems = () => {
                     {...form.register("category")}
                   >
                     <option value=""> -- Pilih Kategori --</option>
-                    <option value="apd">APD</option>
-                    <option value="tools">Tools</option>
-                    <option value="others">Others</option>
+                    {ITEM_CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
                   </select>
                   <FieldError message={form.formState.errors.category?.message} />
                 </Field>

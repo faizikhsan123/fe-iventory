@@ -9,6 +9,7 @@ import useExport from "@/hooks/Laporan/exportRecordPengeluaran";
 
 import { AlertCircle, Download, Inbox, Loader2, Info } from "lucide-react";
 import StockOnHandTab from "../StockonHandTab";
+import { CATEGORY_BADGE_FALLBACK, CATEGORY_BADGE_STYLE, categoryLabel } from "@/lib/itemCategory";
 
 /*
   Palet:
@@ -22,21 +23,16 @@ import StockOnHandTab from "../StockonHandTab";
 // BADGE & STYLE
 // ============================================================
 
-const CATEGORY_STYLE: Record<string, string> = {
-  apd: "bg-[#DBE2EF] text-[#112D4E] ring-[#BFCCE3]",
-  tools: "bg-white text-[#112D4E] ring-[#3F72AF]",
-};
-
 function BadgeKategori({ value }: { value?: string | null }) {
   if (!value) return <span className="text-[#7B8FAE]">—</span>;
 
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ring-1 ring-inset ${
-        CATEGORY_STYLE[value.toLowerCase()] ?? "bg-[#F9F7F7] text-[#50688C] ring-[#DBE2EF]"
+        CATEGORY_BADGE_STYLE[value.toLowerCase()] ?? CATEGORY_BADGE_FALLBACK
       }`}
     >
-      {value}
+      {categoryLabel(value)}
     </span>
   );
 }

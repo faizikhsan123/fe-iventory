@@ -30,8 +30,7 @@ const DetailKaryawan = () => {
   const navigate = useNavigate();
 
   const { data, loading, error, handleGet } = useEmployeDetail();
-  const { user } = useAuth();
-  const isAdmin = Boolean(user?.roles?.includes("admin"));
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     if (id) {

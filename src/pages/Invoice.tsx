@@ -9,8 +9,7 @@ import { useAuth } from "@/hooks/auth/useAuth";
 import { useInvoiceActions, type Invoice } from "@/hooks/Invoice/useInvoice";
 
 const InvoicePage = () => {
-  const { user } = useAuth();
-  const isAdmin = Boolean(user?.roles?.includes("admin"));
+  const { isAdmin } = useAuth();
   const { remove } = useInvoiceActions();
 
   const [formOpen, setFormOpen] = useState(false);

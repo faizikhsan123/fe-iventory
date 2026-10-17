@@ -11,8 +11,8 @@ import { selectClass } from "@/lib/formStyles";
 
 type Props = {
   refreshKey: number;
-  onEdit: (training: Training) => void;
-  onDelete: (training: Training) => void;
+  onEdit?: (training: Training) => void;
+  onDelete?: (training: Training) => void;
 };
 
 const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
@@ -123,26 +123,30 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
                       >
                         <Eye size={16} />
                       </Button>
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        title="Edit"
-                        onClick={() => onEdit(t)}
-                        className="text-[#3F72AF] hover:bg-[#DBE2EF]"
-                      >
-                        <Pencil size={16} />
-                      </Button>
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        title="Hapus"
-                        onClick={() => onDelete(t)}
-                        className="text-[#B3261E] hover:bg-[#FDECEA]"
-                      >
-                        <Trash2 size={16} />
-                      </Button>
+                      {onEdit && (
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          title="Edit"
+                          onClick={() => onEdit(t)}
+                          className="text-[#3F72AF] hover:bg-[#DBE2EF]"
+                        >
+                          <Pencil size={16} />
+                        </Button>
+                      )}
+                      {onDelete && (
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          title="Hapus"
+                          onClick={() => onDelete(t)}
+                          className="text-[#B3261E] hover:bg-[#FDECEA]"
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

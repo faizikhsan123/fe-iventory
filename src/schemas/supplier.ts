@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { ITEM_CATEGORY_VALUES } from "@/lib/itemCategory";
 
 export const supplierSchema = z.object({
   nama: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
   pic: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
 
-  spesialis: z.enum(["apd", "tools", "others"], {
+  spesialis: z.enum(ITEM_CATEGORY_VALUES, {
     message: "Pilih  Salah Satu Kategori ",
   }),
 
@@ -24,7 +25,7 @@ export type SupplierForm = z.infer<typeof supplierSchema>;
 export const supplierSchemaEdit = z.object({
   nama: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
   pic: z.string().min(4, "Nama terlalu pendek").max(50, "Nama terlalu panjang"),
-  spesialis: z.enum(["apd", "tools", "others"], {
+  spesialis: z.enum(ITEM_CATEGORY_VALUES, {
     message: "Pilih  Salah Satu Kategori ",
   }),
 

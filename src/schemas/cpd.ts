@@ -1,12 +1,18 @@
 import { z } from "zod";
+import {
+  EMERGENCY_RELATIONSHIP_VALUES,
+  GENDER_VALUES,
+  MARITAL_STATUS_VALUES,
+  RELIGION_VALUES,
+} from "@/lib/cpdOptions";
 
 // Field CPD, urutan = urutan tampil. Semua opsional.
 export const CPD_FIELDS = [
   { name: "date_of_birth", label: "Tanggal Lahir", type: "date" },
   { name: "place_of_birth", label: "Tempat Lahir", max: 100 },
-  { name: "gender", label: "Jenis Kelamin", max: 30 },
-  { name: "marital_status", label: "Status Pernikahan", max: 50 },
-  { name: "religion", label: "Agama", max: 50 },
+  { name: "gender", label: "Jenis Kelamin", select: true },
+  { name: "marital_status", label: "Status Pernikahan", select: true },
+  { name: "religion", label: "Agama", select: true },
   { name: "nik_ktp", label: "NIK KTP", max: 32, sensitive: true, inputMode: "numeric" },
   { name: "npwp", label: "NPWP", max: 32, sensitive: true },
   { name: "bpjs_labour_no", label: "No. BPJS Ketenagakerjaan", max: 50 },
@@ -20,11 +26,12 @@ export const CPD_FIELDS = [
   { name: "ptfi_assigned_uid", label: "PTFI Assigned UID", max: 50 },
   { name: "emergency_name", label: "Nama Kontak Darurat", max: 100 },
   { name: "emergency_phone", label: "Telepon Kontak Darurat", max: 30, type: "tel", inputMode: "tel" },
-  { name: "emergency_relationship", label: "Hubungan Kontak Darurat", max: 50 },
+  { name: "emergency_relationship", label: "Hubungan Kontak Darurat", select: true },
 ] as const satisfies readonly {
   name: string;
   label: string;
   max?: number;
+  select?: boolean;
   type?: string;
   inputMode?: string;
   sensitive?: boolean;
@@ -36,12 +43,21 @@ export type CpdFieldName = (typeof CPD_FIELDS)[number]["name"];
 const optionalText = (max: number) =>
   z.string().max(max, `Maksimal ${max} karakter`).optional().nullable();
 
+// Dropdown: string kosong -> null. Nilai lama di luar daftar ditolak dengan pesan jelas.
+// Tipe input = output (termasuk "") dideklarasikan eksplisit supaya cocok dengan nilai default form (""),
+// sama seperti field teks lain; saat parse, "" tetap menjadi null.
+const optionalEnum = <T extends [string, ...string[]]>(values: T) =>
+  z
+    .union([z.literal("").transform(() => null), z.enum(values, "Pilih salah satu opsi yang tersedia")])
+    .optional()
+    .nullable() as unknown as z.ZodType<T[number] | "" | null | undefined, T[number] | "" | null | undefined>;
+
 export const cpdSchema = z.object({
   date_of_birth: z.string().optional().nullable(),
   place_of_birth: optionalText(100),
-  gender: optionalText(30),
-  marital_status: optionalText(50),
-  religion: optionalText(50),
+  gender: optionalEnum(GENDER_VALUES),
+  marital_status: optionalEnum(MARITAL_STATUS_VALUES),
+  religion: optionalEnum(RELIGION_VALUES),
   nik_ktp: optionalText(32),
   npwp: optionalText(32),
   bpjs_labour_no: optionalText(50),
@@ -55,7 +71,7 @@ export const cpdSchema = z.object({
   ptfi_assigned_uid: optionalText(50),
   emergency_name: optionalText(100),
   emergency_phone: optionalText(30),
-  emergency_relationship: optionalText(50),
+  emergency_relationship: optionalEnum(EMERGENCY_RELATIONSHIP_VALUES),
 });
 
 export type CpdForm = z.infer<typeof cpdSchema>;

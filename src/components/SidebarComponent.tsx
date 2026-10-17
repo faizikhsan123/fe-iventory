@@ -8,7 +8,6 @@ import {
   BoxIcon,
   FileClock,
   GraduationCap,
-  ClipboardList,
   Receipt,
   Stethoscope,
   ChartNoAxesColumn,
@@ -48,7 +47,6 @@ const mainMenu: MenuItem[] = [
   { to: "/trainings", label: "Master Training", icon: GraduationCap },
   { to: "/contracts", label: "Contract", icon: FileClock },
   { to: "/mcu", label: "Master MCU", icon: Stethoscope },
-  { to: "/rfq", label: "Log RFQ", icon: ClipboardList },
   { to: "/invoices", label: "Status Invoicing", icon: Receipt },
 ];
 
@@ -74,7 +72,6 @@ const SidebarComponent = () => {
   const { loadingLogout, handleLogout } = UseLogout();
   const [open, setOpen] = useState(false);
 
-  const isAdmin = user?.roles?.includes("admin");
 
   // inisial dari nama, misal "Faiz Ikhsan" -> "FI"
   const inisial = (user?.name ?? "U")
@@ -209,12 +206,9 @@ const SidebarComponent = () => {
           <SectionTitle>Menu utama</SectionTitle>
           {renderMenu(mainMenu)}
 
-          {isAdmin && (
-            <>
-              <SectionTitle>Transaksi</SectionTitle>
-              {renderMenu(trxMenu)}
-            </>
-          )}
+          {/* Semua role boleh membuka; office hanya melihat riwayat (read-only) */}
+          <SectionTitle>Transaksi</SectionTitle>
+          {renderMenu(trxMenu)}
 
           <SectionTitle>Laporan &amp; admin</SectionTitle>
           {renderMenu(reportMenu)}

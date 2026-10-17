@@ -11,6 +11,9 @@ export const useAuth = () => {
   const raw = localStorage.getItem("user");
   const user: AuthUser | null = raw ? JSON.parse(raw) : null;
 
-  return { user };
+  // Satu-satunya sumber kebenaran hak ubah data. Role lain (mis. "office") read-only.
+  const isAdmin = Boolean(user?.roles?.includes("admin"));
+
+  return { user, isAdmin };
 };
 

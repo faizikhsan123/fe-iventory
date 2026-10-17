@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/auth/useAuth";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AlertCircle, ArrowLeft, ExternalLink, Loader2, Pencil, Trash2 } from "lucide-react";
@@ -25,6 +26,7 @@ const InfoItem = ({ label, value }: { label: string; value?: string }) => (
 const TrainingDetailPages = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
 
   const { data: training, loading: loadingTraining, error: errorTraining, getTraining } = UseShowTraining();
   const { data: participants, loading, error, getParticipants } = UseGetParticipants();
@@ -53,8 +55,8 @@ const TrainingDetailPages = () => {
       <SambutanComponent
         paragraf1={training?.name_training ?? "Detail Training"}
         paragraf2="Kelola peserta dan file pendukung"
-        button="+ Tambah Peserta"
-        onclick={() => setIsAddOpen(true)}
+        button={isAdmin ? "+ Tambah Peserta" : undefined}
+        onclick={isAdmin ? () => setIsAddOpen(true) : undefined}
       />
 
       <div className="space-y-4 p-4 sm:p-6">
@@ -158,6 +160,7 @@ const TrainingDetailPages = () => {
                     <TableCell className="max-w-[180px] truncate text-[#50688C]">{p.notes ?? "-"}</TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-1">
+                        {isAdmin && (<>
                         <Button
                           type="button"
                           size="icon"
@@ -178,6 +181,7 @@ const TrainingDetailPages = () => {
                         >
                           <Trash2 size={16} />
                         </Button>
+                        </>)}
                       </div>
                     </TableCell>
                   </TableRow>

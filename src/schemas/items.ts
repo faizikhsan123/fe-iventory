@@ -1,11 +1,12 @@
 import { z } from "zod";
+import { ITEM_CATEGORY_VALUES } from "@/lib/itemCategory";
 
 export const itemsSchema = z.object({
   file: z.instanceof(File).optional().nullable(),
 
   name: z.string("Minimal 1 karakter dan 50 karakter").min(1).max(50),
 
-  category: z.enum(["apd", "tools", "others"], {
+  category: z.enum(ITEM_CATEGORY_VALUES, {
     message: "Pilih  Salah Satu Kategori ",
   }),
 

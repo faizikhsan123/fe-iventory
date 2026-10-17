@@ -6,8 +6,10 @@ import UpdateGroups from "@/components/Group/UpdateGroups";
 import Navbar from "@/components/Navbar";
 import SambutanComponent from "@/components/SambutanCoomponent";
 import DeleteGroups from "@/components/Group/DelteGroups";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const GroupPages = () => {
+  const { isAdmin } = useAuth();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: number; group_name: string } | null>(null);
@@ -22,8 +24,8 @@ const GroupPages = () => {
       <SambutanComponent
         paragraf1="Master Groups"
         paragraf2="Kelola Data group"
-        button="+ Tambah Group"
-        onclick={() => setIsCreateOpen(true)}
+        button={isAdmin ? "+ Tambah Group" : undefined}
+        onclick={isAdmin ? () => setIsCreateOpen(true) : undefined}
       />
 
       <CreateGroups open={isCreateOpen} onOpenChange={setIsCreateOpen} onSuccess={refresh} />
@@ -44,8 +46,8 @@ const GroupPages = () => {
 
       <TableGroups
         refreshKey={refreshKey}
-        onEdit={(id) => setEditId(id)}
-        onDelete={(g) => setDeleteTarget(g)}
+        onEdit={isAdmin ? (id) => setEditId(id) : undefined}
+        onDelete={isAdmin ? (g) => setDeleteTarget(g) : undefined}
       />
     </div>
   );

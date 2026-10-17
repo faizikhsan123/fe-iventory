@@ -8,8 +8,7 @@ import { useAuth } from "@/hooks/auth/useAuth";
 import { useMcuActions, type Mcu } from "@/hooks/Mcu/useMcu";
 
 const McuPage = () => {
-  const { user } = useAuth();
-  const isAdmin = Boolean(user?.roles?.includes("admin"));
+  const { isAdmin } = useAuth();
   const { remove } = useMcuActions();
 
   const [formOpen, setFormOpen] = useState(false);

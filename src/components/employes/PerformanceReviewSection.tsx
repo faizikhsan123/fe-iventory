@@ -308,8 +308,7 @@ const PerformanceReviewSection = ({
   defaultProject?: string;
   onChange?: () => void;
 }) => {
-  const { user } = useAuth();
-  const isAdmin = Boolean(user?.roles?.includes("admin"));
+  const { isAdmin } = useAuth();
   const { data, loading, error, saving, createReview, deleteReview } = usePerformanceReview(employeId);
   const [formOpen, setFormOpen] = useState(false);
 

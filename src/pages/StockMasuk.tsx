@@ -2,16 +2,19 @@
 import Navbar from "@/components/Navbar";
 
 import TambahStock from "@/components/StockMasuk/StockMasuk";
+import { StockInReadOnly } from "@/components/StockReadOnlyHistory";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 
 
 const StockMasuk = () => {
+  const { isAdmin } = useAuth();
 
   return (
     <div>
       <Navbar title="Barang Masuk"/>
 
-      <TambahStock/>
+      {isAdmin ? <TambahStock /> : <StockInReadOnly />}
 
       {/* <SambutanCoomponent
         paragraf1="Master Barang"

@@ -9,6 +9,12 @@ import { STORAGE_URL } from "@/lib/axios";
 import { useNavigate } from "react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/hooks/auth/useAuth";
+import {
+  CATEGORY_BADGE_FALLBACK,
+  CATEGORY_BADGE_STYLE,
+  ITEM_CATEGORIES,
+  categoryLabel,
+} from "@/lib/itemCategory";
 
 /*
   Palet:
@@ -50,11 +56,6 @@ const STATUS_LABEL: Record<string, string> = {
   out_of_stock: "Stok Habis",
 };
 
-const CATEGORY_STYLE: Record<string, string> = {
-  apd: "bg-[#DBE2EF] text-[#112D4E] ring-[#BFCCE3]",
-  tools: "bg-white text-[#112D4E] ring-[#3F72AF]",
-};
-
 // function badge status
 function getStockStatus(current: number, min: number): string {
   if (current === 0) return "out_of_stock";
@@ -67,10 +68,10 @@ function BadgeKategori({ value }: { value?: string | null }) {
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ring-1 ring-inset ${
-        CATEGORY_STYLE[value.toLowerCase()] ?? "bg-[#F9F7F7] text-[#50688C] ring-[#DBE2EF]"
+        CATEGORY_BADGE_STYLE[value.toLowerCase()] ?? CATEGORY_BADGE_FALLBACK
       }`}
     >
-      {value}
+      {categoryLabel(value)}
     </span>
   );
 }
@@ -163,9 +164,8 @@ const TableItems = () => {
   // maka dibawah 20 + 1 sampai seterusnya
   const startNumber = (page - 1) * $perPage;
 
-  const { user } = useAuth();
+  const { isAdmin } = useAuth();
 
-  const isAdmin = user?.roles?.includes("admin");
 
   // tombol aksi (dipakai di kartu mobile & tabel)
   const renderActions = (id: number, name?: string | null): ReactNode => (
@@ -267,9 +267,11 @@ const TableItems = () => {
           >
             <option value="all">Semua Kategori</option>
 
-            <option value="apd">APD</option>
-
-            <option value="tools">TOOLS</option>
+            {ITEM_CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
           </select>
         </div>
 

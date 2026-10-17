@@ -4,8 +4,10 @@ import Navbar from "@/components/Navbar";
 import SambutanComponent from "@/components/SambutanCoomponent";
 
 import { useState } from "react";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const Employes = () => {
+  const { isAdmin } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -16,8 +18,8 @@ const Employes = () => {
       <SambutanComponent
         paragraf1="Master Employees"
         paragraf2="Kelola  Data karyawan "
-        button="+ Tambah Karyawan"
-        onclick={() => setIsDialogOpen(true)}
+        button={isAdmin ? "+ Tambah Karyawan" : undefined}
+        onclick={isAdmin ? () => setIsDialogOpen(true) : undefined}
       />
 
       <CreateEmployes

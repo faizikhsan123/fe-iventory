@@ -15,6 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import UseUpdateItems from "@/hooks/items/updateitems";
 import useGetItemById from "@/hooks/items/getByid";
 import { STORAGE_URL } from "@/lib/axios";
+import { ITEM_CATEGORIES } from "@/lib/itemCategory";
 
 /*
   Palet:
@@ -276,9 +277,11 @@ const UpdateItems = () => {
                       {...form.register("category")}
                     >
                       <option value=""> -- Pilih Kategori --</option>
-                      <option value="apd">APD</option>
-                      <option value="tools">Tools</option>
-                      <option value="others">Others</option>
+                      {ITEM_CATEGORIES.map((c) => (
+                        <option key={c.value} value={c.value}>
+                          {c.label}
+                        </option>
+                      ))}
                     </select>
                     <FieldError message={form.formState.errors.category?.message} />
                   </Field>

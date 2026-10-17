@@ -84,8 +84,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
 
   const perPage = 10;
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const isAdmin = user?.roles?.includes("admin");
+  const { isAdmin } = useAuth();
 
   const params = () => ({
     search,

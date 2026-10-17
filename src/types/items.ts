@@ -1,4 +1,6 @@
-export type Category = "apd" | "tools";
+import type { ItemCategory } from "@/lib/itemCategory";
+
+export type Category = ItemCategory;
 export type Size = "s" | "m" | "l" | "xl" | "xxl" | "universal";
 export type Unit = "unit" | "pair" | "pcs" | "set";
 export type Status = "available" | "low_stock" | "out_of_stock";

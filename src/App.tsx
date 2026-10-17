@@ -4,6 +4,7 @@ import DashboardLayout from "./layout/layout";
 import NotFound from "./components/NotFound";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 // Tiap halaman jadi chunk sendiri: dimuat saat dikunjungi, bukan semuanya di awal.
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -25,7 +26,6 @@ const ContractPage = lazy(() => import("./pages/Contract"));
 const ContractDetail = lazy(() => import("./components/Contract/ContractDetail"));
 const McuPage = lazy(() => import("./pages/Mcu"));
 const InvoicePage = lazy(() => import("./pages/Invoice"));
-const RfqPage = lazy(() => import("./pages/Rfq"));
 
 function App() {
   return (
@@ -45,8 +45,11 @@ function App() {
           <Route path="/employes/:id" element={<DetailKaryawan />} />
 
           <Route path="/items" element={<Items />} />
-          <Route path="/create-items" element={<CreateItems />} />
-          <Route path="/update-items/:id" element={<UpdateItems />} />
+          {/* Form tulis: hanya admin, role lain (office) dialihkan ke daftar */}
+          <Route element={<AdminRoute redirectTo="/items" />}>
+            <Route path="/create-items" element={<CreateItems />} />
+            <Route path="/update-items/:id" element={<UpdateItems />} />
+          </Route>
           <Route path="/items/:id" element={<DetailBarang />} />
 
           <Route path="/stock-masuk" element={<StockMasuk />} />
@@ -61,7 +64,6 @@ function App() {
           <Route path="/contracts/:id" element={<ContractDetail />} />
 
           <Route path="/mcu" element={<McuPage />} />
-          <Route path="/rfq" element={<RfqPage />} />
           <Route path="/invoices" element={<InvoicePage />} />
 
           <Route path="/laporan" element={<LaporanPage />} />

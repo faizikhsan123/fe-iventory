@@ -227,8 +227,7 @@ function ResignForm({
 const ContractDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const isAdmin = Boolean(user?.roles?.includes("admin"));
+  const { isAdmin } = useAuth();
   const { data, loading, error, saving, reload, addRenewal, deleteRenewal, resign } = useContractDetail(id);
   const [renewOpen, setRenewOpen] = useState(false);
   const [resignOpen, setResignOpen] = useState(false);

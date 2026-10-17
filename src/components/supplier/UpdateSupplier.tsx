@@ -19,6 +19,7 @@ import { supplierSchemaEdit, type SupplierFormEdit } from "@/schemas/supplier";
 import { useEditSupplier } from "@/hooks/suppliers/EditSupplier";
 import type { Supplier } from "@/types/supplier";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { ITEM_CATEGORIES } from "@/lib/itemCategory";
 
 /*
   Palet:
@@ -143,9 +144,11 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
                 {...form.register("spesialis")}
               >
                 <option value=""> -- Pilih Kategori --</option>
-                <option value="apd">APD</option>
-                <option value="tools">Tools</option>
-                <option value="others">Others</option>
+                {ITEM_CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
               </select>
               <FieldError message={form.formState.errors.spesialis?.message} />
             </Field>
