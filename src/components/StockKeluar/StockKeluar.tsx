@@ -55,7 +55,7 @@ const Row = ({ label, value }: { label: string; value: ReactNode }) => (
 // ============================================================
 
 const StockKeluar = () => {
-  const { data: items, loading: loadingItems, getItems } = UsegetItems();
+  const { data: items, loading: loadingItems, getAllItems } = UsegetItems();
   const { data: employees, loading: loadingEmployees, getEmployesButton } = useGetEmployes();
   const { submit, submitting, error, } = useSubmitStockKeluar();
 
@@ -85,7 +85,7 @@ const StockKeluar = () => {
   };
 
   useEffect(() => {
-    getItems();
+    getAllItems();
     getEmployesButton();
   }, []);
 

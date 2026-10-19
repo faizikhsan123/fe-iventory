@@ -68,7 +68,7 @@ const defaultFormValues: StockMasuk = {
 // ============================================================
 
 const TambahStock = () => {
-  const { data: items, loading: loadingItems, getItems } = UsegetItems();
+  const { data: items, loading: loadingItems, getAllItems } = UsegetItems();
   const { dataSUpplier: suppliers, getSupplier, loadingSupplier } = useSupplier();
   const { errorStockMasuk, handleStockIn, loadingStockMasuk } = Usecreate();
 
@@ -90,7 +90,7 @@ const TambahStock = () => {
   };
 
   useEffect(() => {
-    getItems();
+    getAllItems();
     getSupplier();
   }, []);
 
