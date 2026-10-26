@@ -188,7 +188,8 @@ const SidebarComponent = () => {
             </div>
             <span className="min-w-0 leading-tight">
               <span className="block truncate text-md font-extrabold text-white mt-2">PT. Vando Teknik Solusi</span>
-              <span className="block truncate text-xs text-[#9DB2D3] mt-1">Inventory Gresik</span>
+              <span className="block truncate text-sm  text-[#9DB2D3] mt-1 text-center">Welcome to our </span>
+              <span className="block truncate text-sm text-[#9DB2D3] mt-1 text-center">Business Dashboard</span>
             </span>
           </Link>
           <button

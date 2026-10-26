@@ -72,7 +72,7 @@ export default function Login() {
           </div>
           <div className="leading-tight">
             <p className="text-xl font-extrabold text-white">PT. Vando Teknik Solusi</p>
-            <p className="text-sm font-medium text-[#9DB2D3]">Inventory Gresik</p>
+            <p className="text-sm font-medium text-[#9DB2D3]">Business Dashboard</p>
           </div>
         </div>
 
