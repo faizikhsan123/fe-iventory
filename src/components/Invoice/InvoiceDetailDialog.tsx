@@ -184,7 +184,7 @@ function DocumentsSection({ invoice, canEdit, onChanged }: { invoice: Invoice; c
           );
         })}
       </ul>
-      <p className="mt-1.5 text-xs text-[#50688C]">Format: PDF, JPG, PNG, DOC(X), XLS(X). Maksimal 5 MB.</p>
+      <p className="mt-1.5 text-xs text-[#50688C]">Format: PDF, JPG, PNG, DOC(X), XLS(X). Maksimal 10 MB.</p>
       <div className="mt-2">
         <FormAlert message={error} />
       </div>

@@ -134,7 +134,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
   return (
     <div className="space-y-4">
       {/* Ringkasan per tahapan (klik untuk filter) */}
-      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4 2xl:grid-cols-7">
         {INVOICE_STATUSES.map((s) => {
           const active = filters.status === s.value;
           return (

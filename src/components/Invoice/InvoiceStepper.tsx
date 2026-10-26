@@ -3,7 +3,7 @@ import { INVOICE_STATUSES, statusIndex } from "@/lib/invoice";
 
 // posisi invoice di tahapan: langkah yang sudah lewat terisi, langkah sekarang disorot.
 // compact: lingkaran kecil tanpa label (tabel/kartu). Penuh: tiap langkah berbagi lebar sama, label membungkus,
-// jadi 6 tahap tetap muat di layar HP tanpa scroll horizontal.
+// jadi 7 tahap tetap muat di layar HP tanpa scroll horizontal.
 const InvoiceStepper = ({ status, compact = false }: { status: string; compact?: boolean }) => {
   const current = statusIndex(status);
 
@@ -24,13 +24,13 @@ const InvoiceStepper = ({ status, compact = false }: { status: string; compact?:
             {!compact && i > 0 && (
               <span
                 aria-hidden="true"
-                className={`absolute right-1/2 top-3.5 h-0.5 w-full -translate-y-1/2 ${i <= current ? "bg-[#3F72AF]" : "bg-[#DBE2EF]"}`}
+                className={`absolute right-1/2 top-3 h-0.5 sm:top-3.5 w-full -translate-y-1/2 ${i <= current ? "bg-[#3F72AF]" : "bg-[#DBE2EF]"}`}
               />
             )}
             <span
               title={s.hint}
               className={`relative grid place-items-center rounded-full text-[10px] font-bold ring-2 ${
-                compact ? "h-5 w-5" : "h-7 w-7 text-xs"
+                compact ? "h-5 w-5" : "h-6 w-6 sm:h-7 sm:w-7 sm:text-xs"
               } ${
                 active
                   ? "bg-[#112D4E] text-white ring-[#8FB0DC]"
@@ -43,7 +43,7 @@ const InvoiceStepper = ({ status, compact = false }: { status: string; compact?:
             </span>
             {!compact && (
               <span
-                className={`px-0.5 text-center text-[10px] font-semibold leading-tight break-words sm:text-[11px] ${active ? "text-[#112D4E]" : "text-[#7B8FAE]"}`}
+                className={`px-0 text-center text-[9px] font-semibold leading-tight break-words sm:px-0.5 sm:text-[11px] ${active ? "text-[#112D4E]" : "text-[#7B8FAE]"}`}
               >
                 {s.label}
               </span>
