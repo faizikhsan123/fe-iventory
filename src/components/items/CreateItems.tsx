@@ -6,6 +6,7 @@ import { useState, type ReactNode } from "react";
 import { Label } from "../ui/label";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
+import { CurrencyInput } from "../ui/currency-input";
 import { Textarea } from "../ui/textarea";
 
 import { itemsSchema, type ItemsCreate } from "@/schemas/items";
@@ -60,22 +61,6 @@ const CreateItems = () => {
   const handleRemoveImage = () => {
     form.setValue("file", null, { shouldValidate: true });
     setPreviewImage(null);
-  };
-
-  const formatRupiah = (value: string | number) => {
-    const number = typeof value === "string" ? value.replace(/\D/g, "") : value;
-    if (!number) return "";
-    return new Intl.NumberFormat("id-ID").format(Number(number));
-  };
-
-  const [displayPrice, setDisplayPrice] = useState(formatRupiah(form.getValues("price") || ""));
-
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/\D/g, ""); // buang semua non-digit
-    form.setValue("price", rawValue ? Number(rawValue) : 0, {
-      shouldValidate: true,
-    });
-    setDisplayPrice(formatRupiah(rawValue));
   };
 
   return (
@@ -317,15 +302,22 @@ const CreateItems = () => {
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[#50688C]">
                     Rp
                   </span>
-                  <Input
-                    type="text"
-                    inputMode="numeric"
-                    value={displayPrice}
-                    onChange={handlePriceChange}
-                    id="price"
-                    placeholder="50.000"
-                    className={`${inputClassName} pl-10`}
-                    disabled={loadingCreate}
+                  <Controller
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <CurrencyInput
+                        name={field.name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        value={field.value ? field.value : ""}
+                        onValueChange={(raw) => field.onChange(raw === "" ? 0 : Number(raw))}
+                        id="price"
+                        placeholder="50.000"
+                        className={`${inputClassName} pl-10`}
+                        disabled={loadingCreate}
+                      />
+                    )}
                   />
                 </div>
                 <FieldError message={form.formState.errors.price?.message} />

@@ -6,6 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Label } from "../ui/label";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
+import { CurrencyInput } from "../ui/currency-input";
 import { Textarea } from "../ui/textarea";
 
 import { itemsSchema, type ItemsCreate } from "@/schemas/items";
@@ -79,29 +80,6 @@ const UpdateItems = () => {
     setPreviewImage(null);
   };
 
-  const formatRupiah = (value: string | number | null | undefined) => {
-    if (value === null || value === undefined || value === "") return "";
-    // Number("30000.00") = 30000, jadi desimal nggak ikut kebuang jadi digit
-    const num = typeof value === "number" ? value : Number(value);
-    if (Number.isNaN(num) || num === 0) return "";
-    return new Intl.NumberFormat("id-ID").format(Math.round(num));
-  };
-
-  const [displayPrice, setDisplayPrice] = useState("");
-
-  const watchedPrice = form.watch("price");
-  useEffect(() => {
-    setDisplayPrice(formatRupiah(watchedPrice));
-  }, [watchedPrice]);
-
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/\D/g, ""); // ini aman, karena input user cuma digit
-    form.setValue("price", rawValue ? Number(rawValue) : 0, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  };
-
   // isi ulang form begitu data lama (item) berhasil di-fetch
   useEffect(() => {
     if (!item) return;
@@ -118,7 +96,6 @@ const UpdateItems = () => {
       price: item.price ?? undefined,
     });
 
-    setDisplayPrice(formatRupiah(item.price ?? ""));
   }, [item]);
 
   // effect terpisah khusus buat preview, biar gampang dibaca
@@ -404,15 +381,22 @@ const UpdateItems = () => {
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[#50688C]">
                       Rp
                     </span>
-                    <Input
-                      type="text"
-                      inputMode="numeric"
-                      value={displayPrice}
-                      onChange={handlePriceChange}
-                      id="price"
-                      placeholder="50.000"
-                      className={`${inputClassName} pl-10`}
-                      disabled={updateloading}
+                    <Controller
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <CurrencyInput
+                          name={field.name}
+                          ref={field.ref}
+                          onBlur={field.onBlur}
+                          value={field.value ? field.value : ""}
+                          onValueChange={(raw) => field.onChange(raw === "" ? 0 : Number(raw))}
+                          id="price"
+                          placeholder="50.000"
+                          className={`${inputClassName} pl-10`}
+                          disabled={updateloading}
+                        />
+                      )}
                     />
                   </div>
                   <FieldError message={form.formState.errors.price?.message} />

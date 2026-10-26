@@ -3,6 +3,7 @@ import { Loader2, Receipt } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { CurrencyInput } from "../ui/currency-input";
 import FormAlert from "../common/FormAlert";
 import { useInvoiceActions, type Invoice, type InvoiceForm } from "@/hooks/Invoice/useInvoice";
 import { INVOICE_DIVISIONS } from "@/lib/invoice";
@@ -154,13 +155,10 @@ function InvoiceFormBody({
 
             <label className="space-y-2">
               <span className={labelClass}>Nilai (Rp)</span>
-              <Input
-                type="number"
-                min={0}
-                inputMode="numeric"
+              <CurrencyInput
                 className={inputClass}
                 value={form.amount}
-                onChange={(e) => set("amount", e.target.value)}
+                onValueChange={(raw) => set("amount", raw)}
                 placeholder="0"
                 disabled={saving}
               />
