@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2, UserPlus } from "lucide-react";
 import {
@@ -45,7 +45,7 @@ const emptyValues: GroupsForm = {
 const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsProps) => {
   const { loadingUpdate, errorUpdate, handleUpdate } = UpdateGroupsHooks();
   const { loadingDetail, errorDetail, getGroup } = UseGetGroupDetail();
-  const { getEmployesButton, data } = useGetEmployes();
+  const { getEmployesButton, data, loading: loadingEmployees, error: errorEmployees } = useGetEmployes();
 
   const form = useForm<GroupsForm>({
     resolver: zodResolver(GroupsSchema),
@@ -59,16 +59,18 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
       return;
     }
 
-    getEmployesButton();
+    getEmployesButton({ all: true });
 
+    let cancelled = false;
     getGroup(groupId).then((g) => {
-      if (!g) return;
+      if (!g || cancelled) return;
       form.reset({
         group_name: g.group_name,
       
         employes_ids: (g.employees ?? []).map((e) => e.id),
       });
     });
+    return () => { cancelled = true; };
   }, [open, groupId, form, getGroup, getEmployesButton]);
 
   const handlesubmit = async (values: GroupsForm) => {
@@ -80,7 +82,8 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
     }
   };
 
-  const busy = loadingUpdate || loadingDetail;
+  const busy = loadingUpdate || loadingDetail || loadingEmployees;
+  const selectedCount = useWatch({ control: form.control, name: "employes_ids" }).length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -179,7 +182,9 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
 
                   return (
                     <div className="max-h-56 space-y-1 overflow-y-auto rounded-lg border border-[#BFCCE3] p-2">
-                      {data.length === 0 && (
+                      {loadingEmployees && <p role="status" className="py-4 text-center text-sm text-[#50688C]">Memuat seluruh karyawan...</p>}
+                      {errorEmployees && <p role="alert" className="py-4 text-center text-sm text-[#B3261E]">{errorEmployees}</p>}
+                      {!loadingEmployees && !errorEmployees && data.length === 0 && (
                         <p className="py-4 text-center text-sm text-[#7B8FAE]">Belum ada karyawan</p>
                       )}
 
@@ -209,7 +214,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
               />
 
               <p className="text-xs text-[#50688C]">
-                {form.watch("employes_ids").length} karyawan dipilih
+                {selectedCount} karyawan dipilih
               </p>
             </FieldSet>
 
@@ -239,7 +244,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
             />
             <Button
               type="submit"
-              disabled={busy}
+              disabled={busy || Boolean(errorEmployees) || Boolean(errorDetail)}
               className="h-11 w-full gap-2 rounded-lg bg-[#112D4E] px-5 font-bold text-white hover:bg-[#0B2240] disabled:opacity-60 sm:w-auto"
             >
               {loadingUpdate ? (

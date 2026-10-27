@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Clock, Loader2, Search, Users, UsersRound } from "lucide-react";
 import {
@@ -56,7 +56,7 @@ const emptyValues: GroupsForm = {
 
 const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
   const { loadingCreate, errorCreate, handleCreate } = CreateGroupsHooks();
-  const { getEmployesButton, data } = useGetEmployes();
+  const { getEmployesButton, data, loading: loadingEmployees, error: errorEmployees } = useGetEmployes();
   const [q, setQ] = useState("");
 
   const form = useForm<GroupsForm>({
@@ -66,10 +66,9 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
 
   useEffect(() => {
     if (open) {
-      getEmployesButton();
+      getEmployesButton({ all: true });
     } else {
       form.reset(emptyValues);
-      setQ("");
     }
   }, [open, form, getEmployesButton]);
 
@@ -85,14 +84,19 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
     const ok = await handleCreate(values);
     if (ok) {
       onSuccess();
+      setQ("");
       onOpenChange(false);
     }
   };
 
-  const selectedCount = form.watch("employes_ids").length;
+  const selectedCount = useWatch({ control: form.control, name: "employes_ids" }).length;
+  const busy = loadingCreate || loadingEmployees;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(nextOpen) => {
+      if (!nextOpen) setQ("");
+      onOpenChange(nextOpen);
+    }}>
       <DialogContent className="flex max-h-[92dvh] w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-xl border border-[#DBE2EF] bg-white p-0 shadow-[0_10px_30px_rgb(17,45,78,0.18)] sm:max-w-2xl">
         {/* Header */}
         <DialogHeader className="shrink-0 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-4 pr-12 sm:px-6">
@@ -212,7 +216,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
                           type="button"
                           variant="outline"
                           onClick={toggleAll}
-                          disabled={loadingCreate || filteredEmployes.length === 0}
+                          disabled={busy || Boolean(errorEmployees) || filteredEmployes.length === 0}
                           className="h-10 shrink-0 rounded-lg border-[#BFCCE3] bg-white px-3 text-xs font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
                         >
                           {allFilteredSelected ? "Hapus semua" : "Pilih semua"}
@@ -221,7 +225,9 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
 
                       {/* list */}
                       <div className="max-h-60 divide-y divide-[#EBEFF6] overflow-y-auto">
-                        {filteredEmployes.length === 0 && (
+                        {loadingEmployees && <p role="status" className="py-8 text-center text-sm text-[#50688C]">Memuat seluruh karyawan...</p>}
+                        {errorEmployees && <p role="alert" className="py-8 text-center text-sm text-[#B3261E]">{errorEmployees}</p>}
+                        {!loadingEmployees && !errorEmployees && filteredEmployes.length === 0 && (
                           <p className="py-8 text-center text-sm text-[#7B8FAE]">Karyawan tidak ditemukan</p>
                         )}
 
@@ -239,7 +245,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
                                 id={`employee-${employee.id}`}
                                 checked={checked}
                                 onCheckedChange={() => toggle(employee.id)}
-                                disabled={loadingCreate}
+                                disabled={busy}
                               />
                               <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#112D4E] text-xs font-bold text-white">
                                 {initials(employee.user?.name)}
@@ -289,7 +295,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
             />
             <Button
               type="submit"
-              disabled={loadingCreate}
+              disabled={busy || Boolean(errorEmployees)}
               className="h-11 w-full gap-2 rounded-lg bg-[#112D4E] px-5 font-bold text-white hover:bg-[#0B2240] disabled:opacity-60 sm:w-auto"
             >
               {loadingCreate ? (

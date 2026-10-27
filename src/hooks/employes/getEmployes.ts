@@ -1,6 +1,6 @@
 import { AxiosInstance } from "@/lib/axios";
 import type { employes } from "@/types/employes";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 type Params = {
   search?: string;
@@ -9,6 +9,7 @@ type Params = {
   division?: string;
   position? : string;
   status?: string;
+  all?: boolean;
 };
 
 type Meta = {
@@ -23,22 +24,39 @@ const useGetEmployes = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [meta, setMeta] = useState<Meta | null>(null);
+  const requestId = useRef(0);
 
-  const getEmployesButton = useCallback(async (params: Params = {}) => {
+  const getEmployesButton = useCallback(async ({ all = false, ...params }: Params = {}) => {
+    const currentRequest = ++requestId.current;
     try {
       setLoading(true);
       setError("");
+      setData([]);
+      setMeta(null);
 
       const response = await AxiosInstance.get("/employes", {
-        params,
+        params: all ? { ...params, page: 1, per_page: 100 } : params,
       });
 
-      setData(response.data.data);
-      setMeta(response.data.meta);
+      const employees: employes[] = [...response.data.data];
+      if (currentRequest !== requestId.current) return;
+      if (all) {
+        // The API caps each page at 100; increasing per_page alone loses employees.
+        for (let page = 2; page <= response.data.meta.last_page; page++) {
+          const next = await AxiosInstance.get("/employes", {
+            params: { ...params, page, per_page: 100 },
+          });
+          if (currentRequest !== requestId.current) return;
+          employees.push(...next.data.data);
+        }
+      }
+
+      setData(employees);
+      setMeta(all ? null : response.data.meta);
     } catch {
-      setError("Gagal mengambil data karyawan.");
+      if (currentRequest === requestId.current) setError("Gagal mengambil data karyawan.");
     } finally {
-      setLoading(false);
+      if (currentRequest === requestId.current) setLoading(false);
     }
   }, []);
 
