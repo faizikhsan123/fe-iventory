@@ -28,21 +28,21 @@ const initials = (name?: string | null) => (name ? name.trim().slice(0, 2).toUpp
 
 const AddParticipants = ({ open, trainingId, existingIds, onOpenChange, onSuccess }: Props) => {
   const { loadingAdd, errorAdd, handleAdd, setErrorAdd } = AddParticipantsHooks();
-  const { getEmployesButton, data } = useGetEmployes();
+  const { getAllEmployes, data } = useGetEmployes();
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<number[]>([]);
   const [date, setDate] = useState("");
 
   useEffect(() => {
     if (open) {
-      getEmployesButton();
+      getAllEmployes();
       setErrorAdd("");
     } else {
       setSelected([]);
       setQ("");
       setDate("");
     }
-  }, [open, getEmployesButton, setErrorAdd]);
+  }, [open, getAllEmployes, setErrorAdd]);
 
   const filtered = useMemo(() => {
     const k = q.trim().toLowerCase();

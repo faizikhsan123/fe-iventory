@@ -56,7 +56,7 @@ const Row = ({ label, value }: { label: string; value: ReactNode }) => (
 
 const StockKeluar = () => {
   const { data: items, loading: loadingItems, getAllItems } = UsegetItems();
-  const { data: employees, loading: loadingEmployees, getEmployesButton } = useGetEmployes();
+  const { data: employees, loading: loadingEmployees, getAllEmployes } = useGetEmployes();
   const { submit, submitting, error, } = useSubmitStockKeluar();
 
   const form = useForm<StockOut>({
@@ -86,7 +86,7 @@ const StockKeluar = () => {
 
   useEffect(() => {
     getAllItems();
-    getEmployesButton();
+    getAllEmployes();
   }, []);
 
   const watchedEmployeeId = form.watch("employes_id");

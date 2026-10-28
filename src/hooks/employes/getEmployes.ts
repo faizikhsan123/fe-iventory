@@ -60,12 +60,50 @@ const useGetEmployes = () => {
     }
   }, []);
 
+  // Memuat SEMUA karyawan (semua halaman, 100 per request = batas maksimum backend),
+  // tanpa duplikat dan urut nama. Untuk pilihan karyawan di form; tabel tetap pakai getEmployesButton.
+  const getAllEmployes = useCallback(async (params: Omit<Params, "all" | "page" | "per_page"> = {}) => {
+    const currentRequest = ++requestId.current;
+    try {
+      setLoading(true);
+      setError("");
+      setMeta(null);
+
+      const all: employes[] = [];
+      const seen = new Set<number>();
+      let page = 1;
+      let lastPage = 1;
+      do {
+        const response = await AxiosInstance.get("/employes", {
+          params: { ...params, page, per_page: 100 },
+        });
+        if (currentRequest !== requestId.current) return;
+        for (const emp of response.data.data as employes[]) {
+          if (!seen.has(emp.id)) {
+            seen.add(emp.id);
+            all.push(emp);
+          }
+        }
+        lastPage = response.data.meta?.last_page ?? 1;
+        page += 1;
+      } while (page <= lastPage);
+
+      all.sort((a, b) => (a.user?.name ?? "").localeCompare(b.user?.name ?? "", "id"));
+      setData(all);
+    } catch {
+      if (currentRequest === requestId.current) setError("Gagal mengambil data karyawan.");
+    } finally {
+      if (currentRequest === requestId.current) setLoading(false);
+    }
+  }, []);
+
   return {
     data,
     loading,
     error,
     meta,
     getEmployesButton,
+    getAllEmployes,
   };
 };
 

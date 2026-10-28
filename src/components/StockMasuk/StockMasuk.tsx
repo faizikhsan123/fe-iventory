@@ -69,7 +69,7 @@ const defaultFormValues: StockMasuk = {
 
 const TambahStock = () => {
   const { data: items, loading: loadingItems, getAllItems } = UsegetItems();
-  const { dataSUpplier: suppliers, getSupplier, loadingSupplier } = useSupplier();
+  const { dataSUpplier: suppliers, getAllSuppliers, loadingSupplier } = useSupplier();
   const { errorStockMasuk, handleStockIn, loadingStockMasuk } = Usecreate();
 
   const form = useForm<StockMasuk>({
@@ -91,7 +91,7 @@ const TambahStock = () => {
 
   useEffect(() => {
     getAllItems();
-    getSupplier();
+    getAllSuppliers();
   }, []);
 
   const watchedSupplierId = form.watch("supplier_id");

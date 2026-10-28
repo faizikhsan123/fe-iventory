@@ -111,10 +111,27 @@ export const useMcuActions = () => {
 export const useEmployeeOptions = () => {
   const { data } = useAsyncData(
     async (signal) => {
-      const res = await AxiosInstance.get("/employes", { params: { per_page: 100 }, signal });
-      return (res.data.data as { id: number; id_number: string; user?: { name: string } }[]).map(
-        (e): EmployeeOption => ({ id: e.id, id_number: e.id_number, name: e.user?.name ?? "-" }),
-      );
+      type Emp = { id: number; id_number: string; user?: { name: string } };
+      const all: Emp[] = [];
+      const seen = new Set<number>();
+      let page = 1;
+      let lastPage: number;
+      // API membatasi 100 per halaman: muat semua halaman agar pilihan tidak terpotong.
+      do {
+        const res = await AxiosInstance.get("/employes", { params: { page, per_page: 100 }, signal });
+        for (const e of res.data.data as Emp[]) {
+          if (!seen.has(e.id)) {
+            seen.add(e.id);
+            all.push(e);
+          }
+        }
+        lastPage = res.data.meta?.last_page ?? 1;
+        page += 1;
+      } while (page <= lastPage);
+
+      return all
+        .map((e): EmployeeOption => ({ id: e.id, id_number: e.id_number, name: e.user?.name ?? "-" }))
+        .sort((a, b) => a.name.localeCompare(b.name, "id"));
     },
     [],
   );
