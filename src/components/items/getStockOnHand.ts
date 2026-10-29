@@ -38,7 +38,7 @@ const useGetStockOnHand = () => {
       setTotalNilai(res.data.total_nilai);
       setMeta(res.data.meta);
     } catch {
-      setError("Gagal memuat stock on hand");
+      setError("Failed to load stock on hand");
     } finally {
       setLoading(false);
     }

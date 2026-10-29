@@ -34,6 +34,7 @@ interface User {
 }
 
 export interface StockHistoryItem {
+  id?: number;
   qty: number;
   type: string;
   note: string | null;

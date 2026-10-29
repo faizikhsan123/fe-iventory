@@ -2,6 +2,7 @@ import { AxiosInstance } from "@/lib/axios";
 import type { TransactionResult } from "@/types/Stockout";
 import { isAxiosError } from "axios";
 import { useState } from "react";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const useCreateTransaction = () => {
   const [loading, setLoading] = useState(false);
@@ -16,13 +17,13 @@ const useCreateTransaction = () => {
       setData(response.data.data);
       return response.data.data as TransactionResult;
     } catch (err) {
-      let message = "Terjadi kesalahan, coba lagi";
+      let message = "Something went wrong, please try again.";
       if (isAxiosError(err)) {
         const resData = err.response?.data;
         if (resData?.errors) {
-          message = Object.values(resData.errors).flat().join(", ");
+          message = (Object.values(resData.errors).flat() as unknown[]).map((m) => translateServerMessage(String(m))).join(", ");
         } else if (resData?.message) {
-          message = resData.message;
+          message = translateServerMessage(resData.message);
         }
       }
       setError(message);

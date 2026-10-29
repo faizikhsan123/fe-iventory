@@ -30,11 +30,11 @@ const StockOnHandTab = () => {
       {/* Ringkasan */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-4">
-          <p className="text-sm text-[#50688C]">Total Barang</p>
+          <p className="text-sm text-[#50688C]">Total Items</p>
           <p className="text-xl font-bold text-[#112D4E]">{(meta?.total ?? 0).toLocaleString("id-ID")}</p>
         </div>
         <div className="rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-4">
-          <p className="text-sm text-[#50688C]">Total Nilai Stok</p>
+          <p className="text-sm text-[#50688C]">Total Stock Value</p>
           <p className="text-xl font-bold text-[#112D4E]">{rupiah(totalNilai)}</p>
         </div>
       </div>
@@ -44,11 +44,11 @@ const StockOnHandTab = () => {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Cari barang..."
+          placeholder="Search items..."
           className={`${fieldClass} w-full`}
         />
         <select value={category} onChange={(e) => setCategory(e.target.value)} className={`${fieldClass} sm:w-48`}>
-          <option value="">Semua kategori</option>
+          <option value="">All categories</option>
           {ITEM_CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
               {c.label}
@@ -64,23 +64,23 @@ const StockOnHandTab = () => {
         <table className="w-full min-w-[560px] text-left text-sm">
           <thead>
             <tr className="bg-[#DBE2EF] text-[#112D4E]">
-              <th className="px-4 py-3 font-semibold">Nama Barang</th>
-              <th className="px-3 py-3 font-semibold">Kategori</th>
-              <th className="px-3 py-3 font-semibold">Stok Saat Ini</th>
-              <th className="px-4 py-3 text-right font-semibold">Nilai Stok</th>
+              <th className="px-4 py-3 font-semibold">Item Name</th>
+              <th className="px-3 py-3 font-semibold">Category</th>
+              <th className="px-3 py-3 font-semibold">Current Stock</th>
+              <th className="px-4 py-3 text-right font-semibold">Stock Value</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#DBE2EF]">
             {loading ? (
               <tr>
                 <td colSpan={4} className="px-4 py-6 text-center text-[#50688C]">
-                  Memuat...
+                  Loading...
                 </td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-4 py-6 text-center text-[#50688C]">
-                  Tidak ada data
+                  No data
                 </td>
               </tr>
             ) : (
@@ -106,10 +106,10 @@ const StockOnHandTab = () => {
             onClick={() => setPage((p) => p - 1)}
             className="h-10 rounded-lg border border-[#BFCCE3] bg-white px-4 text-sm font-semibold text-[#112D4E] disabled:opacity-50"
           >
-            Sebelumnya
+            Previous
           </button>
           <span className="text-sm text-[#50688C]">
-            Halaman {meta.current_page} dari {meta.last_page}
+            Page {meta.current_page} of {meta.last_page}
           </span>
           <button
             type="button"
@@ -117,7 +117,7 @@ const StockOnHandTab = () => {
             onClick={() => setPage((p) => p + 1)}
             className="h-10 rounded-lg border border-[#BFCCE3] bg-white px-4 text-sm font-semibold text-[#112D4E] disabled:opacity-50"
           >
-            Berikutnya
+            Next
           </button>
         </div>
       )}

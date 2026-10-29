@@ -58,11 +58,11 @@ function ReviewFormBody({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!periodStart || !periodEnd || !reviewerName.trim() || !reviewDate) {
-      setError("Periode, nama reviewer, dan tanggal review wajib diisi");
+      setError("Period, reviewer name, and review date are required");
       return;
     }
     if (KRA_KEYS.some((k) => scores[k].some((v) => v < 1))) {
-      setError("Semua nilai KRA wajib diisi (1-5)");
+      setError("All KRA scores are required (1-5)");
       return;
     }
     setError("");
@@ -82,9 +82,9 @@ function ReviewFormBody({
   return (
     <>
       <DialogHeader className="shrink-0 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-4 pr-12 sm:px-6">
-        <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Tambah Performance Review</DialogTitle>
+        <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Add Performance Review</DialogTitle>
         <DialogDescription className="text-sm text-[#50688C]">
-          Skala:{" "}
+          Scale:{" "}
           {Object.entries(SCORE_REFERENCE)
             .map(([n, t]) => `${n} = ${t}`)
             .join(" · ")}
@@ -104,24 +104,24 @@ function ReviewFormBody({
               />
             </label>
             <label className="space-y-1.5">
-              <span className={labelClass}>Periode Mulai *</span>
+              <span className={labelClass}>Period Start *</span>
               <Input type="date" className={compactInputClass} value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} />
             </label>
             <label className="space-y-1.5">
-              <span className={labelClass}>Periode Selesai *</span>
+              <span className={labelClass}>Period End *</span>
               <Input type="date" className={compactInputClass} value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} />
             </label>
             <label className="space-y-1.5">
-              <span className={labelClass}>Nama Reviewer *</span>
+              <span className={labelClass}>Reviewer Name *</span>
               <Input
                 className={compactInputClass}
                 value={reviewerName}
                 onChange={(e) => setReviewerName(e.target.value)}
-                placeholder="Nama penilai"
+                placeholder="Reviewer name"
               />
             </label>
             <label className="space-y-1.5">
-              <span className={labelClass}>Jabatan Reviewer</span>
+              <span className={labelClass}>Reviewer Position</span>
               <Input
                 className={compactInputClass}
                 value={reviewerTitle}
@@ -130,7 +130,7 @@ function ReviewFormBody({
               />
             </label>
             <label className="space-y-1.5">
-              <span className={labelClass}>Tanggal Review *</span>
+              <span className={labelClass}>Review Date *</span>
               <Input type="date" className={compactInputClass} value={reviewDate} onChange={(e) => setReviewDate(e.target.value)} />
             </label>
           </div>
@@ -185,7 +185,7 @@ function ReviewFormBody({
             onClick={onClose}
             className="h-11 rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
           >
-            Batal
+            Cancel
           </Button>
           <Button
             type="submit"
@@ -194,10 +194,10 @@ function ReviewFormBody({
           >
             {saving ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Menyimpan...
+                <Loader2 className="h-4 w-4 animate-spin" /> Saving...
               </>
             ) : (
-              "Simpan Review"
+              "Save Review"
             )}
           </Button>
         </div>
@@ -253,7 +253,7 @@ const ReviewItem = memo(function ReviewItem({
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            aria-label="Lihat detail nilai"
+            aria-label="View score details"
             aria-expanded={open}
             className="grid h-9 w-9 place-items-center rounded-lg border border-[#BFCCE3] bg-white text-[#112D4E] hover:bg-[#DBE2EF]"
           >
@@ -263,7 +263,7 @@ const ReviewItem = memo(function ReviewItem({
             <button
               type="button"
               onClick={() => onDelete(review.id)}
-              aria-label="Hapus review"
+              aria-label="Delete review"
               className="grid h-9 w-9 place-items-center rounded-lg border border-[#BFCCE3] bg-white hover:border-[#F2B8B5] hover:bg-[#FDECEA]"
             >
               <Trash2 size={16} className="text-[#B3261E]" />
@@ -314,15 +314,15 @@ const PerformanceReviewSection = ({
 
   const handleDelete = async (id: number) => {
     const ok = await Swal.fire({
-      title: "Hapus review ini?",
+      title: "Delete this review?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Hapus",
-      cancelButtonText: "Batal",
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
     });
     if (!ok.isConfirmed) return;
     const err = await deleteReview(id);
-    if (err) Swal.fire("Gagal!", err, "error");
+    if (err) Swal.fire("Failed!", err, "error");
     else onChange?.();
   };
 
@@ -344,7 +344,7 @@ const PerformanceReviewSection = ({
             onClick={() => setFormOpen(true)}
             className="h-9 gap-1.5 rounded-lg bg-[#112D4E] px-3 text-sm font-semibold text-white hover:bg-[#0B2240]"
           >
-            <Plus size={16} /> Tambah Review
+            <Plus size={16} /> Add Review
           </Button>
         )}
       </div>
@@ -358,7 +358,7 @@ const PerformanceReviewSection = ({
           <div className="grid h-14 w-14 place-items-center rounded-xl bg-[#DBE2EF]">
             <Inbox className="h-6 w-6 text-[#3F72AF]" />
           </div>
-          <p className="text-sm text-[#50688C]">Belum ada performance review untuk karyawan ini</p>
+          <p className="text-sm text-[#50688C]">No performance reviews for this employee yet</p>
         </div>
       )}
 

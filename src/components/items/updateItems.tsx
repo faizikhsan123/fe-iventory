@@ -116,7 +116,7 @@ const UpdateItems = () => {
           className="inline-flex h-10 w-fit shrink-0 items-center gap-1 rounded-lg border border-[#BFCCE3] bg-white px-3 text-sm font-semibold text-[#112D4E] transition hover:bg-[#DBE2EF] active:scale-[0.98]"
         >
           <ChevronLeft className="h-4 w-4" />
-          Kembali
+          Back
         </button>
 
         <div className="flex min-w-0 items-stretch gap-3">
@@ -125,9 +125,9 @@ const UpdateItems = () => {
             aria-hidden="true"
           />
           <div className="min-w-0">
-            <h1 className="text-xl font-extrabold tracking-tight text-[#112D4E] sm:text-2xl">Rubah Barang</h1>
+            <h1 className="text-xl font-extrabold tracking-tight text-[#112D4E] sm:text-2xl">Edit Item</h1>
             <p className="mt-0.5 text-xs leading-5 text-[#50688C] sm:text-sm">
-              Isi form di bawah untuk mengubah barang di inventaris
+              Update the form below to edit this item in the inventory
             </p>
           </div>
         </div>
@@ -142,7 +142,7 @@ const UpdateItems = () => {
         <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
           {/* ================= KOLOM KIRI: FOTO ================= */}
           <div className="h-fit min-w-0 lg:col-span-1">
-            <Card title="Foto Barang">
+            <Card title="Item Photo">
               {/* Preview area */}
               <div className="relative mb-4 flex h-48 w-full items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-[#9DB2D3] bg-[#F9F7F7]">
                 {previewImage ? (
@@ -156,7 +156,7 @@ const UpdateItems = () => {
                       type="button"
                       onClick={() => handleRemoveImage()}
                       disabled={updateloading}
-                      aria-label="Hapus gambar"
+                      aria-label="Remove image"
                       className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full bg-[#112D4E] text-white transition hover:bg-[#0B2240] disabled:opacity-50"
                     >
                       <X className="h-4 w-4" />
@@ -167,7 +167,7 @@ const UpdateItems = () => {
                     <div className="grid h-12 w-12 place-items-center rounded-lg bg-[#DBE2EF]">
                       <ImageIcon className="h-6 w-6 text-[#3F72AF]" />
                     </div>
-                    <p className="text-xs text-[#50688C]">Belum ada gambar dipilih</p>
+                    <p className="text-xs text-[#50688C]">No image selected</p>
                   </div>
                 )}
               </div>
@@ -177,7 +177,7 @@ const UpdateItems = () => {
                   htmlFor="file"
                   className={labelClassName}
                 >
-                  Foto
+                  Photo
                 </FieldLabel>
                 <Controller
                   control={form.control}
@@ -209,7 +209,7 @@ const UpdateItems = () => {
                     />
                   )}
                 />
-                <FieldDescription className="text-xs text-[#50688C]">Pilih gambar untuk diunggah.</FieldDescription>
+                <FieldDescription className="text-xs text-[#50688C]">Choose an image to upload.</FieldDescription>
                 <FieldError message={form.formState.errors.file?.message as string} />
               </Field>
             </Card>
@@ -217,7 +217,7 @@ const UpdateItems = () => {
 
           {/* ================= KOLOM KANAN: FORM ================= */}
           <div className="min-w-0 lg:col-span-2">
-            <Card title="Informasi Barang">
+            <Card title="Item Information">
               <div className="flex flex-col gap-4 sm:gap-5">
                 {/* Nama Barang */}
                 <Field className="gap-2">
@@ -225,7 +225,7 @@ const UpdateItems = () => {
                     htmlFor="nama"
                     className={labelClassName}
                   >
-                    Nama Barang <span className="text-[#B3261E]">*</span>
+                    Item Name <span className="text-[#B3261E]">*</span>
                   </Label>
                   <Input
                     {...form.register("name")}
@@ -245,7 +245,7 @@ const UpdateItems = () => {
                       htmlFor="category"
                       className={labelClassName}
                     >
-                      Kategori <span className="text-[#B3261E]">*</span>
+                      Category <span className="text-[#B3261E]">*</span>
                     </Label>
                     <select
                       id="category"
@@ -253,7 +253,7 @@ const UpdateItems = () => {
                       disabled={updateloading}
                       {...form.register("category")}
                     >
-                      <option value=""> -- Pilih Kategori --</option>
+                      <option value=""> -- Select Category --</option>
                       {ITEM_CATEGORIES.map((c) => (
                         <option key={c.value} value={c.value}>
                           {c.label}
@@ -268,7 +268,7 @@ const UpdateItems = () => {
                       htmlFor="brand"
                       className={labelClassName}
                     >
-                      Brand / Merk
+                      Brand
                     </Label>
                     <Input
                       {...form.register("brand")}
@@ -289,7 +289,7 @@ const UpdateItems = () => {
                       htmlFor="type"
                       className={labelClassName}
                     >
-                      Tipe / Model
+                      Type / Model
                     </Label>
                     <Input
                       {...form.register("type")}
@@ -336,7 +336,7 @@ const UpdateItems = () => {
                       disabled={updateloading}
                       {...form.register("unit")}
                     >
-                      <option value=""> -- Pilih Satuan --</option>
+                      <option value=""> -- Select Unit --</option>
                       <option value="pcs">PCS</option>
                       <option value="set">SET</option>
                       <option value="unit">UNIT</option>
@@ -365,7 +365,7 @@ const UpdateItems = () => {
                       disabled={updateloading}
                     />
                     <FieldError message={form.formState.errors.min_stock?.message} />
-                    <p className="text-xs text-[#3F72AF] sm:text-sm">Sistem akan notifikasi jika stok ≤ nilai ini</p>
+                    <p className="text-xs text-[#3F72AF] sm:text-sm">The system will notify you when stock is ≤ this value</p>
                   </Field>
                 </div>
 
@@ -375,7 +375,7 @@ const UpdateItems = () => {
                     htmlFor="price"
                     className={labelClassName}
                   >
-                    Harga Perolehan
+                    Acquisition Price
                   </Label>
                   <div className="relative">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[#50688C]">
@@ -408,7 +408,7 @@ const UpdateItems = () => {
                     htmlFor="description"
                     className={labelClassName}
                   >
-                    Deskripsi Barang
+                    Item Description
                   </Label>
                   <Textarea
                     {...form.register("description")}
@@ -442,12 +442,12 @@ const UpdateItems = () => {
                       {updateloading ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          Menyimpan...
+                          Saving...
                         </>
                       ) : (
                         <>
                           <Check className="h-4 w-4" />
-                          Simpan Barang
+                          Save Item
                         </>
                       )}
                     </button>

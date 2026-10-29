@@ -14,6 +14,7 @@ import UseGetParticipants from "@/hooks/Trainingparticipant/get";
 import AddParticipants from "./Addparticipant";
 import EditParticipant from "./UploadParticipantFile";
 import DeleteParticipant from "./DeleteParticipant";
+import { formatTanggalIndo } from "@/lib/tanggal";
 
 
 const InfoItem = ({ label, value }: { label: string; value?: string }) => (
@@ -54,8 +55,8 @@ const TrainingDetailPages = () => {
 
       <SambutanComponent
         paragraf1={training?.name_training ?? "Detail Training"}
-        paragraf2="Kelola peserta dan file pendukung"
-        button={isAdmin ? "+ Tambah Peserta" : undefined}
+        paragraf2="Manage participants and supporting files"
+        button={isAdmin ? "+ Add Participant" : undefined}
         onclick={isAdmin ? () => setIsAddOpen(true) : undefined}
       />
 
@@ -66,10 +67,10 @@ const TrainingDetailPages = () => {
           onClick={() => navigate("/trainings")}
           className="h-10 gap-2 rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
         >
-          <ArrowLeft size={16} /> Kembali
+          <ArrowLeft size={16} /> Back
         </Button>
 
-        {/* Info training */}
+        {/* Training info */}
         <div className="rounded-xl border border-[#BFCCE3] bg-white p-4 sm:p-5">
           {loadingTraining ? (
             <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#50688C]" />
@@ -78,15 +79,15 @@ const TrainingDetailPages = () => {
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <InfoItem label="ID Training" value={training?.id_training} />
-              <InfoItem label="Nama" value={training?.name_training} />
-              <InfoItem label="Divisi" value={training?.division_training} />
+              <InfoItem label="Name" value={training?.name_training} />
+              <InfoItem label="Division" value={training?.division_training} />
               <InfoItem label="By" value={training?.by} />
             </div>
           )}
         </div>
 
-        {/* Tabel peserta */}
-        <h2 className="text-base font-bold text-[#112D4E]">Peserta ({participants.length})</h2>
+        {/* Participants table */}
+        <h2 className="text-base font-bold text-[#112D4E]">Participants ({participants.length})</h2>
 
         {error && (
           <div
@@ -112,13 +113,13 @@ const TrainingDetailPages = () => {
           <Table>
             <TableHeader className="bg-[#DBE2EF]">
               <TableRow>
-                <TableHead className="font-bold text-[#112D4E]">Nama</TableHead>
-                <TableHead className="font-bold text-[#112D4E]">Divisi</TableHead>
-                <TableHead className="font-bold text-[#112D4E]">Jabatan</TableHead>
-                <TableHead className="font-bold text-[#112D4E]">Tanggal</TableHead>
+                <TableHead className="font-bold text-[#112D4E]">Name</TableHead>
+                <TableHead className="font-bold text-[#112D4E]">Division</TableHead>
+                <TableHead className="font-bold text-[#112D4E]">Position</TableHead>
+                <TableHead className="font-bold text-[#112D4E]">Date</TableHead>
                 <TableHead className="font-bold text-[#112D4E]">File</TableHead>
-                <TableHead className="font-bold text-[#112D4E]">Catatan</TableHead>
-                <TableHead className="text-right font-bold text-[#112D4E]">Aksi</TableHead>
+                <TableHead className="font-bold text-[#112D4E]">Notes</TableHead>
+                <TableHead className="text-right font-bold text-[#112D4E]">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -131,7 +132,7 @@ const TrainingDetailPages = () => {
               ) : participants.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="py-10 text-center text-sm text-[#7B8FAE]">
-                    Belum ada peserta
+                    No participants yet
                   </TableCell>
                 </TableRow>
               ) : (
@@ -140,7 +141,7 @@ const TrainingDetailPages = () => {
                     <TableCell className="font-semibold text-[#112D4E]">{p.name ?? "-"}</TableCell>
                     <TableCell className="text-[#50688C]">{p.division ?? "-"}</TableCell>
                     <TableCell className="text-[#50688C]">{p.position ?? "-"}</TableCell>
-                    <TableCell className="whitespace-nowrap text-[#50688C]">{p.date ?? "-"}</TableCell>
+                    <TableCell className="whitespace-nowrap text-[#50688C]">{p.date_raw ? formatTanggalIndo(p.date_raw) : (p.date ?? "-")}</TableCell>
                     <TableCell>
                       {p.file ? (
                         <button
@@ -149,11 +150,11 @@ const TrainingDetailPages = () => {
                           disabled={loadingView}
                           className="inline-flex items-center gap-1 rounded-full bg-[#DBE2EF] px-2.5 py-1 text-xs font-semibold text-[#112D4E] hover:bg-[#BFCCE3] disabled:opacity-60"
                         >
-                          Lihat <ExternalLink size={12} />
+                          View <ExternalLink size={12} />
                         </button>
                       ) : (
                         <span className="rounded-full bg-[#FDECEA] px-2.5 py-1 text-xs font-semibold text-[#B3261E]">
-                          Belum upload
+                          Not uploaded
                         </span>
                       )}
                     </TableCell>
@@ -165,7 +166,7 @@ const TrainingDetailPages = () => {
                           type="button"
                           size="icon"
                           variant="ghost"
-                          title="Edit tanggal / file / catatan"
+                          title="Edit date / file / notes"
                           onClick={() => setEditTarget(p)}
                           className="text-[#3F72AF] hover:bg-[#DBE2EF]"
                         >
@@ -175,7 +176,7 @@ const TrainingDetailPages = () => {
                           type="button"
                           size="icon"
                           variant="ghost"
-                          title="Hapus peserta"
+                          title="Delete participant"
                           onClick={() => setDeleteTarget(p)}
                           className="text-[#B3261E] hover:bg-[#FDECEA]"
                         >

@@ -39,7 +39,7 @@ function DocLinks({ mcu }: { mcu: Mcu }) {
           rel="noreferrer"
           className="inline-flex items-center gap-1 text-sm font-semibold text-[#3F72AF] underline-offset-2 hover:underline"
         >
-          {docs.length > 1 ? `Dokumen ${i + 1}` : "Lihat"} <ExternalLink size={13} />
+          {docs.length > 1 ? `Document ${i + 1}` : "View"} <ExternalLink size={13} />
         </a>
       ))}
     </span>
@@ -80,7 +80,7 @@ function Actions({ mcu, onEdit, onDelete }: { mcu: Mcu } & Pick<Props, "onEdit" 
           size="icon"
           variant="outline"
           className={dangerIconButtonClass}
-          aria-label={`Hapus MCU ${mcu.employee_name}`}
+          aria-label={`Delete MCU ${mcu.employee_name}`}
           onClick={() => onDelete(mcu)}
         >
           <Trash2 size={16} className="text-[#B3261E]" />
@@ -141,7 +141,7 @@ const TableMcu = ({ refreshKey = 0, onEdit, onDelete }: Props) => {
     <div className="mt-4 overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
       <div className="flex flex-col gap-3 border-b border-[#BFCCE3] bg-[#DBE2EF] p-4 md:flex-row md:items-center md:justify-between">
         <SearchBar
-          placeholder="Cari karyawan, tempat, atau alergi..."
+          placeholder="Search employee, location, or allergy..."
           busy={isFetching}
           onSearch={(keyword) => {
             setSearch(keyword);
@@ -156,8 +156,8 @@ const TableMcu = ({ refreshKey = 0, onEdit, onDelete }: Props) => {
       {!loading && !error && data.length === 0 && (
         <ListEmpty
           icon={<Stethoscope size={28} />}
-          title="Data MCU tidak ditemukan"
-          hint="Coba kata kunci lain atau tambah data MCU baru"
+          title="No MCU records found"
+          hint="Try another keyword or add a new MCU record"
         />
       )}
 
@@ -176,14 +176,14 @@ const TableMcu = ({ refreshKey = 0, onEdit, onDelete }: Props) => {
                     <b>{m.place_name}</b>
                     {m.mcu_name ? ` · ${m.mcu_name}` : ""}
                   </p>
-                  <p className="text-xs text-[#50688C]">Tanggal: {fmt(m.mcu_date)}</p>
-                  <p className="text-xs text-[#50688C]">Alergi: {m.allergies || "-"}</p>
+                  <p className="text-xs text-[#50688C]">Date: {fmt(m.mcu_date)}</p>
+                  <p className="text-xs text-[#50688C]">Allergy: {m.allergies || "-"}</p>
                   {m.summary && <p className="text-xs text-[#50688C]">{m.summary}</p>}
                   <p className="text-xs text-[#50688C]">
-                    MCU berikutnya: <NextMcu mcu={m} />
+                    Next Annual MCU Date: <NextMcu mcu={m} />
                   </p>
                   <p className="text-xs">
-                    Dokumen: <DocLinks mcu={m} />
+                    Document: <DocLinks mcu={m} />
                   </p>
                 </div>
                 {hasActions && (
@@ -201,15 +201,15 @@ const TableMcu = ({ refreshKey = 0, onEdit, onDelete }: Props) => {
               <TableHeader>
                 <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                   <TableHead className={`${th} w-12`}>No</TableHead>
-                  <TableHead className={th}>Karyawan</TableHead>
-                  <TableHead className={th}>Nama Tempat</TableHead>
-                  <TableHead className={th}>MCU</TableHead>
-                  <TableHead className={th}>Tanggal</TableHead>
-                  <TableHead className={th}>Alergi</TableHead>
+                  <TableHead className={th}>Employee Name</TableHead>
+                  <TableHead className={th}>MCU Location</TableHead>
+                  <TableHead className={th}>MCU Type</TableHead>
+                  <TableHead className={th}>Date MCU</TableHead>
+                  <TableHead className={th}>Allergy</TableHead>
                   <TableHead className={th}>Summary</TableHead>
-                  <TableHead className={th}>Dokumen</TableHead>
-                  <TableHead className={th}>MCU Selanjutnya</TableHead>
-                  {hasActions && <TableHead className={th}>Aksi</TableHead>}
+                  <TableHead className={th}>Document</TableHead>
+                  <TableHead className={th}>Next Annual MCU Date</TableHead>
+                  {hasActions && <TableHead className={th}>Edit</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>

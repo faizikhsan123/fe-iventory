@@ -19,7 +19,7 @@ const useGetItemById = (id: number) => {
         const response = await AxiosInstance.get(`/items/${id}`);
         setItem(response.data.data);
       } catch (error) {
-        setErrorItem("Gagal mengambil data item");
+        setErrorItem("Failed to load item data");
       } finally {
         setLoadingItem(false);
       }

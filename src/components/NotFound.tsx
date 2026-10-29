@@ -24,11 +24,11 @@ const NotFound = () => {
 
         <div className="p-6 text-center sm:p-10">
           <h1 className="text-xl font-extrabold text-[#112D4E] sm:text-2xl">
-            Halaman tidak ditemukan
+            Page not found
           </h1>
 
           <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-[#50688C]">
-            Halaman yang kamu cari tidak tersedia .
+            The page you are looking for is not available.
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -38,7 +38,7 @@ const NotFound = () => {
               className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#BFCCE3] bg-[#F9F7F7] px-5 text-sm font-bold text-[#112D4E] outline-none transition hover:bg-[#DBE2EF] focus-visible:ring-4 focus-visible:ring-[#DBE2EF] active:scale-[0.98]"
             >
               <ArrowLeft className="h-4 w-4" />
-              Kembali
+              Back
             </button>
 
             <Link
@@ -46,7 +46,7 @@ const NotFound = () => {
               className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#112D4E] px-5 text-sm font-bold text-white outline-none transition hover:bg-[#0B2240] focus-visible:ring-4 focus-visible:ring-[#9DB2D3] active:scale-[0.98]"
             >
               <Home className="h-4 w-4" />
-              Ke beranda
+              Go to home
             </Link>
           </div>
         </div>

@@ -37,7 +37,7 @@ export const useSaveCpd = () => {
       await AxiosInstance.put(`/employes/${employeId}/cpd`, payload);
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal menyimpan data CPD");
+      return getErrorMessage(e, "Failed to save CPD data");
     } finally {
       setSaving(false);
     }

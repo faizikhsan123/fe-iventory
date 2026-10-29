@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { AxiosInstance } from "@/lib/axios";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const DeleteGroupsHooks = () => {
   const [loadingDelete, setLoading] = useState(false);
@@ -12,7 +13,8 @@ const DeleteGroupsHooks = () => {
       await AxiosInstance.delete(`/groups/${id}`);
       return true;
     } catch (e: any) {
-      setError(e?.response?.data?.message ?? "Gagal menghapus group");
+      const raw = e?.response?.data?.message;
+      setError(raw ? translateServerMessage(String(raw)) : "Failed to delete group");
       return false;
     } finally {
       setLoading(false);

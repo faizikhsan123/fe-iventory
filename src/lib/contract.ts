@@ -20,9 +20,9 @@ export const isExpiring = (end?: string | null): boolean => {
 export const expiringLabel = (end?: string | null): string | null => {
   const n = daysLeft(end);
   if (n === null || n > EXPIRING_DAYS) return null;
-  if (n < 0) return `Berakhir ${Math.abs(n)} hari lalu`;
-  if (n === 0) return "Berakhir hari ini";
-  return `${n} hari lagi`;
+  if (n < 0) return `Expired ${Math.abs(n)} day${Math.abs(n) === 1 ? "" : "s"} ago`;
+  if (n === 0) return "Expires today";
+  return `${n} day${n === 1 ? "" : "s"} left`;
 };
 
 export const expiringTextClass = "font-semibold text-[#B3261E]";

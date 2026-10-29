@@ -45,17 +45,17 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Cari training..."
+          placeholder="Search training..."
           className="h-11 w-full rounded-lg border border-[#BFCCE3] bg-white pl-9 text-sm text-[#112D4E] outline-none focus-visible:border-[#3F72AF] focus-visible:ring-4 focus-visible:ring-[#DBE2EF]"
         />
       </div>
         <select
           className={`${selectClass} sm:w-48`}
           value={division}
-          aria-label="Filter divisi"
+          aria-label="Filter division"
           onChange={(e) => setDivision(e.target.value)}
         >
-          <option value="all">Semua Divisi</option>
+          <option value="all">All Divisions</option>
           {DIVISIONS.map((d) => (
             <option key={d} value={d}>
               {d}
@@ -79,11 +79,11 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
           <TableHeader className="bg-[#DBE2EF]">
             <TableRow>
               <TableHead className="font-bold text-[#112D4E]">ID Training</TableHead>
-              <TableHead className="font-bold text-[#112D4E]">Nama Training</TableHead>
-              <TableHead className="font-bold text-[#112D4E]">Divisi</TableHead>
+              <TableHead className="font-bold text-[#112D4E]">Training Name</TableHead>
+              <TableHead className="font-bold text-[#112D4E]">Division</TableHead>
               <TableHead className="font-bold text-[#112D4E]">By</TableHead>
               {/* <TableHead className="font-bold text-[#112D4E]">Tanggal</TableHead> */}
-              <TableHead className="text-right font-bold text-[#112D4E]">Aksi</TableHead>
+              <TableHead className="text-right font-bold text-[#112D4E]">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -96,7 +96,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
             ) : filtered.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="py-10 text-center text-sm text-[#7B8FAE]">
-                  Belum ada data training
+                  No training data yet
                 </TableCell>
               </TableRow>
             ) : (
@@ -117,7 +117,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
                         type="button"
                         size="icon"
                         variant="ghost"
-                        title="Detail & peserta"
+                        title="Details & participants"
                         onClick={() => navigate(`/trainings/${t.id}`)}
                         className="text-[#112D4E] hover:bg-[#DBE2EF]"
                       >
@@ -140,7 +140,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
                           type="button"
                           size="icon"
                           variant="ghost"
-                          title="Hapus"
+                          title="Delete"
                           onClick={() => onDelete(t)}
                           className="text-[#B3261E] hover:bg-[#FDECEA]"
                         >

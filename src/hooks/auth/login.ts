@@ -30,9 +30,9 @@ export const UseLogin = () => {
       SetPassword("");
     } catch (error: any) {
       if (error.response?.status === 401) {
-        SetError("email atau password salah");
+        SetError("Incorrect email or password");
       } else if (error.response?.status === 403) {
-        SetError("anda tidak memiliki akses");
+        SetError("You do not have access");
       } else {
         SetError(error.message);
       }

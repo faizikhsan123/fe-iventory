@@ -105,9 +105,9 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
               <UsersRound className="h-5 w-5" />
             </div>
             <div className="min-w-0 text-left">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Tambah Group Baru</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Add New Group</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Atur nama, jam kerja, dan anggota group
+                Set the group name, working hours, and members
               </DialogDescription>
             </div>
           </div>
@@ -117,12 +117,12 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
           <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain p-4 sm:p-6">
             {/* ===== Section 1: info group ===== */}
             <section className="space-y-4">
-              <SectionTitle icon={<Clock size={16} />} title="Informasi Group" hint="Nama dan jam kerja" />
+              <SectionTitle icon={<Clock size={16} />} title="Group Information" hint="Name and working hours" />
 
               <FieldGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field className="gap-2 sm:col-span-2">
                   <Label htmlFor="nama" className={labelClassName}>
-                    Nama Group <span className="text-[#B3261E]">*</span>
+                    Group Name <span className="text-[#B3261E]">*</span>
                   </Label>
                   <Input
                     {...form.register("group_name")}
@@ -137,7 +137,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
 
                 {/* <Field className="gap-2">
                   <Label htmlFor="start_time" className={labelClassName}>
-                    Waktu Mulai <span className="text-[#B3261E]">*</span>
+                    Start Time <span className="text-[#B3261E]">*</span>
                   </Label>
                   <Input
                     {...form.register("start_time")}
@@ -151,7 +151,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
 
                 <Field className="gap-2">
                   <Label htmlFor="end_time" className={labelClassName}>
-                    Waktu Selesai <span className="text-[#B3261E]">*</span>
+                    End Time <span className="text-[#B3261E]">*</span>
                   </Label>
                   <Input
                     {...form.register("end_time")}
@@ -165,12 +165,12 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
               </FieldGroup>
             </section>
 
-            {/* ===== Section 2: anggota ===== */}
+            {/* ===== Section 2: members ===== */}
             <section className="space-y-3">
               <div className="flex items-center justify-between gap-2">
-                <SectionTitle icon={<Users size={16} />} title="Anggota Group" hint="Pilih karyawan yang terlibat" />
+                <SectionTitle icon={<Users size={16} />} title="Group Members" hint="Select the employees involved" />
                 <span className="shrink-0 rounded-full bg-[#112D4E] px-2.5 py-0.5 text-xs font-semibold text-white">
-                  {selectedCount} dipilih
+                  {selectedCount} selected
                 </span>
               </div>
 
@@ -197,7 +197,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
 
                   return (
                     <div className="overflow-hidden rounded-lg border border-[#BFCCE3]">
-                      {/* search + pilih semua */}
+                      {/* search + select all */}
                       <div className="flex items-center gap-2 border-b border-[#DBE2EF] bg-[#F9F7F7] p-2">
                         <div className="relative flex-1">
                           <Search
@@ -207,7 +207,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
                           <Input
                             value={q}
                             onChange={(e) => setQ(e.target.value)}
-                            placeholder="Cari karyawan..."
+                            placeholder="Search employee..."
                             className={`${inputClassName} h-10 pl-9`}
                             disabled={loadingCreate}
                           />
@@ -219,16 +219,16 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
                           disabled={busy || Boolean(errorEmployees) || filteredEmployes.length === 0}
                           className="h-10 shrink-0 rounded-lg border-[#BFCCE3] bg-white px-3 text-xs font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
                         >
-                          {allFilteredSelected ? "Hapus semua" : "Pilih semua"}
+                          {allFilteredSelected ? "Deselect all" : "Select all"}
                         </Button>
                       </div>
 
                       {/* list */}
                       <div className="max-h-60 divide-y divide-[#EBEFF6] overflow-y-auto">
-                        {loadingEmployees && <p role="status" className="py-8 text-center text-sm text-[#50688C]">Memuat seluruh karyawan...</p>}
+                        {loadingEmployees && <p role="status" className="py-8 text-center text-sm text-[#50688C]">Loading all employees...</p>}
                         {errorEmployees && <p role="alert" className="py-8 text-center text-sm text-[#B3261E]">{errorEmployees}</p>}
                         {!loadingEmployees && !errorEmployees && filteredEmployes.length === 0 && (
-                          <p className="py-8 text-center text-sm text-[#7B8FAE]">Karyawan tidak ditemukan</p>
+                          <p className="py-8 text-center text-sm text-[#7B8FAE]">Employee not found</p>
                         )}
 
                         {filteredEmployes.map((employee) => {
@@ -289,7 +289,7 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
                   disabled={loadingCreate}
                   className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
                 >
-                  Batal
+                  Cancel
                 </Button>
               }
             />
@@ -301,10 +301,10 @@ const CreateGroups = ({ open, onOpenChange, onSuccess }: CreateGroupsProps) => {
               {loadingCreate ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Menyimpan...
+                  Saving...
                 </>
               ) : (
-                "Tambah Group"
+                "Add Group"
               )}
             </Button>
           </DialogFooter>

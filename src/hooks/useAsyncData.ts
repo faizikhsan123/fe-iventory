@@ -14,7 +14,7 @@ type Result<T> = { key: string; data: T | null; error: string };
 export function useAsyncData<T>(
   fetcher: (signal: AbortSignal) => Promise<T>,
   deps: readonly unknown[],
-  { enabled = true, errorMessage = "Gagal mengambil data" }: { enabled?: boolean; errorMessage?: string } = {},
+  { enabled = true, errorMessage = "Failed to load data" }: { enabled?: boolean; errorMessage?: string } = {},
 ) {
   const [tick, setTick] = useState(0);
   const [result, setResult] = useState<Result<T>>({ key: "", data: null, error: "" });

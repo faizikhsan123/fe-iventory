@@ -54,7 +54,7 @@ const useGetEmployes = () => {
       setData(employees);
       setMeta(all ? null : response.data.meta);
     } catch {
-      if (currentRequest === requestId.current) setError("Gagal mengambil data karyawan.");
+      if (currentRequest === requestId.current) setError("Failed to load employee data.");
     } finally {
       if (currentRequest === requestId.current) setLoading(false);
     }
@@ -88,10 +88,10 @@ const useGetEmployes = () => {
         page += 1;
       } while (page <= lastPage);
 
-      all.sort((a, b) => (a.user?.name ?? "").localeCompare(b.user?.name ?? "", "id"));
+      all.sort((a, b) => (a.user?.name ?? "").localeCompare(b.user?.name ?? "", "en"));
       setData(all);
     } catch {
-      if (currentRequest === requestId.current) setError("Gagal mengambil data karyawan.");
+      if (currentRequest === requestId.current) setError("Failed to load employee data.");
     } finally {
       if (currentRequest === requestId.current) setLoading(false);
     }

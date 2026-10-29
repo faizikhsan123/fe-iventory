@@ -4,10 +4,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import useTurnover from "@/hooks/dashboard/turnover";
 import { formatTanggalIndo } from "@/lib/tanggal";
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const MONTH_NAMES = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
 ];
 
 const selectClass =
@@ -17,24 +17,24 @@ function MonthMultiSelect({ value, onChange }: { value: number[]; onChange: (v: 
   const toggle = (m: number) =>
     onChange(value.includes(m) ? value.filter((x) => x !== m) : [...value, m].sort((a, b) => a - b));
   const text =
-    value.length === 0 ? "Per tahun" : value.length <= 2 ? value.map((m) => MONTHS[m - 1]).join(", ") : `${value.length} bulan`;
+    value.length === 0 ? "Whole year" : value.length <= 2 ? value.map((m) => MONTHS[m - 1]).join(", ") : `${value.length} months`;
 
   return (
     <Popover>
-      <PopoverTrigger aria-label="Pilih bulan" className={`${selectClass} inline-flex min-w-36 items-center justify-between gap-2`}>
+      <PopoverTrigger aria-label="Select months" className={`${selectClass} inline-flex min-w-36 items-center justify-between gap-2`}>
         <span className="truncate">{text}</span>
         <ChevronDown className="h-4 w-4 shrink-0" />
       </PopoverTrigger>
       <PopoverContent align="end" className="w-56 p-2">
         <div className="mb-1 flex items-center justify-between px-1">
-          <span className="text-xs font-semibold text-[#50688C]">Pilih bulan</span>
+          <span className="text-xs font-semibold text-[#50688C]">Select months</span>
           <button
             type="button"
             onClick={() => onChange([])}
             disabled={value.length === 0}
             className="text-xs font-semibold text-[#3F72AF] hover:underline disabled:opacity-40"
           >
-            Semua / Reset
+            All / Reset
           </button>
         </div>
         <div className="grid grid-cols-2 gap-0.5">
@@ -77,6 +77,14 @@ const TurnoverCard = () => {
   const { data, error, isFetching } = useTurnover(year, months);
 
   const years = data?.years?.length ? data.years : [year];
+  // label periode dibuat di frontend (server mengirim nama bulan bahasa Indonesia)
+  const periodLabel = data
+    ? months.length === 0
+      ? `Year ${data.period.year}`
+      : months.length === 1
+        ? `${MONTH_NAMES[months[0] - 1]} ${data.period.year}`
+        : `${months.map((m) => MONTHS[m - 1]).join(", ")} ${data.period.year}`
+    : "";
   const maxRate = Math.max(1, ...(data?.monthly ?? []).map((m) => m.turnover_rate ?? 0));
 
   return (
@@ -84,10 +92,10 @@ const TurnoverCard = () => {
       <div className="flex flex-col gap-3 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
         <div className="flex items-center gap-2.5">
           <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
-          <h3 className="font-bold text-[#112D4E]">Turn Over Rate Karyawan</h3>
+          <h3 className="font-bold text-[#112D4E]">Employee Turnover Rate</h3>
         </div>
         <div className="flex gap-2">
-          <select aria-label="Tahun" className={selectClass} value={year} onChange={(e) => setYear(Number(e.target.value))}>
+          <select aria-label="Year" className={selectClass} value={year} onChange={(e) => setYear(Number(e.target.value))}>
             {years.map((y) => (
               <option key={y} value={y}>
                 {y}
@@ -111,23 +119,23 @@ const TurnoverCard = () => {
           {/* Ringkasan periode */}
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
             <div className="col-span-2 rounded-lg bg-[#112D4E] p-4 text-white lg:col-span-1">
-              <p className="text-xs text-[#9DB2D3]">{data.period.label}</p>
+              <p className="text-xs text-[#9DB2D3]">{periodLabel}</p>
               <p className="mt-1 text-3xl font-extrabold tabular-nums leading-none">{pct(data.summary.turnover_rate)}</p>
-              <p className="mt-1.5 text-xs text-[#9DB2D3]">Turn over rate</p>
+              <p className="mt-1.5 text-xs text-[#9DB2D3]">Turnover rate</p>
             </div>
-            <Stat icon={UserMinus} label="Karyawan keluar" value={String(data.summary.left)} />
-            <Stat icon={UserPlus} label="Karyawan masuk" value={String(data.summary.joined)} />
+            <Stat icon={UserMinus} label="Employees left" value={String(data.summary.left)} />
+            <Stat icon={UserPlus} label="Employees joined" value={String(data.summary.joined)} />
             <Stat
               icon={Users}
-              label="Headcount awal → akhir"
+              label="Headcount start → end"
               value={`${data.summary.headcount_start} → ${data.summary.headcount_end}`}
             />
-            <Stat icon={Users} label="Rata-rata headcount" value={String(data.summary.average_headcount)} />
+            <Stat icon={Users} label="Average headcount" value={String(data.summary.average_headcount)} />
           </div>
 
           {/* Per bulan dalam tahun terpilih (klik bar untuk pilih/batal pilih bulan) */}
           <div>
-            <p className="mb-2 text-xs font-semibold text-[#50688C]">Turn over rate per bulan, {data.period.year}</p>
+            <p className="mb-2 text-xs font-semibold text-[#50688C]">Turnover rate per month, {data.period.year}</p>
             <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">
               {data.monthly.map((m) => {
                 const h = m.turnover_rate ? Math.max(6, (m.turnover_rate / maxRate) * 64) : 3;
@@ -143,7 +151,7 @@ const TurnoverCard = () => {
                       )
                     }
                     aria-pressed={active}
-                    aria-label={`${MONTH_NAMES[m.month - 1]}: ${pct(m.turnover_rate)}, ${m.left} keluar`}
+                    aria-label={`${MONTH_NAMES[m.month - 1]}: ${pct(m.turnover_rate)}, ${m.left} left`}
                     className={`flex flex-col items-center gap-1 rounded-lg border px-1 py-2 text-center transition disabled:cursor-not-allowed disabled:opacity-40 ${
                       active ? "border-[#112D4E] bg-[#DBE2EF]" : "border-[#DBE2EF] bg-white hover:bg-[#F9F7F7]"
                     }`}
@@ -164,10 +172,10 @@ const TurnoverCard = () => {
 
           {/* Karyawan yang keluar di periode ini */}
           <div>
-            <p className="mb-2 text-xs font-semibold text-[#50688C]">Karyawan keluar, {data.period.label}</p>
+            <p className="mb-2 text-xs font-semibold text-[#50688C]">Employees who left, {periodLabel}</p>
             {data.left_employees.length === 0 ? (
               <p className="rounded-lg border border-dashed border-[#BFCCE3] px-4 py-6 text-center text-sm text-[#50688C]">
-                Tidak ada karyawan yang keluar pada periode ini
+                No employees left during this period
               </p>
             ) : (
               <ul className="divide-y divide-[#DBE2EF] rounded-lg border border-[#DBE2EF]">
@@ -187,8 +195,8 @@ const TurnoverCard = () => {
           </div>
 
           <p className="text-xs text-[#7B8FAE]">
-            Turn over rate = karyawan keluar ÷ rata-rata headcount × 100. Rata-rata headcount = (headcount awal +
-            headcount akhir periode) ÷ 2.
+            Turnover rate = employees who left ÷ average headcount × 100. Average headcount = (headcount at start +
+            headcount at end of period) ÷ 2.
           </p>
         </div>
       )}

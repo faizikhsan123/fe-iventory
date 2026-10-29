@@ -70,7 +70,7 @@ const useEmployeDetail = () => {
       const response = await AxiosInstance.get(`/employes/${employeId}/detail`);
       setData(response.data.data);
     } catch (err) {
-      setError("Gagal mengambil detail karyawan");
+      setError("Failed to load employee details");
     }
 
     setLoading(false);

@@ -12,14 +12,14 @@ const StockMasuk = () => {
 
   return (
     <div>
-      <Navbar title="Barang Masuk"/>
+      <Navbar title="Stock In"/>
 
       {isAdmin ? <TambahStock /> : <StockInReadOnly />}
 
       {/* <SambutanCoomponent
-        paragraf1="Master Barang"
-        paragraf2="Kelola daftar Barang APD & Tools"
-        button="+ Tambah barang"
+        paragraf1="Stock In"
+        paragraf2="Manage incoming stock"
+        button="+ Add item"
         onclick={() => navigate("/create-items")}
       /> */}
 

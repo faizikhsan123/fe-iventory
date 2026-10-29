@@ -68,7 +68,7 @@ const useItemDetail = () => {
       const response = await AxiosInstance.get(`/items/${itemId}/detail`);
       setData(response.data.data);
     } catch (err) {
-      setError("Gagal mengambil detail barang");
+      setError("Failed to load item details");
     }
 
     setLoading(false);

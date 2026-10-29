@@ -51,9 +51,9 @@ const STATUS_DOT: Record<string, string> = {
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  available: "Tersedia",
-  low_stock: "Stok Menipis",
-  out_of_stock: "Stok Habis",
+  available: "Available",
+  low_stock: "Low Stock",
+  out_of_stock: "Out of Stock",
 };
 
 // function badge status
@@ -174,7 +174,7 @@ const TableItems = () => {
         size="icon"
         variant="outline"
         className={actionBtnClass}
-        aria-label={`Lihat ${name ?? "barang"}`}
+        aria-label={`View ${name ?? "item"}`}
         onClick={() => navigate(`/items/${id}`)}
       >
         <Eye size={16} />
@@ -187,7 +187,7 @@ const TableItems = () => {
             size="icon"
             variant="outline"
             className={actionBtnClass}
-            aria-label={`Edit ${name ?? "barang"}`}
+            aria-label={`Edit ${name ?? "item"}`}
             disabled={deleteloading}
           >
             <SquarePen size={16} />
@@ -198,7 +198,7 @@ const TableItems = () => {
             size="icon"
             variant="outline"
             className={`${actionBtnClass} hover:border-[#F2B8B5] hover:bg-[#FDECEA]`}
-            aria-label={`Hapus ${name ?? "barang"}`}
+            aria-label={`Delete ${name ?? "item"}`}
             disabled={deleteloading}
           >
             <Trash2 size={16} className="text-[#B3261E]" />
@@ -231,7 +231,7 @@ const TableItems = () => {
 
               <Input
                 className={searchClass}
-                placeholder="Cari barang..."
+                placeholder="Search items..."
                 value={keyword}
                 onChange={(e) => Setkeyword(e.target.value)}
               />
@@ -240,7 +240,7 @@ const TableItems = () => {
                 <button
                   type="button"
                   onClick={clearSearch}
-                  aria-label="Hapus pencarian"
+                  aria-label="Clear search"
                   className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[#50688C] transition hover:bg-[#DBE2EF] hover:text-[#112D4E]"
                 >
                   <X size={15} />
@@ -252,7 +252,7 @@ const TableItems = () => {
               className="h-11 rounded-lg bg-[#112D4E] px-5 font-semibold text-white hover:bg-[#0B2240] disabled:opacity-60"
               disabled={loading}
             >
-              Cari
+              Search
             </Button>
           </form>
 
@@ -263,9 +263,9 @@ const TableItems = () => {
               Setstatus(e.target.value);
               Setpage(1);
             }}
-            aria-label="Filter kategori"
+            aria-label="Filter by category"
           >
-            <option value="all">Semua Kategori</option>
+            <option value="all">All Categories</option>
 
             {ITEM_CATEGORIES.map((c) => (
               <option key={c.value} value={c.value}>
@@ -304,7 +304,7 @@ const TableItems = () => {
         {error && !loading && (
           <div className="flex flex-col items-center gap-2 px-4 py-14 text-center">
             <AlertCircle size={32} className="text-[#B3261E]" />
-            <p className="text-sm font-medium text-[#B3261E]">Gagal mengambil data barang.</p>
+            <p className="text-sm font-medium text-[#B3261E]">Failed to load items.</p>
           </div>
         )}
 
@@ -314,8 +314,8 @@ const TableItems = () => {
             <div className="grid h-16 w-16 place-items-center rounded-xl bg-[#DBE2EF]">
               <Search size={28} className="text-[#3F72AF]" />
             </div>
-            <p className="font-semibold text-[#112D4E]">Barang tidak ditemukan</p>
-            <p className="text-sm text-[#50688C]">Coba gunakan kata kunci lain</p>
+            <p className="font-semibold text-[#112D4E]">No items found</p>
+            <p className="text-sm text-[#50688C]">Try a different keyword</p>
           </div>
         )}
 
@@ -351,11 +351,11 @@ const TableItems = () => {
 
                     <div className="mt-3 grid grid-cols-2 gap-3 rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-3">
                       <div>
-                        <p className="text-xs text-[#50688C]">Stok sekarang</p>
+                        <p className="text-xs text-[#50688C]">Current stock</p>
                         <p className="font-bold text-[#112D4E]">{items.current_stock} unit</p>
                       </div>
                       <div>
-                        <p className="text-xs text-[#50688C]">Min stok</p>
+                        <p className="text-xs text-[#50688C]">Min stock</p>
                         <p className="font-semibold text-[#112D4E]">{items.min_stock} unit</p>
                       </div>
                     </div>
@@ -372,15 +372,15 @@ const TableItems = () => {
                 <TableHeader>
                   <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                     <TableHead className="w-12 px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
-                    <TableHead className="px-4 font-bold text-[#112D4E]">Foto</TableHead>
-                    <TableHead className="px-4 font-bold text-[#112D4E]">Nama Barang</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Photo</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Item Name</TableHead>
                     <TableHead className="px-4 font-bold text-[#112D4E]">Type</TableHead>
-                    <TableHead className="px-4 font-bold text-[#112D4E]">Kategori</TableHead>
-                    <TableHead className="px-4 font-bold text-[#112D4E]">Merk</TableHead>
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Min Stok</TableHead>
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Stok Sekarang</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Category</TableHead>
+                    <TableHead className="px-4 font-bold text-[#112D4E]">Brand</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Min Stock</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Current Stock</TableHead>
                     <TableHead className="px-4 font-bold text-[#112D4E]">Status</TableHead>
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Aksi</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Action</TableHead>
                   </TableRow>
                 </TableHeader>
 
@@ -420,7 +420,7 @@ const TableItems = () => {
             {/* ================= PAGINATION ================= */}
             <div className="flex items-center justify-between gap-3 border-t border-[#DBE2EF] bg-[#F9F7F7] p-4">
               <span className="text-sm text-[#50688C]">
-                Halaman <b className="text-[#112D4E]">{page}</b> dari <b className="text-[#112D4E]">{lastPage}</b>
+                Page <b className="text-[#112D4E]">{page}</b> of <b className="text-[#112D4E]">{lastPage}</b>
               </span>
 
               <div className="flex gap-2">
@@ -428,7 +428,7 @@ const TableItems = () => {
                   size="icon"
                   variant="outline"
                   className={pageBtnClass}
-                  aria-label="Halaman sebelumnya"
+                  aria-label="Previous page"
                   // disable ketika page kurang dari 1 sama dengan 1 dan loading
                   disabled={page <= 1 || loading}
                   onClick={() => Setpage(page - 1)}
@@ -440,7 +440,7 @@ const TableItems = () => {
                   size="icon"
                   variant="outline"
                   className={pageBtnClass}
-                  aria-label="Halaman berikutnya"
+                  aria-label="Next page"
                   disabled={page >= lastPage || loading}
                   onClick={() => Setpage(page + 1)}
                 >

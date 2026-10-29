@@ -23,9 +23,9 @@ const toneClass: Record<CardTone, { tile: string; top: string }> = {
 
 const defaultCards: CardItem[] = [
   { icon: Truck, value: 5, label: "Total Supplier", tone: "navy" },
-  { icon: Check, value: 4, label: "Aktif", tone: "azure" },
-  { icon: X, value: 1, label: "Tidak Aktif", tone: "sky" },
-  { icon: Info, value: 5, label: "Kota", tone: "ice" },
+  { icon: Check, value: 4, label: "Active", tone: "azure" },
+  { icon: X, value: 1, label: "Inactive", tone: "sky" },
+  { icon: Info, value: 5, label: "City", tone: "ice" },
 ];
 
 // animasi hitung naik (dimatikan kalau user pilih reduced motion)

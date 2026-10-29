@@ -123,9 +123,9 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               <UserCog className="h-5 w-5" />
             </div>
             <div className="min-w-0 text-left">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Update Karyawan</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Update Employee</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Perbarui data karyawan di bawah
+                Update the employee details below
               </DialogDescription>
             </div>
           </div>
@@ -144,13 +144,13 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   htmlFor="nama"
                   className={labelClassName}
                 >
-                  Nama Karyawan <span className="text-[#B3261E]">*</span>
+                  Employee Name <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("name")}
                   type="text"
                   id="nama"
-                  placeholder="Nama lengkap karyawan"
+                  placeholder="Employee full name"
                   className={inputClassName}
                   disabled={loadingupdate}
                 />
@@ -161,13 +161,13 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   htmlFor="id_number"
                   className={labelClassName}
                 >
-                  ID Karyawan <span className="text-[#B3261E]">*</span>
+                  Employee ID <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("id_number")}
                   type="text"
                   id="id_number"
-                  placeholder="ID karyawan"
+                  placeholder="Employee ID"
                   className={inputClassName}
                   disabled={loadingupdate}
                 />
@@ -203,7 +203,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   disabled={loadingupdate}
                   {...form.register("division")}
                 >
-                  <option value="">-- Pilih Divisi --</option>
+                  <option value="">-- Select Division --</option>
                   {DIVISIONS.map((d) => (
                     <option key={d} value={d}>
                       {d}
@@ -226,7 +226,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   disabled={loadingupdate}
                   {...form.register("position")}
                 >
-                  <option value="">-- Pilih Posisi --</option>
+                  <option value="">-- Select Position --</option>
                   <option value="Supervisor">Supervisor</option>
                   <option value="Technician">Technician</option>
                   <option value="Foreman">Foreman</option>
@@ -267,13 +267,13 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   htmlFor="actual_address"
                   className={labelClassName}
                 >
-                  Alamat Domisili
+                  Current Address
                 </Label>
                 <Input
                   {...form.register("actual_address")}
                   type="text"
                   id="actual_address"
-                  placeholder="Alamat domisili"
+                  placeholder="Current address"
                   className={inputClassName}
                   disabled={loadingupdate}
                 />
@@ -287,13 +287,13 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   htmlFor="ktp_address"
                   className={labelClassName}
                 >
-                  Alamat Sesuai KTP
+                  ID Card Address
                 </Label>
                 <Input
                   {...form.register("ktp_address")}
                   type="text"
                   id="ktp_address"
-                  placeholder="Alamat sesuai KTP"
+                  placeholder="Address as on ID card"
                   className={inputClassName}
                   disabled={loadingupdate}
                 />
@@ -318,7 +318,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   disabled={loadingupdate}
                   {...form.register("status")}
                 >
-                  <option value="">-- Pilih Status --</option>
+                  <option value="">-- Select Status --</option>
                   <option value="active">Active</option>
                   <option value="inactive">Deactive</option>
                 </select>
@@ -328,7 +328,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               {form.watch("status") === "inactive" && (
                 <Field className="gap-2">
                   <Label htmlFor="left_at" className={labelClassName}>
-                    Tanggal Keluar
+                    Leave Date
                   </Label>
                   <Input
                     {...form.register("left_at")}
@@ -338,7 +338,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                     disabled={loadingupdate}
                   />
                   <FieldDescription className="text-xs text-[#50688C]">
-                    Dipakai untuk turn over rate. Kosongkan untuk memakai hari ini.
+                    Used for the turnover rate. Leave empty to use today.
                   </FieldDescription>
                 </Field>
               )}
@@ -348,7 +348,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   htmlFor="picture"
                   className={labelClassName}
                 >
-                  Foto
+                  Photo
                 </FieldLabel>
                 <Controller
                   control={form.control}
@@ -372,7 +372,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                     />
                   )}
                 />
-                <FieldDescription className="text-xs text-[#50688C]">Pilih gambar untuk diunggah.</FieldDescription>
+                <FieldDescription className="text-xs text-[#50688C]">Choose an image to upload.</FieldDescription>
                 <FieldError message={form.formState.errors.file?.message as string} />
               </Field>
 
@@ -392,7 +392,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                     type="button"
                     onClick={handleRemoveImage}
                     disabled={loadingupdate}
-                    aria-label="Hapus gambar"
+                    aria-label="Remove image"
                     className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full bg-[#112D4E] text-white transition hover:bg-[#0B2240] active:scale-95 disabled:opacity-50"
                   >
                     <X className="h-4 w-4" />
@@ -403,7 +403,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   <div className="grid h-12 w-12 place-items-center rounded-lg bg-[#DBE2EF]">
                     <ImagePlus className="h-6 w-6 text-[#3F72AF]" />
                   </div>
-                  <p className="text-xs text-[#50688C]">Belum ada gambar dipilih</p>
+                  <p className="text-xs text-[#50688C]">No image selected</p>
                 </div>
               )}
             </div>
@@ -429,7 +429,7 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
                   disabled={loadingupdate}
                   className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
                 >
-                  Batal
+                  Cancel
                 </Button>
               }
             />
@@ -441,10 +441,10 @@ const UpdateEmployes = ({ open, onOpenChange, onSuccess, employes }: updateEmplo
               {loadingupdate ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Menyimpan...
+                  Saving...
                 </>
               ) : (
-                "Update Karyawan"
+                "Update Employee"
               )}
             </Button>
           </DialogFooter>

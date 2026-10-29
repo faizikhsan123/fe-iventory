@@ -19,7 +19,7 @@ const ViewParticipantFileHooks = () => {
       else window.open(url, "_blank");
     } catch {
       win?.close();
-      setError("Gagal membuka file");
+      setError("Failed to open file");
     } finally {
       setLoading(false);
     }

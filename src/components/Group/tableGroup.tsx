@@ -33,7 +33,7 @@ function BadgeAnggota({ count }: { count: number }) {
   return (
     <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-[#112D4E] ring-1 ring-inset ring-[#3F72AF]">
       <Users size={12} className="text-[#3F72AF]" />
-      {count} anggota
+      {count} member{count === 1 ? "" : "s"}
     </span>
   );
 }
@@ -46,14 +46,14 @@ type Member = {
   expiring: boolean;
 };
 
-const EMPTY_MEMBERS = <span className="text-sm text-[#7B8FAE]">Belum ada anggota</span>;
+const EMPTY_MEMBERS = <span className="text-sm text-[#7B8FAE]">No members yet</span>;
 
 // satu kolom (nama / division / position), data tersusun ke bawah; tinggi baris sama agar sejajar antar kolom
-function MemberColumn({ values, classes }: { values: string[]; classes?: string[] }) {
+function MemberColumn({ values, classes, align = "center" }: { values: string[]; classes?: string[]; align?: "left" | "center" }) {
   return (
     <ul className="divide-y divide-[#EBEFF6]">
       {values.map((v, i) => (
-        <li key={i} className={`flex h-9 items-center justify-center text-sm font-medium text-[#112D4E] ${classes?.[i] ?? ""}`}>
+        <li key={i} className={`flex h-9 items-center ${align === "left" ? "justify-start text-left" : "justify-center"} text-sm font-medium text-[#112D4E] ${classes?.[i] ?? ""}`}>
           {v}
         </li>
       ))}
@@ -67,16 +67,16 @@ function ListAnggota({ members }: { members: Member[] }) {
   return (
     <ul className="divide-y divide-[#DBE2EF]">
       {members.map((m, i) => (
-        <li key={`${m.name}-${i}`} className="py-2 text-center first:pt-0 last:pb-0">
+        <li key={`${m.name}-${i}`} className="py-2 text-left first:pt-0 last:pb-0">
           <p className={`text-sm font-semibold ${m.expiring ? "text-[#B3261E]" : "text-[#112D4E]"}`}>
             {m.name}
-            {m.expiring && " · kontrak hampir habis"}
+            {m.expiring && " · contract expiring soon"}
           </p>
           <p className="text-xs text-[#50688C]">
             {m.division} · {m.position}
           </p>
           <p className="text-xs text-[#50688C]">
-            Performa {m.performance ?? "-"}
+            Performance {m.performance ?? "-"}
           </p>
         </li>
       ))}
@@ -141,7 +141,7 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
           size="icon"
           variant="outline"
           className={`${actionBtnClass} hover:border-[#F2B8B5] hover:bg-[#FDECEA]`}
-          aria-label={`Hapus ${name}`}
+          aria-label={`Delete ${name}`}
           onClick={() => onDelete({ id, group_name: name })}
         >
           <Trash2 size={16} className="text-[#B3261E]" />
@@ -169,7 +169,7 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
               />
               <Input
                 className={searchClass}
-                placeholder="Cari group atau anggota..."
+                placeholder="Search group or member..."
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
@@ -177,7 +177,7 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
                 <button
                   type="button"
                   onClick={clearSearch}
-                  aria-label="Hapus pencarian"
+                  aria-label="Clear search"
                   className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[#50688C] transition hover:bg-[#DBE2EF] hover:text-[#112D4E]"
                 >
                   <X size={15} />
@@ -189,7 +189,7 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
               className="h-11 rounded-lg bg-[#112D4E] px-5 font-semibold text-white hover:bg-[#0B2240] disabled:opacity-60"
               disabled={loading}
             >
-              Cari
+              Search
             </Button>
           </form>
         </div>
@@ -223,8 +223,8 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
             <div className="grid h-16 w-16 place-items-center rounded-xl bg-[#DBE2EF]">
               <Users size={28} className="text-[#3F72AF]" />
             </div>
-            <p className="font-semibold text-[#112D4E]">Group tidak ditemukan</p>
-            <p className="text-sm text-[#50688C]">Coba kata kunci lain atau tambah group baru</p>
+            <p className="font-semibold text-[#112D4E]">Group not found</p>
+            <p className="text-sm text-[#50688C]">Try a different keyword or add a new group</p>
           </div>
         )}
 
@@ -264,15 +264,15 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
                 <TableHeader>
                   <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                     <TableHead className="w-12 px-4 text-center font-bold text-[#112D4E] lg:px-6">No</TableHead>
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Nama Group</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Group Name</TableHead>
                     {/* <TableHead className="px-4 text-center font-bold text-[#112D4E]">Jam Kerja</TableHead> */}
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Anggota</TableHead>
+                    <TableHead className="px-4 text-left font-bold text-[#112D4E]">Members</TableHead>
                     <TableHead className="px-4 text-center font-bold text-[#112D4E]">Division</TableHead>
                     <TableHead className="px-4 text-center font-bold text-[#112D4E]">Position</TableHead>
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Performa</TableHead>
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Jumlah</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Performance</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Count</TableHead>
                     {hasActions && (
-                      <TableHead className="px-4 text-center font-bold text-[#112D4E]">Aksi</TableHead>
+                      <TableHead className="px-4 text-center font-bold text-[#112D4E]">Action</TableHead>
                     )}
                   </TableRow>
                 </TableHeader>
@@ -290,8 +290,9 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
                         {/* <TableCell className="px-4 py-4 align-top">
                           <BadgeJam start={group.start_time} end={group.end_time} />
                         </TableCell> */}
-                        <TableCell className="px-4 py-2 text-center align-top">
+                        <TableCell className="px-4 py-2 text-left align-top">
                           {members.length === 0 ? EMPTY_MEMBERS : <MemberColumn
+                              align="left"
                               values={members.map((m) => m.name)}
                               classes={members.map((m) => (m.expiring ? "text-[#B3261E]! font-bold" : ""))}
                             />}

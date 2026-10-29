@@ -44,9 +44,9 @@ const DeleteTraining = ({ open, training, onOpenChange, onSuccess }: Props) => {
               <Trash2 className="h-5 w-5" />
             </div>
             <div className="min-w-0 text-left">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Hapus Training</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Delete Training</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Data yang dihapus nggak bisa dikembalikan
+                Deleted data cannot be restored
               </DialogDescription>
             </div>
           </div>
@@ -54,7 +54,7 @@ const DeleteTraining = ({ open, training, onOpenChange, onSuccess }: Props) => {
 
         <div className="space-y-3 p-4 sm:p-6">
           <p className="text-sm text-[#112D4E]">
-            Yakin mau hapus training <b>{training?.name_training}</b>?
+            Are you sure you want to delete the training <b>{training?.name_training}</b>?
           </p>
 
           {errorDelete && (
@@ -77,7 +77,7 @@ const DeleteTraining = ({ open, training, onOpenChange, onSuccess }: Props) => {
                 disabled={loadingDelete}
                 className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
               >
-                Batal
+                Cancel
               </Button>
             }
           />
@@ -90,10 +90,10 @@ const DeleteTraining = ({ open, training, onOpenChange, onSuccess }: Props) => {
             {loadingDelete ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Menghapus...
+                Deleting...
               </>
             ) : (
-              "Hapus"
+              "Delete"
             )}
           </Button>
         </DialogFooter>

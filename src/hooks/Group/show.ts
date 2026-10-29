@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { AxiosInstance } from "@/lib/axios";
 import type { Group } from "@/types/Group";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const UseGetGroupDetail = () => {
   const [group, setGroup] = useState<Group | null>(null);
@@ -15,7 +16,8 @@ const UseGetGroupDetail = () => {
       setGroup(res.data.data);
       return res.data.data as Group;
     } catch (e: any) {
-      setError(e?.response?.data?.message ?? "Gagal mengambil detail group");
+      const raw = e?.response?.data?.message;
+      setError(raw ? translateServerMessage(String(raw)) : "Failed to load group details");
       return null;
     } finally {
       setLoading(false);

@@ -84,9 +84,9 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
               <UserPlus className="h-5 w-5" />
             </div>
             <div className="min-w-0 text-left">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Tambah Karyawan Baru</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Add New Employee</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Lengkapi data karyawan di bawah
+                Fill in the employee details below
               </DialogDescription>
             </div>
           </div>
@@ -99,13 +99,13 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
             <FieldGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field className="gap-2 sm:col-span-2">
                 <Label htmlFor="nama" className={labelClassName}>
-                  Nama Karyawan <span className="text-[#B3261E]">*</span>
+                  Employee Name <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("name")}
                   type="text"
                   id="nama"
-                  placeholder="Nama lengkap karyawan"
+                  placeholder="Employee full name"
                   className={inputClassName}
                   disabled={loadingCreate}
                 />
@@ -114,13 +114,13 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
 
               <Field className="gap-2">
                 <Label htmlFor="id_number" className={labelClassName}>
-                  ID Karyawan <span className="text-[#B3261E]">*</span>
+                  Employee ID <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("id_number")}
                   type="text"
                   id="id_number"
-                  placeholder="ID Karyawan"
+                  placeholder="Employee ID"
                   className={inputClassName}
                   disabled={loadingCreate}
                 />
@@ -159,7 +159,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                     className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-lg text-[#50688C] transition hover:text-[#112D4E]"
                     tabIndex={-1}
                   >
@@ -179,7 +179,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                   disabled={loadingCreate}
                   {...form.register("division")}
                 >
-                  <option value="">-- Pilih Divisi --</option>
+                  <option value="">-- Select Division --</option>
                   {DIVISIONS.map((d) => (
                     <option key={d} value={d}>
                       {d}
@@ -199,7 +199,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                   disabled={loadingCreate}
                   {...form.register("position")}
                 >
-                  <option value="">-- Pilih Posisi --</option>
+                  <option value="">-- Select Position --</option>
                   <option value="Supervisor">Supervisor</option>
                   <option value="Technician">Technician</option>
                   <option value="Foreman">Foreman</option>
@@ -237,13 +237,13 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
 
               <Field className="gap-2 ">
                 <Label htmlFor="ktp_address" className={labelClassName}>
-                  Alamat Sesuai KTP
+                  ID Card Address
                 </Label>
                 <Input
                   {...form.register("ktp_address")}
                   type="text"
                   id="ktp_address"
-                  placeholder="Alamat sesuai KTP"
+                  placeholder="Address as on ID card"
                   className={inputClassName}
                   disabled={loadingCreate}
                 />
@@ -252,13 +252,13 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
 
               <Field className="gap-2 ">
                 <Label htmlFor="actual_address" className={labelClassName}>
-                  Alamat Domisili 
+                  Current Address 
                 </Label>
                 <Input
                   {...form.register("actual_address")}
                   type="text"
                   id="actual_address"
-                  placeholder="Alamat domisili"
+                  placeholder="Current address"
                   className={inputClassName}
                   disabled={loadingCreate}
                 />
@@ -269,7 +269,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
 
               <Field className="gap-2 sm:col-span-2">
                 <FieldLabel htmlFor="picture" className={labelClassName}>
-                  Foto
+                  Photo
                 </FieldLabel>
                 <Controller
                   control={form.control}
@@ -294,7 +294,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                   )}
                 />
                 <FieldDescription className="text-xs text-[#50688C]">
-                  Pilih gambar untuk diunggah (PNG/JPG).
+                  Choose an image to upload (PNG/JPG).
                 </FieldDescription>
                 <FieldError message={form.formState.errors.file?.message as string} />
               </Field>
@@ -304,11 +304,11 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
               {/* CPD: opsional, dilipat supaya form tetap ringkas */}
               <details className="group rounded-lg border border-[#BFCCE3] sm:col-span-2">
                 <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-4 py-2 text-sm font-bold text-[#112D4E] hover:bg-[#F9F7F7] [&::-webkit-details-marker]:hidden">
-                  Data CPD (opsional)
+                  CPD Data (optional)
                   <ChevronDown className="h-4 w-4 transition group-open:rotate-180" aria-hidden="true" />
                 </summary>
                 <div className="grid grid-cols-1 gap-4 border-t border-[#DBE2EF] p-4 sm:grid-cols-2">
-                  <SectionTitle>Data Pribadi dan Kontrak</SectionTitle>
+                  <SectionTitle>Personal and Contract Data</SectionTitle>
                   <CpdFields disabled={loadingCreate} />
                 </div>
               </details>
@@ -323,7 +323,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                     type="button"
                     onClick={handleRemoveImage}
                     disabled={loadingCreate}
-                    aria-label="Hapus gambar"
+                    aria-label="Remove image"
                     className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full bg-[#112D4E] text-white transition hover:bg-[#0B2240] active:scale-95 disabled:opacity-50"
                   >
                     <X className="h-4 w-4" />
@@ -334,7 +334,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                   <div className="grid h-12 w-12 place-items-center rounded-lg bg-[#DBE2EF]">
                     <ImagePlus className="h-6 w-6 text-[#3F72AF]" />
                   </div>
-                  <p className="text-xs text-[#50688C]">Belum ada gambar dipilih</p>
+                  <p className="text-xs text-[#50688C]">No image selected</p>
                 </div>
               )}
             </div>
@@ -360,7 +360,7 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
                   disabled={loadingCreate}
                   className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
                 >
-                  Batal
+                  Cancel
                 </Button>
               }
             />
@@ -372,10 +372,10 @@ const CreateEmployes = ({ open, onOpenChange, onSuccess }: CreateEmployesProps) 
               {loadingCreate ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Menyimpan...
+                  Saving...
                 </>
               ) : (
-                "Tambah Karyawan"
+                "Add Employee"
               )}
             </Button>
           </DialogFooter>

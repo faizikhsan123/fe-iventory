@@ -30,16 +30,16 @@ const McuPage = () => {
   const handleDelete = useCallback(
     async (m: Mcu) => {
       const ok = await Swal.fire({
-        title: "Hapus data MCU?",
-        text: `Data MCU ${m.employee_name} (${m.mcu_date}) akan dihapus beserta dokumennya.`,
+        title: "Delete MCU record?",
+        text: `The MCU record of ${m.employee_name} (${m.mcu_date}) and its documents will be deleted.`,
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Hapus",
-        cancelButtonText: "Batal",
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
       });
       if (!ok.isConfirmed) return;
       const err = await remove(m.id);
-      if (err) Swal.fire("Gagal!", err, "error");
+      if (err) Swal.fire("Failed!", err, "error");
       else refresh();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,8 +52,8 @@ const McuPage = () => {
 
       <SambutanComponent
         paragraf1="Master MCU"
-        paragraf2="Kelola data medical check up karyawan"
-        button={isAdmin ? "+ Tambah MCU" : undefined}
+        paragraf2="Manage employee medical check-up records"
+        button={isAdmin ? "+ Add MCU" : undefined}
         onclick={isAdmin ? openCreate : undefined}
       />
 

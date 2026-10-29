@@ -96,7 +96,7 @@ const StockKeluar = () => {
   const selectedEmployee = employees.find((employee) => employee.id.toString() === watchedEmployeeId);
 
   const formattedDate = watchedDate
-    ? new Date(watchedDate).toLocaleDateString("id-ID", {
+    ? new Date(watchedDate).toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "long",
         year: "numeric",
@@ -117,11 +117,11 @@ const StockKeluar = () => {
       {/* ================= KOLOM KIRI ================= */}
       <div className="min-w-0 space-y-4 sm:space-y-6 lg:col-span-2">
         {/* Pilih Karyawan */}
-        <Card title="Pilih Karyawan">
+        <Card title="Select Employee">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="employes_id" className={labelClassName}>
-                Karyawan <span className="text-[#B3261E]">*</span>
+                Employee <span className="text-[#B3261E]">*</span>
               </Label>
               <select
                 id="employes_id"
@@ -129,7 +129,7 @@ const StockKeluar = () => {
                 disabled={submitting}
                 {...form.register("employes_id")}
               >
-                <option value="">{loadingEmployees ? "Memuat karyawan..." : "-- Pilih karyawan --"}</option>
+                <option value="">{loadingEmployees ? "Loading employees..." : "-- Select employee --"}</option>
                 {employees.map((employee) => (
                   <option key={employee.id} value={employee.id.toString()}>
                     {employee.user.name} ({employee.division})
@@ -141,7 +141,7 @@ const StockKeluar = () => {
 
             <div className="space-y-2">
               <Label htmlFor="date" className={labelClassName}>
-                Tanggal Pengeluaran <span className="text-[#B3261E]">*</span>
+                Issue Date <span className="text-[#B3261E]">*</span>
               </Label>
               <Input id="date" type="date" className={inputClassName} {...form.register("date")} />
               <FieldError message={form.formState.errors.date?.message} />
@@ -164,11 +164,11 @@ const StockKeluar = () => {
         </Card>
 
         {/* Daftar Barang */}
-        <Card title="Daftar Barang">
+        <Card title="Item List">
           {/* header kolom (hanya tablet ke atas) */}
           <div className="mb-1 hidden grid-cols-[2rem_1fr_7rem_2.5rem] gap-3 border-b border-[#DBE2EF] pb-2 text-sm font-semibold text-[#112D4E] sm:grid">
             <span>No</span>
-            <span>Barang</span>
+            <span>Item</span>
             <span>Qty</span>
             <span />
           </div>
@@ -181,7 +181,7 @@ const StockKeluar = () => {
               >
                 {/* label nomor: mobile di pojok kartu, tablet+ di kolom No */}
                 <p className="absolute left-3 top-3 text-sm font-bold text-[#112D4E] sm:hidden">
-                  Barang {index + 1}
+                  Item {index + 1}
                 </p>
                 <span className="hidden pt-3 text-sm text-[#50688C] sm:block">{index + 1}</span>
 
@@ -191,7 +191,7 @@ const StockKeluar = () => {
                     disabled={submitting}
                     {...form.register(`items.${index}.items_id`)}
                   >
-                    <option value="">{loadingItems ? "Memuat barang..." : "-- Pilih barang --"}</option>
+                    <option value="">{loadingItems ? "Loading items..." : "-- Select item --"}</option>
                     {items.map((item) => (
                       <option key={item.id} value={item.id.toString()}>
                         {item.name}
@@ -220,7 +220,7 @@ const StockKeluar = () => {
                     <button
                       type="button"
                       onClick={() => remove(index)}
-                      aria-label={`Hapus barang ${index + 1}`}
+                      aria-label={`Remove item ${index + 1}`}
                       className="grid h-10 w-10 place-items-center rounded-lg text-[#50688C] transition hover:bg-[#FDECEA] hover:text-[#B3261E] active:scale-95"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -239,15 +239,15 @@ const StockKeluar = () => {
             className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#9DB2D3] bg-white text-sm font-semibold text-[#112D4E] transition hover:border-[#3F72AF] hover:bg-[#F9F7F7] active:scale-[0.99]"
           >
             <Plus className="h-4 w-4" />
-            Tambah baris
+            Add row
           </button>
         </Card>
 
         {/* Catatan */}
-        <Card title="Catatan">
+        <Card title="Notes">
           <Textarea
             {...form.register("note")}
-            placeholder="Keperluan peminjaman / pemberian barang..."
+            placeholder="Purpose of the loan / issuance of items..."
             rows={4}
             className={areaClassName}
           />
@@ -258,27 +258,27 @@ const StockKeluar = () => {
       {/* ================= RINGKASAN ================= */}
       <div className="h-fit min-w-0 overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl lg:sticky lg:top-6">
         <div className="bg-[#112D4E] px-4 py-4 text-white sm:px-6">
-          <h2 className="font-bold">Ringkasan Transaksi</h2>
-          <p className="mt-0.5 text-xs text-[#9DB2D3]">Periksa kembali sebelum menyimpan</p>
+          <h2 className="font-bold">Transaction Summary</h2>
+          <p className="mt-0.5 text-xs text-[#9DB2D3]">Review before saving</p>
         </div>
         <div className="h-1 w-full bg-[#3F72AF]" />
 
         <div className="p-4 sm:p-6">
           <div className="space-y-3.5 rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-4 text-sm">
             {/* <div>
-              <p className="text-[#50688C]">No. Transaksi</p>
+              <p className="text-[#50688C]">Transaction No.</p>
               <p
                 className={`flex items-center gap-1.5 break-all font-bold ${
                   result?.transaction_number ? "text-[#112D4E]" : "text-[#3F72AF]"
                 }`}
               >
                 {result?.transaction_number && <CheckCircle2 className="h-4 w-4 shrink-0 text-[#3F72AF]" />}
-                {result?.transaction_number ?? "Dibuat otomatis"}
+                {result?.transaction_number ?? "Generated automatically"}
               </p>
             </div> */}
-            <Row label="Karyawan" value={selectedEmployee?.user.name ?? "—"} />
+            <Row label="Employee" value={selectedEmployee?.user.name ?? "—"} />
             <Row
-              label="Tanggal"
+              label="Date"
               value={
                 <span className="inline-flex items-center gap-1.5">
                   <CalendarDays className="h-3.5 w-3.5 text-[#3F72AF]" />
@@ -308,12 +308,12 @@ const StockKeluar = () => {
             {submitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Menyimpan...
+                Saving...
               </>
             ) : (
               <>
                 <Check className="h-4 w-4" />
-                Simpan transaksi
+                Save transaction
               </>
             )}
           </Button>

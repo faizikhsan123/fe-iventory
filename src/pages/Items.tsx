@@ -9,12 +9,12 @@ const Items = () => {
   const { isAdmin } = useAuth();
   return (
     <div>
-      <Navbar title="Barang" />
+      <Navbar title="Items" />
 
       <SambutanCoomponent
-        paragraf1="Master Barang"
-        paragraf2="Kelola daftar Barang APD & Tools"
-        button={isAdmin ? "+ Tambah barang" : undefined}
+        paragraf1="Item Master"
+        paragraf2="Manage the list of PPE & Tools items"
+        button={isAdmin ? "+ Add item" : undefined}
         onclick={isAdmin ? () => navigate("/create-items") : undefined}
       />
 

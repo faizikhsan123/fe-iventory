@@ -5,13 +5,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { usePenerimaanStok } from "@/hooks/Laporan/penerimaan";
 import useTransaction from "@/hooks/Laporan/BaranngKeluar";
 
-// Tampilan baca-saja riwayat Barang Masuk / Keluar untuk role non-admin (office).
+// Read-only history of Stock In / Stock Out untuk role non-admin (office).
 
 const fmtDate = (d: string) => {
   const date = new Date(d);
   return Number.isNaN(date.getTime())
     ? d
-    : date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
+    : date.toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
 };
 
 interface ShellProps {
@@ -31,7 +31,7 @@ const Shell = ({ title, loading, error, empty, page, lastPage, onPage, children 
       <h2 className="font-bold text-[#112D4E]">{title}</h2>
     </div>
     {loading ? (
-      <div className="flex justify-center p-10" role="status" aria-label="Memuat">
+      <div className="flex justify-center p-10" role="status" aria-label="Loading">
         <Loader2 className="h-5 w-5 animate-spin text-[#50688C]" />
       </div>
     ) : error ? (
@@ -39,21 +39,21 @@ const Shell = ({ title, loading, error, empty, page, lastPage, onPage, children 
         {error}
       </p>
     ) : empty ? (
-      <p className="p-10 text-center text-sm text-[#50688C]">Belum ada data</p>
+      <p className="p-10 text-center text-sm text-[#50688C]">No data yet</p>
     ) : (
       <div className="overflow-x-auto">{children}</div>
     )}
     {lastPage > 1 && (
       <div className="flex items-center justify-between gap-3 border-t border-[#DBE2EF] p-3 text-sm text-[#50688C]">
         <span>
-          Halaman {page} dari {lastPage}
+          Page {page} of {lastPage}
         </span>
         <div className="flex gap-2">
           <Button type="button" variant="outline" size="sm" disabled={page <= 1 || loading} onClick={() => onPage(page - 1)}>
-            Sebelumnya
+            Previous
           </Button>
           <Button type="button" variant="outline" size="sm" disabled={page >= lastPage || loading} onClick={() => onPage(page + 1)}>
-            Berikutnya
+            Next
           </Button>
         </div>
       </div>
@@ -72,7 +72,7 @@ export const StockInReadOnly = () => {
 
   return (
     <Shell
-      title="Riwayat Barang Masuk"
+      title="Stock In History"
       loading={loading}
       error={error}
       empty={dataPenerimaanStok.length === 0}
@@ -83,11 +83,11 @@ export const StockInReadOnly = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Tanggal</TableHead>
-            <TableHead>Barang</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Item</TableHead>
             <TableHead>Supplier</TableHead>
             <TableHead>Qty</TableHead>
-            <TableHead>Catatan</TableHead>
+            <TableHead>Notes</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -116,7 +116,7 @@ export const StockOutReadOnly = () => {
 
   return (
     <Shell
-      title="Riwayat Barang Keluar"
+      title="Stock Out History"
       loading={loading}
       error={error}
       empty={data.length === 0}
@@ -127,10 +127,10 @@ export const StockOutReadOnly = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>No. Transaksi</TableHead>
-            <TableHead>Tanggal</TableHead>
-            <TableHead>Karyawan</TableHead>
-            <TableHead>Barang</TableHead>
+            <TableHead>Transaction No.</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Employee</TableHead>
+            <TableHead>Item</TableHead>
             <TableHead>Qty</TableHead>
           </TableRow>
         </TableHeader>

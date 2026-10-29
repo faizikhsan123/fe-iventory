@@ -33,8 +33,8 @@ const TrainingPages = () => {
 
       <SambutanComponent
         paragraf1="Master Training"
-        paragraf2="Kelola Data training"
-        button={isAdmin ? "+ Tambah Training" : undefined}
+        paragraf2="Manage training data"
+        button={isAdmin ? "+ Add Training" : undefined}
         onclick={isAdmin ? openCreate : undefined}
       />
 

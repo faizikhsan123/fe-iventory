@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar"
 const Activityy = () => {
   return (
     <div>
-      <Navbar title="Aktifitas Tercatat" />
+      <Navbar title="Recorded Activity" />
       <br />
 
       <TableAvtivity />

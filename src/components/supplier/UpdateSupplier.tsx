@@ -94,7 +94,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
             <div className="min-w-0">
               <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Edit Supplier</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Lengkapi informasi supplier di bawah
+                Complete the supplier information below
               </DialogDescription>
             </div>
           </div>
@@ -105,7 +105,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
           <FieldGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field className="gap-2 sm:col-span-2">
               <Label htmlFor="nama" className={labelClassName}>
-                Nama Supplier / Perusahaan <span className="text-[#B3261E]">*</span>
+                Supplier / Company Name <span className="text-[#B3261E]">*</span>
               </Label>
               <Input
                 type="text"
@@ -120,7 +120,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
 
             <Field className="gap-2">
               <Label htmlFor="pic" className={labelClassName}>
-                Nama PIC <span className="text-[#B3261E]">*</span>
+                PIC Name <span className="text-[#B3261E]">*</span>
               </Label>
               <Input
                 type="text"
@@ -135,7 +135,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
 
             <Field className="gap-2">
               <Label htmlFor="spesialis" className={labelClassName}>
-                Spesialis <span className="text-[#B3261E]">*</span>
+                Specialty <span className="text-[#B3261E]">*</span>
               </Label>
               <select
                 id="spesialis"
@@ -143,7 +143,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
                 disabled={loadingUpdate}
                 {...form.register("spesialis")}
               >
-                <option value=""> -- Pilih Kategori --</option>
+                <option value=""> -- Select Category --</option>
                 {ITEM_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
                     {c.label}
@@ -155,7 +155,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
 
             <Field className="gap-2">
               <Label htmlFor="phone" className={labelClassName}>
-                No. Telepon
+                Phone Number
               </Label>
               <Input
                 type="text"
@@ -179,8 +179,8 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
                 disabled={loadingUpdate}
                 {...form.register("status")}
               >
-                <option value="active">Aktif</option>
-                <option value="inactive">Tidak Aktif</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
               </select>
               <FieldError message={form.formState.errors.status?.message} />
             </Field>
@@ -203,7 +203,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
 
             <Field className="gap-2 sm:col-span-2">
               <Label htmlFor="address" className={labelClassName}>
-                Alamat
+                Address
               </Label>
               <Input
                 type="text"
@@ -238,7 +238,7 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
                 disabled={loadingUpdate}
                 className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
               >
-                Batal
+                Cancel
               </Button>
             }
           />
@@ -251,10 +251,10 @@ export function EditSupplier({ open, onOpenChange, supplier, onSuccess }: EditSu
             {loadingUpdate ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Menyimpan...
+                Saving...
               </>
             ) : (
-              "Ubah Supplier"
+              "Update Supplier"
             )}
           </Button>
         </DialogFooter>

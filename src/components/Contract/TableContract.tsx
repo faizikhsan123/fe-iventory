@@ -32,7 +32,7 @@ const ExpiryCell = ({ date }: { date: string | null }) => {
 };
 
 const DetailButton = ({ name, onClick }: { name: string; onClick: () => void }) => (
-  <Button size="icon" variant="outline" aria-label={`Detail ${name}`} onClick={onClick} className={iconButtonClass}>
+  <Button size="icon" variant="outline" aria-label={`Details of ${name}`} onClick={onClick} className={iconButtonClass}>
     <Eye size={16} />
   </Button>
 );
@@ -89,7 +89,7 @@ const TableContract = () => {
     <div className="mt-4 overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
       <div className="flex flex-col gap-3 border-b border-[#BFCCE3] bg-[#DBE2EF] p-4 md:flex-row md:items-center md:justify-between">
         <SearchBar
-          placeholder="Cari nama atau ID karyawan..."
+          placeholder="Search employee name or ID..."
           busy={isFetching}
           onSearch={(keyword) => {
             setSearch(keyword);
@@ -102,7 +102,7 @@ const TableContract = () => {
       {error && <ListError message={error} />}
 
       {!loading && !error && data.length === 0 && (
-        <ListEmpty icon={<FileClock size={28} />} title="Data contract tidak ditemukan" hint="Coba kata kunci lain" />
+        <ListEmpty icon={<FileClock size={28} />} title="No contracts found" hint="Try a different keyword" />
       )}
 
       {!loading && !error && data.length > 0 && (
@@ -128,7 +128,7 @@ const TableContract = () => {
                   )}
                 </p>
                 <p className="mt-1 text-xs text-[#50688C]">
-                  Perpanjangan {c.renewals_count}x · Review {c.reviews_count}x · Avg {score(c.average_score)}
+                  Renewals {c.renewals_count}x · Review {c.reviews_count}x · Avg {score(c.average_score)}
                 </p>
               </li>
             ))}
@@ -140,13 +140,13 @@ const TableContract = () => {
               <TableHeader>
                 <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                   <TableHead className={`${th} w-12`}>No</TableHead>
-                  <TableHead className={th}>Karyawan</TableHead>
+                  <TableHead className={th}>Employee</TableHead>
                   <TableHead className={th}>Contract Joined</TableHead>
                   <TableHead className={th}>Contract Expired</TableHead>
-                  <TableHead className={th}>Perpanjangan</TableHead>
+                  <TableHead className={th}>Renewals</TableHead>
                   <TableHead className={th}>Performance Review</TableHead>
                   <TableHead className={th}>Average Score</TableHead>
-                  <TableHead className={th}>Aksi</TableHead>
+                  <TableHead className={th}>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -157,7 +157,7 @@ const TableContract = () => {
             </Table>
           </div>
 
-          <Pagination meta={meta} unit="karyawan" onChange={setPage} />
+          <Pagination meta={meta} unit="employees" onChange={setPage} />
         </div>
       )}
     </div>

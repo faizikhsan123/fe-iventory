@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { AxiosInstance } from "@/lib/axios";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 type UpdateParticipantPayload = {
   date: string;
@@ -28,7 +29,8 @@ const UpdateParticipantHooks = () => {
       } catch (e: any) {
         const errors = e?.response?.data?.errors;
         const firstError = errors ? (Object.values(errors)[0] as string[])?.[0] : null;
-        setError(firstError ?? e?.response?.data?.message ?? "Gagal mengubah data peserta");
+        const raw = firstError ?? e?.response?.data?.message;
+        setError(raw ? translateServerMessage(String(raw)) : "Failed to update participant data");
         return false;
       } finally {
         setLoading(false);

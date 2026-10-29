@@ -30,9 +30,9 @@ const useSubmitStockKeluar = () => {
         date: values.date,
       });
     } catch (err) {
-      const message = (err as Error).message || "Gagal membuat transaksi";
+      const message = (err as Error).message || "Failed to create transaction";
       setError(message);
-      MySwal.fire("Gagal!", message, "error");
+      MySwal.fire("Failed!", message, "error");
       setSubmitting(false);
       return null;
     }
@@ -48,15 +48,15 @@ const useSubmitStockKeluar = () => {
         });
       }
     } catch (err) {
-      const message = (err as Error).message || "Gagal menyimpan salah satu barang";
+      const message = (err as Error).message || "Failed to save one of the items";
       setError(message);
-      MySwal.fire("Gagal!", message, "error");
+      MySwal.fire("Failed!", message, "error");
       setSubmitting(false);
       return null;
     }
 
     setResult(transaction);
-    MySwal.fire("Berhasil!", "Transaksi barang keluar berhasil disimpan.", "success");
+    MySwal.fire("Success!", "Stock-out transaction saved successfully.", "success");
     setSubmitting(false);
     return transaction;
   };

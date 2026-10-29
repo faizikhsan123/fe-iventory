@@ -34,16 +34,16 @@ const InvoicePage = () => {
   const handleDelete = useCallback(
     async (inv: Invoice) => {
       const ok = await Swal.fire({
-        title: "Hapus invoice?",
-        text: `Invoice "${inv.service_name}" (${inv.division}) beserta riwayat statusnya akan dihapus.`,
+        title: "Delete invoice?",
+        text: `Invoice "${inv.service_name}" (${inv.division}) and its status history will be deleted.`,
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Hapus",
-        cancelButtonText: "Batal",
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
       });
       if (!ok.isConfirmed) return;
       const err = await remove(inv.id);
-      if (err) Swal.fire("Gagal!", err, "error");
+      if (err) Swal.fire("Failed!", err, "error");
       else refresh();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,12 +52,11 @@ const InvoicePage = () => {
 
   return (
     <div>
-      <Navbar title="Invoicing" />
+      <Navbar title="Invoice" />
 
       <SambutanComponent
-        paragraf1="Status Invoicing"
-        paragraf2="Pantau invoice jasa tiap divisi sudah sampai tahap mana"
-        button={isAdmin ? "+ Tambah Invoice" : undefined}
+        paragraf1="Invoice"
+        button={isAdmin ? "+ Add Invoice" : undefined}
         onclick={isAdmin ? openCreate : undefined}
       />
 

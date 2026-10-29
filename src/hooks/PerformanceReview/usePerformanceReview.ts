@@ -37,7 +37,7 @@ const usePerformanceReview = (employeId?: string | number) => {
       return res.data.data as PerformanceReview[];
     },
     [employeId],
-    { enabled: Boolean(employeId), errorMessage: "Gagal mengambil performance review" },
+    { enabled: Boolean(employeId), errorMessage: "Failed to load performance review" },
   );
 
   // return pesan error kalau gagal, null kalau berhasil
@@ -48,7 +48,7 @@ const usePerformanceReview = (employeId?: string | number) => {
       reload();
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal menyimpan performance review");
+      return getErrorMessage(e, "Failed to save performance review");
     } finally {
       setSaving(false);
     }
@@ -60,7 +60,7 @@ const usePerformanceReview = (employeId?: string | number) => {
       reload();
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal menghapus performance review");
+      return getErrorMessage(e, "Failed to delete performance review");
     }
   };
 

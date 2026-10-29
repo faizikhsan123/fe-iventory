@@ -32,7 +32,7 @@ function StatusForm({ invoice, onUpdated }: { invoice: Invoice; onUpdated: () =>
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (status === invoice.status) {
-      setError("Pilih tahapan yang berbeda dari status saat ini");
+      setError("Choose a stage different from the current status");
       return;
     }
     const err = await updateStatus(invoice.id, { status, status_date: statusDate, note: note.trim() || undefined });
@@ -62,7 +62,7 @@ function StatusForm({ invoice, onUpdated }: { invoice: Invoice; onUpdated: () =>
           className={`${compactInputClass} sm:col-span-2`}
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="Catatan (opsional)"
+          placeholder="Note (optional)"
           maxLength={255}
           disabled={saving}
         />
@@ -75,10 +75,10 @@ function StatusForm({ invoice, onUpdated }: { invoice: Invoice; onUpdated: () =>
       >
         {saving ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" /> Menyimpan...
+            <Loader2 className="h-4 w-4 animate-spin" /> Saving...
           </>
         ) : (
-          "Simpan Status"
+          "Save Status"
         )}
       </Button>
     </form>
@@ -115,12 +115,12 @@ function DocumentsSection({ invoice, canEdit, onChanged }: { invoice: Invoice; c
 
   const handleDelete = async (type: InvoiceDocType, label: string) => {
     const ok = await Swal.fire({
-      title: `Hapus dokumen ${label}?`,
-      text: "File akan dihapus permanen.",
+      title: `Delete ${label} document?`,
+      text: "The file will be permanently deleted.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Ya, hapus",
-      cancelButtonText: "Batal",
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
     });
     if (!ok.isConfirmed) return;
     setError("");
@@ -131,7 +131,7 @@ function DocumentsSection({ invoice, canEdit, onChanged }: { invoice: Invoice; c
 
   return (
     <div>
-      <p className="mb-2 text-sm font-bold text-[#112D4E]">Dokumen Pendukung</p>
+      <p className="mb-2 text-sm font-bold text-[#112D4E]">Supporting Documents</p>
       <ul className="space-y-2">
         {INVOICE_DOC_TYPES.map(({ value, label }) => {
           const doc = invoice.documents?.[value];
@@ -143,17 +143,17 @@ function DocumentsSection({ invoice, canEdit, onChanged }: { invoice: Invoice; c
               <FileText className="h-4 w-4 shrink-0 text-[#50688C]" aria-hidden="true" />
               <div className="min-w-0 flex-1 basis-40">
                 <p className="text-xs text-[#50688C]">{label}</p>
-                <p className="break-all text-sm font-semibold text-[#112D4E]">{has ? name : "Belum ada file"}</p>
+                <p className="break-all text-sm font-semibold text-[#112D4E]">{has ? name : "No file yet"}</p>
               </div>
               <div className="flex flex-wrap items-center gap-1.5">
-                {busy === value && <Loader2 className="h-4 w-4 animate-spin text-[#3F72AF]" aria-label="Memproses" />}
+                {busy === value && <Loader2 className="h-4 w-4 animate-spin text-[#3F72AF]" aria-label="Processing" />}
                 {has && (
                   <>
                     <Button type="button" variant="outline" className={docBtn} disabled={disabled} onClick={() => handleDownload(value, name, true)}>
-                      <Eye className="h-3.5 w-3.5" /> Lihat
+                      <Eye className="h-3.5 w-3.5" /> View
                     </Button>
                     <Button type="button" variant="outline" className={docBtn} disabled={disabled} onClick={() => handleDownload(value, name, false)}>
-                      <Download className="h-3.5 w-3.5" /> Unduh
+                      <Download className="h-3.5 w-3.5" /> Download
                     </Button>
                   </>
                 )}
@@ -166,15 +166,15 @@ function DocumentsSection({ invoice, canEdit, onChanged }: { invoice: Invoice; c
                       type="file"
                       accept={INVOICE_DOC_ACCEPT}
                       className="hidden"
-                      aria-label={`Pilih file ${label}`}
+                      aria-label={`Choose ${label} file`}
                       onChange={(e) => handleFile(value, e)}
                     />
                     <Button type="button" variant="outline" className={docBtn} disabled={disabled} onClick={() => inputs.current[value]?.click()}>
-                      <Upload className="h-3.5 w-3.5" /> {has ? "Ganti" : "Upload"}
+                      <Upload className="h-3.5 w-3.5" /> {has ? "Replace" : "Upload"}
                     </Button>
                     {has && (
                       <Button type="button" variant="outline" className={`${docBtn} text-red-600`} disabled={disabled} onClick={() => handleDelete(value, label)}>
-                        <Trash2 className="h-3.5 w-3.5" /> Hapus
+                        <Trash2 className="h-3.5 w-3.5" /> Delete
                       </Button>
                     )}
                   </>
@@ -184,7 +184,7 @@ function DocumentsSection({ invoice, canEdit, onChanged }: { invoice: Invoice; c
           );
         })}
       </ul>
-      <p className="mt-1.5 text-xs text-[#50688C]">Format: PDF, JPG, PNG, DOC(X), XLS(X). Maksimal 10 MB.</p>
+      <p className="mt-1.5 text-xs text-[#50688C]">Formats: PDF, JPG, PNG, DOC(X), XLS(X). Max 10 MB.</p>
       <div className="mt-2">
         <FormAlert message={error} />
       </div>
@@ -212,10 +212,10 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
     <>
       <DialogHeader className="shrink-0 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-4 pr-12 sm:px-6">
         <DialogTitle className="break-words text-lg font-extrabold text-[#112D4E]">
-          {invoice?.service_name ?? "Detail Invoice"}
+          {invoice?.service_name ?? "Invoice Detail"}
         </DialogTitle>
         <DialogDescription className="text-sm text-[#50688C]">
-          {invoice ? `${invoice.division}${invoice.invoice_number ? ` · ${invoice.invoice_number}` : ""}` : "Memuat..."}
+          {invoice ? `${invoice.division}${invoice.invoice_number ? ` · ${invoice.invoice_number}` : ""}` : "Loading..."}
         </DialogDescription>
       </DialogHeader>
 
@@ -230,9 +230,9 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
               {[
                 ["Status", statusLabel(invoice.status)],
                 ["Client", invoice.client || "-"],
-                ["Nilai", rupiah(invoice.amount)],
-                ["Tanggal Jasa", invoice.service_date ? formatTanggalIndo(invoice.service_date) : "-"],
-                ["Tanggal invoice submit", invoice.invoice_date ? formatTanggalIndo(invoice.invoice_date) : "-"],
+                ["Amount", rupiah(invoice.amount)],
+                ["Service Date", invoice.service_date ? formatTanggalIndo(invoice.service_date) : "-"],
+                ["Invoice Submitted Date", invoice.invoice_date ? formatTanggalIndo(invoice.invoice_date) : "-"],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-lg border border-[#DBE2EF] bg-[#F9F7F7] p-3">
                   <dt className="text-xs text-[#50688C]">{k}</dt>
@@ -241,13 +241,6 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
               ))}
             </dl>
 
-            {invoice.service_description && (
-              <div>
-                <p className="mb-1 text-xs font-semibold text-[#50688C]">Deskripsi Jasa</p>
-                <p className="whitespace-pre-line break-words text-sm text-[#112D4E]">{invoice.service_description}</p>
-              </div>
-            )}
-
             {invoice.notes && <p className="whitespace-pre-line text-sm text-[#112D4E]">{invoice.notes}</p>}
 
             {canEdit && <StatusForm key={invoice.status} invoice={invoice} onUpdated={handleUpdated} />}
@@ -255,7 +248,7 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
             <DocumentsSection invoice={invoice} canEdit={canEdit} onChanged={handleUpdated} />
 
             <div>
-              <p className="mb-2 text-sm font-bold text-[#112D4E]">Riwayat Status</p>
+              <p className="mb-2 text-sm font-bold text-[#112D4E]">Status History</p>
               <ol className="space-y-0 border-l-2 border-[#DBE2EF] pl-4">
                 {[...(invoice.logs ?? [])].reverse().map((l) => (
                   <li key={l.id} className="relative pb-4 last:pb-0">

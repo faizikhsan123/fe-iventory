@@ -64,10 +64,9 @@ const useCountUp = (target: number, duration = 900) => {
 
 const getSapaan = () => {
   const h = new Date().getHours();
-  if (h < 11) return "Selamat pagi";
-  if (h < 15) return "Selamat siang";
-  if (h < 18) return "Selamat sore";
-  return "Selamat malam";
+  if (h < 11) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
 };
 
 // ============================================================
@@ -96,7 +95,7 @@ const Dashboard = () => {
           className="inline-flex h-11 items-center gap-2 rounded-lg border border-[#F2B8B5] bg-white px-5 text-sm font-semibold text-[#B3261E] transition hover:bg-[#FDECEA] active:scale-95"
         >
           <RefreshCw className="h-4 w-4" />
-          Coba lagi
+          Try again
         </button>
       </div>
     );
@@ -120,7 +119,7 @@ const Dashboard = () => {
               {namaDepan ? `, ${namaDepan}` : ""}
             </h2>
             <p className="mt-1.5 text-sm text-[#DBE2EF] sm:text-base">
-              Pantau stok dan pergerakan barang APD &amp; Tools hari ini.
+              Monitor today's stock levels and item movements.
             </p>
           </div>
 
@@ -129,7 +128,7 @@ const Dashboard = () => {
             className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-[#F9F7F7] px-5 text-sm font-bold text-[#112D4E] outline-none transition hover:bg-[#DBE2EF] focus-visible:ring-4 focus-visible:ring-[#9DB2D3] active:scale-95 sm:w-auto"
           >
             <FileBarChart className="h-4 w-4" />
-            Lihat laporan
+            View reports
           </Link>
         </div>
 
@@ -149,31 +148,31 @@ const Dashboard = () => {
         <CardSummary
           icon={Package}
           tone="navy"
-          label="Total Barang"
+          label="Total Items"
           value={summary.total_barang}
         />
         <CardSummary
           icon={BarChart3}
           tone="azure"
-          label="Stok Saat Ini"
+          label="Current Stock"
           value={summary.current_stock}
         />
         <CardSummary
           icon={ArrowDownCircle}
           tone="sky"
-          label="Barang Keluar"
+          label="Stock Out"
           value={summary.barang_keluar}
         />
         <CardSummary
           icon={CheckCircle2}
           tone="ice"
-          label="Barang Masuk"
+          label="Stock In"
           value={summary.barang_masuk}
         />
         <CardSummary
           icon={XCircle}
           tone="danger"
-          label="Stok Habis"
+          label="Out of Stock"
           value={summary.out_of_stock}
           alert={summary.out_of_stock > 0}
           className="col-span-2 sm:col-span-1"
@@ -257,7 +256,7 @@ function CardSummary({ icon: Icon, tone, label, value, alert, className = "" }: 
         {alert && (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FDECEA] px-2.5 py-0.5 text-xs font-bold text-[#B3261E] ring-1 ring-inset ring-[#F2B8B5]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#B3261E]" />
-            Perlu restock
+            Needs restocking
           </span>
         )}
       </div>
@@ -315,9 +314,9 @@ interface AktivitasStokItem {
 
 function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
   return (
-    <Panel title="Aktivitas Stok Terbaru">
+    <Panel title="Recent Stock Activity">
       {data.length === 0 ? (
-        <Kosong text="Belum ada aktivitas" />
+        <Kosong text="No activity yet" />
       ) : (
         <>
           {/* Mobile: kartu */}
@@ -360,10 +359,10 @@ function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
                 <tr className="bg-[#DBE2EF] text-sm text-[#112D4E]">
-                  <th className="px-6 py-3 font-semibold">Tanggal</th>
+                  <th className="px-6 py-3 font-semibold">Date</th>
                   <th className="px-3 py-3 font-semibold">Part No.</th>
-                  <th className="px-3 py-3 font-semibold">Nama Barang</th>
-                  <th className="px-3 py-3 font-semibold">Aktivitas</th>
+                  <th className="px-3 py-3 font-semibold">Item Name</th>
+                  <th className="px-3 py-3 font-semibold">Activity</th>
                   <th className="px-3 py-3 font-semibold">Qty</th>
                   {/* <th className="px-6 py-3 font-semibold">User</th> */}
                 </tr>
@@ -387,7 +386,7 @@ function TabelAktivitasStok({ data }: { data: AktivitasStokItem[] }) {
                               : "bg-[#FDECEA] text-[#B3261E] ring-[#F2B8B5]"
                           }`}
                         >
-                          {isIn ? "Stok Masuk" : "Stok Keluar"}
+                          {isIn ? "Stock In" : "Stock Out"}
                         </span>
                       </td>
                       <td className={`px-3 py-3.5 font-bold ${isIn ? "text-[#112D4E]" : "text-[#B3261E]"}`}>
@@ -423,9 +422,9 @@ interface TransaksiTerbaruItem {
 
 function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
   return (
-    <Panel title="Transaksi Terbaru">
+    <Panel title="Recent Transactions">
       {data.length === 0 ? (
-        <Kosong text="Belum ada transaksi" />
+        <Kosong text="No transactions yet" />
       ) : (
         <>
           {/* Mobile: kartu */}
@@ -451,10 +450,10 @@ function TabelTransaksiTerbaru({ data }: { data: TransaksiTerbaruItem[] }) {
               <thead>
                 <tr className="bg-[#DBE2EF] text-sm text-[#112D4E]">
                   {/* <th className="px-6 py-3 font-semibold">No. Transaksi</th> */}
-                  <th className="px-3 py-3 font-semibold">Karyawan</th>
-                  <th className="px-3 py-3 font-semibold">Barang</th>
-                  <th className="px-3 py-3 font-semibold">Kategori</th>
-                  <th className="px-6 py-3 font-semibold">Tanggal</th>
+                  <th className="px-3 py-3 font-semibold">Employee</th>
+                  <th className="px-3 py-3 font-semibold">Item</th>
+                  <th className="px-3 py-3 font-semibold">Category</th>
+                  <th className="px-6 py-3 font-semibold">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#DBE2EF]">
@@ -516,12 +515,12 @@ function KontrakBerakhirCard({ data }: { data: KontrakBerakhirItem[] }) {
         <div className="flex items-center gap-2.5">
           <CalendarClock className="h-5 w-5 text-[#B3261E]" />
           <h3 className="font-bold text-[#B3261E]">
-            Kontrak Segera Berakhir <span className="text-xs font-semibold">(30 hari)</span>
+            Contracts Expiring Soon <span className="text-xs font-semibold">(30 days)</span>
           </h3>
           <span className="rounded-full bg-[#B3261E] px-2 py-0.5 text-xs font-bold text-white">{data.length}</span>
         </div>
         <Link to="/contracts" className="text-sm font-semibold text-[#B3261E] underline-offset-2 hover:underline">
-          Lihat semua
+          View all
         </Link>
       </div>
 
@@ -577,12 +576,12 @@ function McuBerikutnyaCard({ data }: { data: McuBerikutnyaItem[] }) {
         <div className="flex items-center gap-2.5">
           <Stethoscope className="h-5 w-5 text-[#B3261E]" />
           <h3 className="font-bold text-[#B3261E]">
-            MCU Segera Jatuh Tempo <span className="text-xs font-semibold">(30 hari)</span>
+            MCU Due Soon <span className="text-xs font-semibold">(30 days)</span>
           </h3>
           <span className="rounded-full bg-[#B3261E] px-2 py-0.5 text-xs font-bold text-white">{data.length}</span>
         </div>
         <Link to="/mcu" className="text-sm font-semibold text-[#B3261E] underline-offset-2 hover:underline">
-          Lihat semua
+          View all
         </Link>
       </div>
 
@@ -599,7 +598,7 @@ function McuBerikutnyaCard({ data }: { data: McuBerikutnyaItem[] }) {
                   {m.id_number} · {m.position} · {m.division}
                   {m.group_name ? ` · ${m.group_name}` : ""}
                 </p>
-                <p className="text-xs text-[#50688C]">MCU terakhir di {m.place_name}</p>
+                <p className="text-xs text-[#50688C]">Last MCU at {m.place_name}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm font-semibold text-[#B3261E]">{formatTanggalIndo(m.next_mcu_date)}</p>

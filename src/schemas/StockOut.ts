@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 export const StockOutItemSchema = z.object({
-  items_id: z.string("Barang wajib dipilih").min(1, "Barang wajib dipilih"),
-  qty: z.number("Masukkan Angka QTY").min(1, "Qty minimal 1"),
+  items_id: z.string("Item is required").min(1, "Item is required"),
+  qty: z.number("Enter a quantity").min(1, "Minimum quantity is 1"),
 });
 
 export const StockOutSchema = z.object({
-  date: z.string().min(1, "Wajib memilih Tanggal"),
-  employes_id: z.string("Karyawan wajib dipilih").min(1, "Karyawan wajib dipilih"),
+  date: z.string().min(1, "Date is required"),
+  employes_id: z.string("Employee is required").min(1, "Employee is required"),
   note: z.string("Maksimal 200 karakter").max(200).optional().or(z.literal("")),
-  items: z.array(StockOutItemSchema).min(1, "Minimal 1 barang harus ditambahkan"),
+  items: z.array(StockOutItemSchema).min(1, "At least 1 item must be added"),
 });
 
 export type StockOutItem = z.infer<typeof StockOutItemSchema>;

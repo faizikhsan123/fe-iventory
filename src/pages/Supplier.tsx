@@ -17,8 +17,8 @@ const Supplier = () => {
 
       <SambutanComponent
         paragraf1="Master Supplier"
-        paragraf2="Kelola daftar mitra supplier barang APD & Tools"
-        button={isAdmin ? "+ Tambah Supplier" : undefined}
+        paragraf2="Manage the list of inventory suppliers"
+        button={isAdmin ? "+ Add Supplier" : undefined}
         onclick={isAdmin ? () => setIsDialogOpen(true) : undefined}
       />
 

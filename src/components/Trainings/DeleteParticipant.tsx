@@ -46,9 +46,9 @@ const DeleteParticipant = ({ open, participant, onOpenChange, onSuccess }: Props
               <Trash2 className="h-5 w-5" />
             </div>
             <div className="min-w-0 text-left">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Hapus Peserta</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Delete Participant</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                File pendukungnya ikut terhapus
+                The supporting file will be deleted too
               </DialogDescription>
             </div>
           </div>
@@ -56,7 +56,7 @@ const DeleteParticipant = ({ open, participant, onOpenChange, onSuccess }: Props
 
         <div className="space-y-3 p-4 sm:p-6">
           <p className="text-sm text-[#112D4E]">
-            Yakin mau hapus <b>{participant?.name}</b> dari training ini?
+            Are you sure you want to remove <b>{participant?.name}</b> from this training?
           </p>
           {errorDelete && (
             <div
@@ -78,7 +78,7 @@ const DeleteParticipant = ({ open, participant, onOpenChange, onSuccess }: Props
                 disabled={loadingDelete}
                 className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
               >
-                Batal
+                Cancel
               </Button>
             }
           />
@@ -91,10 +91,10 @@ const DeleteParticipant = ({ open, participant, onOpenChange, onSuccess }: Props
             {loadingDelete ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Menghapus...
+                Deleting...
               </>
             ) : (
-              "Hapus"
+              "Delete"
             )}
           </Button>
         </DialogFooter>

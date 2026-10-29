@@ -40,23 +40,23 @@ interface MenuItem {
 
 const mainMenu: MenuItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, also: ["/"] },
-  { to: "/items", label: "Master Barang", icon: BoxIcon, also: ["/create-items", "/update-items"] },
-  { to: "/supplier", label: "Master Supplier", icon: BookUser },
-  { to: "/employes", label: "Master Karyawan", icon: UserStar },
+  { to: "/items", label: "Master Items", icon: BoxIcon, also: ["/create-items", "/update-items"] },
+  { to: "/supplier", label: "Master Suppliers", icon: BookUser },
+  { to: "/employes", label: "Master Employees", icon: UserStar },
   { to: "/groups", label: "Master Groups", icon: UsersRound },
   { to: "/trainings", label: "Master Training", icon: GraduationCap },
   { to: "/contracts", label: "Contract", icon: FileClock },
   { to: "/mcu", label: "Master MCU", icon: Stethoscope },
-  { to: "/invoices", label: "Status Invoicing", icon: Receipt },
+  { to: "/invoices", label: "Invoice", icon: Receipt },
 ];
 
 const trxMenu: MenuItem[] = [
-  { to: "/stock-masuk", label: "Tambah Stock", icon: ArrowUp },
-  { to: "/stock-keluar", label: "Barang Keluar", icon: ArrowDown },
+  { to: "/stock-masuk", label: "Add Stock", icon: ArrowUp },
+  { to: "/stock-keluar", label: "Stock Out", icon: ArrowDown },
 ];
 
 const reportMenu: MenuItem[] = [
-  { to: "/laporan", label: "Laporan", icon: ChartNoAxesColumn },
+  { to: "/laporan", label: "Reports", icon: ChartNoAxesColumn },
   { to: "/activity-log", label: "Activity Log", icon: ActivityIcon },
 ];
 
@@ -145,7 +145,7 @@ const SidebarComponent = () => {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          aria-label="Buka menu"
+          aria-label="Open menu"
           aria-expanded={open}
           className="grid h-10 w-10 place-items-center rounded-lg border border-[#BFCCE3] bg-[#F9F7F7] text-[#112D4E] outline-none transition active:bg-[#DBE2EF] focus-visible:ring-2 focus-visible:ring-[#3F72AF]"
         >
@@ -195,7 +195,7 @@ const SidebarComponent = () => {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            aria-label="Tutup menu"
+            aria-label="Close menu"
             className="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[#DBE2EF] transition hover:bg-[#1B406B] lg:hidden"
           >
             <X className="h-5 w-5" />
@@ -204,14 +204,14 @@ const SidebarComponent = () => {
 
         {/* Menu (scroll sendiri kalau layar pendek) */}
         <nav className="flex-1 overflow-y-auto overscroll-contain px-3 py-4">
-          <SectionTitle>Menu utama</SectionTitle>
+          <SectionTitle>Main menu</SectionTitle>
           {renderMenu(mainMenu)}
 
           {/* Semua role boleh membuka; office hanya melihat riwayat (read-only) */}
-          <SectionTitle>Transaksi</SectionTitle>
+          <SectionTitle>Transactions</SectionTitle>
           {renderMenu(trxMenu)}
 
-          <SectionTitle>Laporan &amp; admin</SectionTitle>
+          <SectionTitle>Reports &amp; admin</SectionTitle>
           {renderMenu(reportMenu)}
         </nav>
 

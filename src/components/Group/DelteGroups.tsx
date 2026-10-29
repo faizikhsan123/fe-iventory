@@ -44,9 +44,9 @@ const DeleteGroups = ({ open, group, onOpenChange, onSuccess }: DeleteGroupsProp
               <Trash2 className="h-5 w-5" />
             </div>
             <div className="min-w-0 text-left">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Hapus Group</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Delete Group</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Tindakan ini tidak bisa dibatalkan
+                This action cannot be undone
               </DialogDescription>
             </div>
           </div>
@@ -54,8 +54,8 @@ const DeleteGroups = ({ open, group, onOpenChange, onSuccess }: DeleteGroupsProp
 
         <div className="space-y-3 p-4 sm:p-6">
           <p className="text-sm text-[#112D4E]">
-            Yakin mau menghapus group <b>{group?.group_name}</b>? Anggota group tidak ikut terhapus, hanya
-            dilepas dari group ini.
+            Are you sure you want to delete the group <b>{group?.group_name}</b>? Group members are not deleted, only
+            removed from this group.
           </p>
 
           {errorDelete && (
@@ -78,7 +78,7 @@ const DeleteGroups = ({ open, group, onOpenChange, onSuccess }: DeleteGroupsProp
                 disabled={loadingDelete}
                 className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
               >
-                Batal
+                Cancel
               </Button>
             }
           />
@@ -91,10 +91,10 @@ const DeleteGroups = ({ open, group, onOpenChange, onSuccess }: DeleteGroupsProp
             {loadingDelete ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Menghapus...
+                Deleting...
               </>
             ) : (
-              "Ya, Hapus"
+              "Yes, Delete"
             )}
           </Button>
         </DialogFooter>

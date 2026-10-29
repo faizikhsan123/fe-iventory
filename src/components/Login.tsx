@@ -23,18 +23,18 @@ import { useState, type CSSProperties } from "react";
 const features = [
   {
     icon: PackageCheck,
-    title: "Stok real-time",
-    desc: "Pantau barang masuk dan keluar kapan saja.",
+    title: "Real-time stock",
+    desc: "Track stock in and stock out at any time.",
   },
   {
     icon: ShieldCheck,
-    title: "Akses terkontrol",
-    desc: "Hak akses sesuai peran setiap pengguna.",
+    title: "Controlled access",
+    desc: "Access rights based on each user's role.",
   },
   {
     icon: BarChart3,
-    title: "Laporan otomatis",
-    desc: "Ringkasan stok APD & Tools siap dilihat.",
+    title: "Automated reports",
+    desc: "Stock summaries are ready to view.",
   },
 ];
 
@@ -79,11 +79,11 @@ export default function Login() {
         {/* Konten utama */}
         <div className="max-w-xl">
           <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-white xl:text-5xl">
-            Kelola inventaris APD &amp; Tools lebih mudah.
+            Manage your inventory with ease.
           </h1>
 
           <p className="mt-5 max-w-lg text-base leading-7 text-[#DBE2EF]">
-            Satu tempat untuk mengelola barang, stok, supplier, karyawan, dan laporan.
+            One place to manage items, stock, suppliers, employees, and reports.
           </p>
 
           <ul className="mt-10 border-t border-[#25476F]">
@@ -135,10 +135,10 @@ export default function Login() {
 
             <div className="p-5 sm:p-8">
               <h2 className="text-2xl font-extrabold tracking-tight text-[#112D4E] sm:text-3xl">
-                Masuk ke akun
+                Sign in to your account
               </h2>
               <p className="mt-2 text-sm leading-6 text-[#50688C]">
-                Gunakan email dan password yang terdaftar.
+                Use your registered email and password.
               </p>
 
               {/* Error */}
@@ -167,7 +167,7 @@ export default function Login() {
                       required
                       autoComplete="email"
                       inputMode="email"
-                      placeholder="nama@perusahaan.com"
+                      placeholder="name@company.com"
                       value={email}
                       onChange={(e) => SetEmail(e.target.value)}
                       className={`${inputClass} pr-4`}
@@ -188,7 +188,7 @@ export default function Login() {
                       type={hidepw ? "password" : "text"}
                       required
                       autoComplete="current-password"
-                      placeholder="Masukkan password"
+                      placeholder="Enter your password"
                       value={password}
                       onChange={(e) => SetPassword(e.target.value)}
                       className={`${inputClass} pr-12`}
@@ -196,7 +196,7 @@ export default function Login() {
                     <button
                       type="button"
                       onClick={() => SethidePw((prev) => !prev)}
-                      aria-label={hidepw ? "Tampilkan password" : "Sembunyikan password"}
+                      aria-label={hidepw ? "Show password" : "Hide password"}
                       className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-lg text-[#50688C] transition hover:text-[#112D4E]"
                       tabIndex={-1}
                     >
@@ -218,10 +218,10 @@ export default function Login() {
                   {loading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Memproses...
+                      Processing...
                     </>
                   ) : (
-                    "Masuk"
+                    "Sign in"
                   )}
                 </button>
               </form>

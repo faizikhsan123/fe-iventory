@@ -4,7 +4,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { CPD_FIELDS, PPE_FIELDS, type CpdForm, type PpeFieldName } from "@/schemas/cpd";
 import { inputClass, labelClass, selectClass } from "@/lib/formStyles";
-import { CPD_SELECT_OPTIONS } from "@/lib/cpdOptions";
+import { CPD_SELECT_OPTIONS, cpdOptionLabel } from "@/lib/cpdOptions";
 
 // Form induk (Create/Update/edit CPD di detail) membungkus ini dengan <FormProvider>.
 type Values = { cpd?: CpdForm } & Partial<Record<PpeFieldName, string | null>> & Record<string, unknown>;
@@ -19,12 +19,12 @@ export const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-// Ukuran APD: ppe_shoes ... ppe_gloves
+// PPE Sizes: ppe_shoes ... ppe_gloves
 export function PpeFields({ disabled }: { disabled?: boolean }) {
   const { register, formState } = useFormContext<Values>();
   return (
     <>
-      <SectionTitle>Ukuran APD</SectionTitle>
+      <SectionTitle>PPE Sizes</SectionTitle>
       {PPE_FIELDS.map((f) => (
         <Field key={f.name} className="gap-2">
           <Label htmlFor={f.name} className={labelClass}>
@@ -36,7 +36,7 @@ export function PpeFields({ disabled }: { disabled?: boolean }) {
             maxLength={30}
             className={inputClass}
             disabled={disabled}
-            placeholder="Contoh: 42 / L"
+            placeholder="Example: 42 / L"
           />
           <FieldError message={formState.errors[f.name]?.message as string | undefined} />
         </Field>
@@ -54,7 +54,7 @@ type CpdFieldsProps = {
 };
 
 // Dropdown native. Nilai tersimpan yang tidak ada di daftar (data lama) ditampilkan
-// sebagai opsi tambahan "<nilai> (lama)" supaya tidak hilang diam-diam.
+// sebagai opsi tambahan "<nilai> (old)" supaya tidak hilang diam-diam.
 function CpdSelect({
   id,
   options,
@@ -71,13 +71,13 @@ function CpdSelect({
   const legacy = typeof current === "string" && current !== "" && !options.includes(current) ? current : null;
   return (
     <select id={id} className={selectClass} disabled={disabled} {...registration}>
-      <option value="">Pilih...</option>
+      <option value="">Select...</option>
       {options.map((o) => (
         <option key={o} value={o}>
-          {o}
+          {cpdOptionLabel(o)}
         </option>
       ))}
-      {legacy && <option value={legacy}>{legacy} (lama)</option>}
+      {legacy && <option value={legacy}>{cpdOptionLabel(legacy)} (old)</option>}
     </select>
   );
 }

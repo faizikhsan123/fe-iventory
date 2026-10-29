@@ -13,7 +13,6 @@ const emptyForm: InvoiceForm = {
   invoice_number: "",
   service_name: "",
   service_date: "",
-  service_description: "",
   division: "",
   client: "",
   amount: "",
@@ -27,7 +26,6 @@ const toForm = (invoice: Invoice | null): InvoiceForm =>
         invoice_number: invoice.invoice_number ?? "",
         service_name: invoice.service_name,
         service_date: invoice.service_date ?? "",
-        service_description: invoice.service_description ?? "",
         division: invoice.division,
         client: invoice.client ?? "",
         amount: invoice.amount != null ? String(invoice.amount) : "",
@@ -63,7 +61,7 @@ function InvoiceFormBody({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.service_name.trim() || !form.division) {
-      setError("Nama jasa dan divisi wajib diisi");
+      setError("Service description and division are required");
       return;
     }
     setError("");
@@ -85,9 +83,9 @@ function InvoiceFormBody({
           </div>
           <div className="min-w-0 text-left">
             <DialogTitle className="text-lg font-extrabold text-[#112D4E]">
-              {isEdit ? "Update Invoice" : "Tambah Invoice"}
+              {isEdit ? "Update Invoice" : "Add Invoice"}
             </DialogTitle>
-            <DialogDescription className="mt-0.5 text-sm text-[#50688C]">Invoice jasa</DialogDescription>
+            <DialogDescription className="mt-0.5 text-sm text-[#50688C]">Service invoice</DialogDescription>
           </div>
         </div>
       </DialogHeader>
@@ -97,20 +95,20 @@ function InvoiceFormBody({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="space-y-2 sm:col-span-2">
               <span className={labelClass}>
-                Nama / Jenis Jasa <span className="text-[#B3261E]">*</span>
+                Service Description <span className="text-[#B3261E]">*</span>
               </span>
               <Input
                 className={inputClass}
                 value={form.service_name}
                 onChange={(e) => set("service_name", e.target.value)}
-                placeholder="Contoh: Service rutin analyzer"
+                placeholder="e.g. Routine analyzer service"
                 disabled={saving}
               />
             </label>
 
             <label className="space-y-2">
               <span className={labelClass}>
-                Divisi <span className="text-[#B3261E]">*</span>
+                Division <span className="text-[#B3261E]">*</span>
               </span>
               <select
                 className={selectClass}
@@ -118,10 +116,10 @@ function InvoiceFormBody({
                 onChange={(e) => set("division", e.target.value)}
                 disabled={saving}
               >
-                <option value="">-- Pilih Divisi --</option>
+                <option value="">-- Select Division --</option>
                 {/* invoice lama berdivisi Safety tetap bisa tampil agar select tidak kosong */}
                 {form.division && !(INVOICE_DIVISIONS as readonly string[]).includes(form.division) && (
-                  <option value={form.division}>{form.division} (lama)</option>
+                  <option value={form.division}>{form.division} (legacy)</option>
                 )}
                 {INVOICE_DIVISIONS.map((d) => (
                   <option key={d} value={d}>
@@ -132,12 +130,12 @@ function InvoiceFormBody({
             </label>
 
             <label className="space-y-2">
-              <span className={labelClass}>No. Invoice</span>
+              <span className={labelClass}>Invoice No</span>
               <Input
                 className={inputClass}
                 value={form.invoice_number}
                 onChange={(e) => set("invoice_number", e.target.value)}
-                placeholder="Boleh diisi nanti"
+                placeholder="Can be filled in later"
                 disabled={saving}
               />
             </label>
@@ -148,13 +146,13 @@ function InvoiceFormBody({
                 className={inputClass}
                 value={form.client}
                 onChange={(e) => set("client", e.target.value)}
-                placeholder="Contoh: PT Freeport Indonesia"
+                placeholder="e.g. PT Freeport Indonesia"
                 disabled={saving}
               />
             </label>
 
             <label className="space-y-2">
-              <span className={labelClass}>Nilai (Rp)</span>
+              <span className={labelClass}>Amount (Rp)</span>
               <CurrencyInput
                 className={inputClass}
                 value={form.amount}
@@ -165,7 +163,7 @@ function InvoiceFormBody({
             </label>
 
             <label className="space-y-2">
-              <span className={labelClass}>Tanggal Jasa</span>
+              <span className={labelClass}>Service Date</span>
               <Input
                 type="date"
                 className={inputClass}
@@ -176,7 +174,7 @@ function InvoiceFormBody({
             </label>
 
             <label className="space-y-2">
-              <span className={labelClass}>Tanggal invoice submit</span>
+              <span className={labelClass}>Invoice Submitted Date</span>
               <Input
                 type="date"
                 className={inputClass}
@@ -187,18 +185,7 @@ function InvoiceFormBody({
             </label>
 
             <label className="space-y-2 sm:col-span-2">
-              <span className={labelClass}>Deskripsi Jasa</span>
-              <textarea
-                className={`min-h-20 py-2 ${fieldBase}`}
-                value={form.service_description}
-                onChange={(e) => set("service_description", e.target.value)}
-                maxLength={2000}
-                disabled={saving}
-              />
-            </label>
-
-            <label className="space-y-2 sm:col-span-2">
-              <span className={labelClass}>Catatan</span>
+              <span className={labelClass}>Notes</span>
               <textarea
                 className={`min-h-20 py-2 ${fieldBase}`}
                 value={form.notes}
@@ -220,7 +207,7 @@ function InvoiceFormBody({
             onClick={onClose}
             className="h-11 rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
           >
-            Batal
+            Cancel
           </Button>
           <Button
             type="submit"
@@ -229,12 +216,12 @@ function InvoiceFormBody({
           >
             {saving ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Menyimpan...
+                <Loader2 className="h-4 w-4 animate-spin" /> Saving...
               </>
             ) : isEdit ? (
               "Update Invoice"
             ) : (
-              "Tambah Invoice"
+              "Add Invoice"
             )}
           </Button>
         </div>

@@ -34,7 +34,7 @@ export const useSupplier = () => {
       setData(response.data.data);
       setMeta(response.data.meta);
     } catch {
-      setError("Gagal mengambil data supplier.");
+      setError("Failed to load suppliers.");
     } finally {
       setLoading(false);
     }
@@ -68,7 +68,7 @@ export const useSupplier = () => {
       all.sort((a, b) => a.name.localeCompare(b.name, "id"));
       setData(all);
     } catch {
-      setError("Gagal mengambil data supplier.");
+      setError("Failed to load suppliers.");
     } finally {
       setLoading(false);
     }

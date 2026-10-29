@@ -128,7 +128,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
         size="icon"
         variant="outline"
         className={actionBtnClass}
-        aria-label="Lihat detail"
+        aria-label="View details"
         onClick={() => navigate(`/employes/${emp.id}`)}
       >
         <Eye size={16} />
@@ -140,7 +140,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
             size="icon"
             variant="outline"
             className={actionBtnClass}
-            aria-label="Edit karyawan"
+            aria-label="Edit employee"
             onClick={() => setStateUpdate(emp)}
           >
             <SquarePen size={16} />
@@ -149,7 +149,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
             size="icon"
             variant="outline"
             className={`${actionBtnClass} hover:border-[#F2B8B5] hover:bg-[#FDECEA]`}
-            aria-label="Hapus karyawan"
+            aria-label="Delete employee"
             disabled={isLoading}
             onClick={() => onDelete(emp.id)}
           >
@@ -179,7 +179,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
             />
             <Input
               className={searchClass}
-              placeholder="Cari nama, divisi, jabatan..."
+              placeholder="Search name, division, position..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
@@ -187,7 +187,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
               <button
                 type="button"
                 onClick={clearSearch}
-                aria-label="Hapus pencarian"
+                aria-label="Clear search"
                 className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[#50688C] transition hover:bg-[#DBE2EF] hover:text-[#112D4E]"
               >
                 <X size={15} />
@@ -198,7 +198,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
             disabled={isLoading}
             className="h-11 rounded-lg bg-[#112D4E] px-5 font-semibold text-white hover:bg-[#0B2240] disabled:opacity-60"
           >
-            Cari
+            Search
           </Button>
         </form>
 
@@ -206,13 +206,13 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
           <select
             className={selectClassName}
             value={division}
-            aria-label="Filter divisi"
+            aria-label="Filter division"
             onChange={(e) => {
               setDivision(e.target.value);
               setPage(1);
             }}
           >
-            <option value="all">Semua Divisi</option>
+            <option value="all">All Divisions</option>
             {DIVISIONS.map((d) => (
               <option key={d} value={d}>
                 {d}
@@ -223,13 +223,13 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
           <select
             className={selectClassName}
             value={position}
-            aria-label="Filter posisi"
+            aria-label="Filter position"
             onChange={(e) => {
               setPosition(e.target.value);
               setPage(1);
             }}
           >
-            <option value="all">Semua Position</option>
+            <option value="all">All Positions</option>
             <option value="Supervisor">Supervisor</option>
             <option value="Foreman">Foreman</option>
             <option value="Technician">Technician</option>
@@ -245,7 +245,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
               setPage(1);
             }}
           >
-            <option value="all">Semua</option>
+            <option value="all">All</option>
             <option value="active">Active</option>
             <option value="inactive">Deactive</option>
           </select>
@@ -281,8 +281,8 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
           <div className="grid h-16 w-16 place-items-center rounded-xl bg-[#DBE2EF]">
             <Search size={28} className="text-[#3F72AF]" />
           </div>
-          <p className="font-semibold text-[#112D4E]">Karyawan tidak ditemukan</p>
-          <p className="text-sm text-[#50688C]">Coba gunakan kata kunci lain</p>
+          <p className="font-semibold text-[#112D4E]">Employee not found</p>
+          <p className="text-sm text-[#50688C]">Try a different keyword</p>
         </div>
       )}
 
@@ -306,7 +306,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                     </div>
                     <p className="truncate text-xs text-[#50688C]">{emp.user.email}</p>
                     {expiringLabel(emp.contract_end) && (
-                      <span className={`${expiringBadgeClass} mt-1`}>Kontrak {expiringLabel(emp.contract_end)}</span>
+                      <span className={`${expiringBadgeClass} mt-1`}>Contract {expiringLabel(emp.contract_end)}</span>
                     )}
                     <p className="mt-1 text-sm text-[#112D4E]">
                       {emp.position} · {emp.division}
@@ -327,11 +327,11 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
               <TableHeader>
                 <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Karyawan</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Divisi</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Posisi</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Employee</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Division</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Position</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Status</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Aksi</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Action</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -352,7 +352,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                           <p className="font-semibold">{emp.user.name}</p>
                           <p className="truncate text-xs text-[#50688C]">{emp.user.email}</p>
                           {expiringLabel(emp.contract_end) && (
-                            <span className={`${expiringBadgeClass} mt-1`}>Kontrak {expiringLabel(emp.contract_end)}</span>
+                            <span className={`${expiringBadgeClass} mt-1`}>Contract {expiringLabel(emp.contract_end)}</span>
                           )}
                         </div>
                       </div>
@@ -389,7 +389,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
           {/* ================= PAGINATION ================= */}
           <div className="flex items-center justify-between gap-3 border-t border-[#DBE2EF] bg-[#F9F7F7] p-4">
             <span className="text-sm text-[#50688C]">
-              Hal. <b className="text-[#112D4E]">{page}</b> dari <b className="text-[#112D4E]">{lastPage}</b>
+              Page <b className="text-[#112D4E]">{page}</b> of <b className="text-[#112D4E]">{lastPage}</b>
             </span>
 
             <div className="flex gap-2">
@@ -398,19 +398,19 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                 className={pageBtnClass}
                 disabled={page <= 1 || isLoading}
                 onClick={() => setPage(page - 1)}
-                aria-label="Halaman sebelumnya"
+                aria-label="Previous page"
               >
                 <ChevronLeft size={16} />
-                <span className="hidden sm:inline">Sebelumnya</span>
+                <span className="hidden sm:inline">Previous</span>
               </Button>
               <Button
                 variant="outline"
                 className={pageBtnClass}
                 disabled={page >= lastPage || isLoading}
                 onClick={() => setPage(page + 1)}
-                aria-label="Halaman berikutnya"
+                aria-label="Next page"
               >
-                <span className="hidden sm:inline">Berikutnya</span>
+                <span className="hidden sm:inline">Next</span>
                 <ChevronRight size={16} />
               </Button>
             </div>

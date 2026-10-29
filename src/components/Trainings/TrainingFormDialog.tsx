@@ -22,7 +22,7 @@ import UpdateTrainingHooks from "@/hooks/Training/update";
 
 type Props = {
   open: boolean;
-  training: Training | null; // null = mode tambah
+  training: Training | null; // null = create mode
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 };
@@ -93,10 +93,10 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
             </div>
             <div className="min-w-0 text-left">
               <DialogTitle className="text-lg font-extrabold text-[#112D4E]">
-                {isEdit ? "Edit Training" : "Tambah Training Baru"}
+                {isEdit ? "Edit Training" : "Add New Training"}
               </DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Isi data training dengan lengkap
+                Fill in the training details
               </DialogDescription>
             </div>
           </div>
@@ -112,7 +112,7 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
                 <Input
                   {...form.register("id_training")}
                   id="id_training"
-                  placeholder="Contoh: TRN-001"
+                  placeholder="Example: TRN-001"
                   className={inputClassName}
                   disabled={loading}
                 />
@@ -121,7 +121,7 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
 
               <Field className="gap-2">
                 <Label htmlFor="division_training" className={labelClassName}>
-                  Divisi <span className="text-[#B3261E]">*</span>
+                  Division <span className="text-[#B3261E]">*</span>
                 </Label>
                 <select
                   {...form.register("division_training")}
@@ -140,12 +140,12 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
 
               <Field className="gap-2">
                 <Label htmlFor="name_training" className={labelClassName}>
-                  Nama Training <span className="text-[#B3261E]">*</span>
+                  Training Name <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("name_training")}
                   id="name_training"
-                  placeholder="Contoh: Basic Gas Analyzer"
+                  placeholder="Example: Basic Gas Analyzer"
                   className={inputClassName}
                   disabled={loading}
                 />
@@ -159,7 +159,7 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
                 <Input
                   {...form.register("by")}
                   id="by"
-                  placeholder="Nama pembuat"
+                  placeholder="Creator name"
                   className={inputClassName}
                   disabled={loading}
                 />
@@ -201,7 +201,7 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
                   disabled={loading}
                   className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
                 >
-                  Batal
+                  Cancel
                 </Button>
               }
             />
@@ -213,12 +213,12 @@ const TrainingFormDialog = ({ open, training, onOpenChange, onSuccess }: Props) 
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Menyimpan...
+                  Saving...
                 </>
               ) : isEdit ? (
-                "Simpan Perubahan"
+                "Save Changes"
               ) : (
-                "Tambah Training"
+                "Add Training"
               )}
             </Button>
           </DialogFooter>

@@ -41,7 +41,6 @@ export type InvoiceForm = {
   invoice_number: string;
   service_name: string;
   service_date: string;
-  service_description: string;
   division: string;
   client: string;
   amount: string;
@@ -79,7 +78,7 @@ export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
       };
     },
     [filters.search, filters.division, filters.status, filters.sort_status, filters.page, refreshKey],
-    { errorMessage: "Gagal mengambil data invoice" },
+    { errorMessage: "Failed to load invoice data" },
   );
 
   return {
@@ -100,7 +99,7 @@ export const useInvoiceDetail = (id: number | null) => {
       return res.data.data as Invoice;
     },
     [id],
-    { enabled: id !== null, errorMessage: "Gagal mengambil detail invoice" },
+    { enabled: id !== null, errorMessage: "Failed to load invoice details" },
   );
 
   return { invoice: data, loading, error, reload };
@@ -114,7 +113,6 @@ export const useInvoiceActions = () => {
     invoice_number: f.invoice_number.trim() || null,
     service_name: f.service_name.trim(),
     service_date: f.service_date || null,
-    service_description: f.service_description.trim() || null,
     division: f.division,
     client: f.client.trim() || null,
     amount: f.amount === "" ? null : Number(f.amount),
@@ -137,18 +135,18 @@ export const useInvoiceActions = () => {
   const save = (f: InvoiceForm, id?: number) =>
     run(
       () => (id ? AxiosInstance.put(`/invoices/${id}`, toPayload(f)) : AxiosInstance.post("/invoices", toPayload(f))),
-      "Gagal menyimpan invoice",
+      "Failed to save invoice",
     );
 
   const updateStatus = (id: number, body: { status: string; status_date: string; note?: string }) =>
-    run(() => AxiosInstance.post(`/invoices/${id}/status`, body), "Gagal mengubah status invoice");
+    run(() => AxiosInstance.post(`/invoices/${id}/status`, body), "Failed to update invoice status");
 
   const remove = async (id: number): Promise<string | null> => {
     try {
       await AxiosInstance.delete(`/invoices/${id}`);
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal menghapus invoice");
+      return getErrorMessage(e, "Failed to delete invoice");
     }
   };
 
@@ -176,11 +174,11 @@ export const useInvoiceDocuments = (invoiceId: number) => {
     const body = new FormData();
     body.append("type", type);
     body.append("file", file);
-    return run(type, () => AxiosInstance.post(`/invoices/${invoiceId}/documents`, body), "Gagal mengunggah dokumen");
+    return run(type, () => AxiosInstance.post(`/invoices/${invoiceId}/documents`, body), "Failed to upload document");
   };
 
   const removeDoc = (type: InvoiceDocType) =>
-    run(type, () => AxiosInstance.delete(`/invoices/${invoiceId}/documents/${type}`), "Gagal menghapus dokumen");
+    run(type, () => AxiosInstance.delete(`/invoices/${invoiceId}/documents/${type}`), "Failed to delete document");
 
   // Unduh sebagai blob (butuh auth); PDF/gambar dibuka di tab baru bila view, selain itu disimpan.
   const download = (type: InvoiceDocType, fileName: string, view: boolean) =>
@@ -202,7 +200,7 @@ export const useInvoiceDocuments = (invoiceId: number) => {
         }
         setTimeout(() => URL.revokeObjectURL(url), 60_000);
       },
-      "Gagal mengunduh dokumen",
+      "Failed to download document",
     );
 
   return { busy, upload, removeDoc, download };

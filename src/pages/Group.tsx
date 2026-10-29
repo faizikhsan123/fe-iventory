@@ -23,8 +23,8 @@ const GroupPages = () => {
 
       <SambutanComponent
         paragraf1="Master Groups"
-        paragraf2="Kelola Data group"
-        button={isAdmin ? "+ Tambah Group" : undefined}
+        paragraf2="Manage group data"
+        button={isAdmin ? "+ Add Group" : undefined}
         onclick={isAdmin ? () => setIsCreateOpen(true) : undefined}
       />
 

@@ -3,6 +3,7 @@ import { isAxiosError } from "axios";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const MySwal = withReactContent(Swal);
 
@@ -13,12 +14,12 @@ export const useDeleteSupplier = () => {
   // terima parameter onDelete sebagai callback function yang akan dipanggil setelah data berhasil dihapus
   const handleDelete = async (id: number, onDelete?: () => void) => {
     const result = await Swal.fire({
-      title: "Yakin mau hapus?",
-      text: "Data yang dihapus tidak bisa dikembalikan!",
+      title: "Are you sure you want to delete?",
+      text: "Deleted data cannot be recovered!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Ya, hapus",
-      cancelButtonText: "Batal",
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
     });
 
     // kalau user klik Batal atau tutup dialog, stop di sini
@@ -29,11 +30,11 @@ export const useDeleteSupplier = () => {
       SetError("");
       await AxiosInstance.delete(`/suppliers/${id}`);
 
-      MySwal.fire("Terhapus!", "Data berhasil dihapus.", "success");
+      MySwal.fire("Deleted!", "Data deleted successfully.", "success");
       onDelete?.(); // panggil callback onDelete kalau ada
     } catch (error) {
       // kita kasi error generic dulu
-              let message = "Terjadi kesalahan, coba lagi.";
+              let message = "Something went wrong, please try again.";
         
               if (isAxiosError(error)) {
                 // eh error ini beneran gara-gara request ke server
@@ -55,18 +56,18 @@ export const useDeleteSupplier = () => {
         
                 if (data?.errors) {
                   //Kalau ada errors (yang isinya per-field kayak contoh di atas), kita gabungin SEMUA pesan errornya jadi satu kalimat panjang dipisah koma. // { email: ["Email sudah dipakai"], password: ["Password kurang panjang"] }
-                  message = Object.values(data.errors).flat().join(", ");
+                  message = (Object.values(data.errors).flat() as unknown[]).map((m) => translateServerMessage(String(m))).join(", ");
                   //// "Email sudah dipakai, Password kurang panjang"
                   // digabung jadi satu string, dipisah koma
                 } else if (data?.message) {
                   //Kadang server nggak kirim error per-field, cuma kirim satu pesan doang, misal:
-                  message = data.message;
+                  message = translateServerMessage(data.message);
                   //Kalau kayak gini, ya langsung pake message itu aja.
                 }
               }
         
               SetError(message);
-              MySwal.fire("Gagal!", message, "error");
+              MySwal.fire("Failed!", message, "error");
     } finally {
       SetLoading(false);
     }

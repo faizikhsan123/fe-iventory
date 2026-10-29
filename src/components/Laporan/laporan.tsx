@@ -1,15 +1,18 @@
 // StockDashboardSection.tsx (Laporan)
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useSearchParams } from "react-router"; // sebelumnya "react-router-dom"
 import { useTopBorrowed } from "@/hooks/Laporan/TopBorrow";
 import { usePenerimaanStok, type StockHistoryItem } from "@/hooks/Laporan/penerimaan";
-import useTransaction, { type TransactionData } from "@/hooks/Laporan/BaranngKeluar";
+import useTransaction, { type TransactionData, type TransactionLineItem } from "@/hooks/Laporan/BaranngKeluar";
 import useLowStock, { type LowStockItem } from "@/hooks/Laporan/lowStock";
 import useExport from "@/hooks/Laporan/exportRecordPengeluaran";
 
-import { AlertCircle, Download, Inbox, Loader2, Info } from "lucide-react";
+import { AlertCircle, Download, Inbox, Loader2, Info, Pencil } from "lucide-react";
+import { useAuth } from "@/hooks/auth/useAuth";
+import EditQuantityDialog, { type EditQuantityState } from "./EditQuantityDialog";
 import StockOnHandTab from "../StockonHandTab";
 import { CATEGORY_BADGE_FALLBACK, CATEGORY_BADGE_STYLE, categoryLabel } from "@/lib/itemCategory";
+import { formatServerDate } from "@/lib/tanggal";
 
 /*
   Palet:
@@ -81,6 +84,20 @@ function statusView(opts: { loading: boolean; error: string; empty: boolean; emp
   return null;
 }
 
+function EditButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#BFCCE3] bg-white text-[#112D4E] transition hover:border-[#3F72AF] hover:bg-[#DBE2EF]"
+    >
+      <Pencil className="h-4 w-4" />
+    </button>
+  );
+}
+
 // header tabel desktop
 const TH = "px-4 py-3 font-semibold first:pl-6 last:pr-6";
 const TD = "px-4 py-3.5 first:pl-6 last:pr-6";
@@ -94,11 +111,11 @@ const TR = "text-[#112D4E] transition-colors hover:bg-[#F9F7F7]";
 type TabKey = "record-pengeluaran" | "penerimaan-stok" | "barang-keluar" | "stok-kritis" | "stock-on-hand";
 
 const DAFTAR_TAB: { key: TabKey; label: string }[] = [
-  { key: "record-pengeluaran", label: "Record Pengeluaran" },
-  { key: "penerimaan-stok", label: "Penerimaan Stok" },
-  { key: "barang-keluar", label: "Barang Keluar" },
-  { key: "stok-kritis", label: "Stok Kritis" },
-  { key: "stock-on-hand", label: "Stock On Hand" },
+  { key: "record-pengeluaran", label: "Issue Records" },
+  { key: "penerimaan-stok", label: "Stock Receipts" },
+  { key: "barang-keluar", label: "Stock Out" },
+  { key: "stok-kritis", label: "Low Stock" },
+  { key: "stock-on-hand", label: "Stock on Hand" },
 ];
 
 // tab tanpa endpoint export (stock-on-hand) tidak ada di sini
@@ -135,6 +152,8 @@ export default function StockDashboardSection() {
   const [endDate, setEndDate] = useState("");
 
   const { loadingExport, handleExport } = useExport();
+  const { isAdmin } = useAuth();
+  const [editState, setEditState] = useState<EditQuantityState | null>(null);
 
   const exportConfig = EXPORT_CONFIG[tabAktif];
 
@@ -172,7 +191,7 @@ export default function StockDashboardSection() {
     handleGet: getStokKritis,
   } = useLowStock();
 
-  useEffect(() => {
+  const refreshActiveTab = useCallback(() => {
     if (tabAktif === "record-pengeluaran") {
       getTopBorrowed(startDate || undefined, endDate || undefined);
     }
@@ -186,7 +205,12 @@ export default function StockDashboardSection() {
       getStokKritis({});
     }
     // stock-on-hand ambil datanya sendiri di dalam komponen StockOnHandTab
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabAktif, startDate, endDate]);
+
+  useEffect(() => {
+    refreshActiveTab();
+  }, [refreshActiveTab]);
 
   // Stok Kritis & Stock On Hand = snapshot kondisi sekarang, jadi tidak butuh filter tanggal
   const tampilkanFilterTanggal = tabAktif !== "stok-kritis" && tabAktif !== "stock-on-hand";
@@ -231,16 +255,16 @@ export default function StockDashboardSection() {
                   max={endDate || undefined}
                   onChange={(e) => setStartDate(e.target.value)}
                   className={dateClass}
-                  aria-label="Tanggal mulai"
+                  aria-label="Start date"
                 />
-                <span className="hidden text-sm text-[#50688C] min-[420px]:block">s/d</span>
+                <span className="hidden text-sm text-[#50688C] min-[420px]:block">to</span>
                 <input
                   type="date"
                   value={endDate}
                   min={startDate || undefined}
                   onChange={(e) => setEndDate(e.target.value)}
                   className={dateClass}
-                  aria-label="Tanggal akhir"
+                  aria-label="End date"
                 />
               </div>
               {(startDate || endDate) && (
@@ -259,7 +283,7 @@ export default function StockDashboardSection() {
           ) : (
             <p className="inline-flex items-center gap-2 text-sm text-[#50688C]">
               <Info className="h-4 w-4 shrink-0 text-[#3F72AF]" />
-              Menampilkan kondisi stok saat ini
+              Showing current stock levels
             </p>
           )}
 
@@ -272,7 +296,7 @@ export default function StockDashboardSection() {
               className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#112D4E] px-5 text-sm font-semibold text-white transition hover:bg-[#0B2240] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               {loadingExport ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              {loadingExport ? "Mengunduh..." : "Export Excel"}
+              {loadingExport ? "Downloading..." : "Export Excel"}
             </button>
           )}
         </div>
@@ -283,10 +307,22 @@ export default function StockDashboardSection() {
         <TabelTopDiberikan data={dataTopBorrowed} loading={loadingTopDiberikan} error={errorTopDiberikan} />
       )}
       {tabAktif === "penerimaan-stok" && (
-        <TabelPenerimaanStok data={dataPenerimaanStok} loading={loadingPenerimaan} error={errorPenerimaan} />
+        <TabelPenerimaanStok
+          data={dataPenerimaanStok}
+          loading={loadingPenerimaan}
+          error={errorPenerimaan}
+          canEdit={isAdmin}
+          onEdit={setEditState}
+        />
       )}
       {tabAktif === "barang-keluar" && (
-        <TabelBarangKeluar data={dataBarangKeluar} loading={loadingBarangKeluar} error={errorBarangKeluar} />
+        <TabelBarangKeluar
+          data={dataBarangKeluar}
+          loading={loadingBarangKeluar}
+          error={errorBarangKeluar}
+          canEdit={isAdmin}
+          onEdit={setEditState}
+        />
       )}
       {tabAktif === "stok-kritis" && (
         <TabelStokKritis data={dataStokKritis} loading={loadingStokKritis} error={errorStokKritis} />
@@ -296,6 +332,8 @@ export default function StockDashboardSection() {
           <StockOnHandTab />
         </div>
       )}
+
+      <EditQuantityDialog state={editState} onClose={() => setEditState(null)} onSaved={refreshActiveTab} />
     </div>
   );
 }
@@ -344,7 +382,7 @@ function TabelTopDiberikan({ data, loading, error }: TabelTopDiberikanProps) {
     loading,
     error,
     empty: data.length === 0,
-    emptyText: "Belum ada data untuk periode ini",
+    emptyText: "No data for this period",
   });
   if (status) return status;
 
@@ -359,12 +397,12 @@ function TabelTopDiberikan({ data, loading, error }: TabelTopDiberikanProps) {
               <p className="break-words text-sm font-semibold text-[#112D4E]">{item.name}</p>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <BadgeKategori value={item.category} />
-                <span className="text-xs text-[#50688C]">Stok: {item.current_stock} unit</span>
+                <span className="text-xs text-[#50688C]">Stock: {item.current_stock} units</span>
               </div>
             </div>
             <div className="shrink-0 text-right">
               <p className="text-lg font-extrabold text-[#112D4E]">{item.total_pinjam}x</p>
-              <p className="text-xs text-[#50688C]">Diberikan</p>
+              <p className="text-xs text-[#50688C]">Issued</p>
             </div>
           </li>
         ))}
@@ -375,11 +413,11 @@ function TabelTopDiberikan({ data, loading, error }: TabelTopDiberikanProps) {
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead>
             <tr className={THEAD}>
-              <th className={TH}>Peringkat</th>
-              <th className={TH}>Nama Barang</th>
-              <th className={TH}>Kategori</th>
-              <th className={TH}>Stok Saat Ini</th>
-              <th className={TH}>Total Diberikan</th>
+              <th className={TH}>Rank</th>
+              <th className={TH}>Item Name</th>
+              <th className={TH}>Category</th>
+              <th className={TH}>Current Stock</th>
+              <th className={TH}>Total Issued</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#DBE2EF]">
@@ -392,7 +430,7 @@ function TabelTopDiberikan({ data, loading, error }: TabelTopDiberikanProps) {
                 <td className={TD}>
                   <BadgeKategori value={item.category} />
                 </td>
-                <td className={TD}>{item.current_stock} unit</td>
+                <td className={TD}>{item.current_stock} units</td>
                 <td className={`${TD} font-bold text-[#112D4E]`}>{item.total_pinjam}x</td>
               </tr>
             ))}
@@ -411,18 +449,31 @@ interface TabelPenerimaanStokProps {
   data: StockHistoryItem[];
   loading: boolean;
   error: string;
+  canEdit: boolean;
+  onEdit: (state: EditQuantityState) => void;
 }
 
-function TabelPenerimaanStok({ data, loading, error }: TabelPenerimaanStokProps) {
+function TabelPenerimaanStok({ data, loading, error, canEdit, onEdit }: TabelPenerimaanStokProps) {
   const dataMasuk = data.filter((item) => item.type === "in");
 
   const status = statusView({
     loading,
     error,
     empty: dataMasuk.length === 0,
-    emptyText: "Belum ada data penerimaan stok untuk periode ini",
+    emptyText: "No stock receipts for this period",
   });
   if (status) return status;
+
+  const editFor = (item: StockHistoryItem): EditQuantityState | null =>
+    canEdit && item.type === "in" && item.id !== undefined
+      ? {
+          target: { kind: "stock-history", id: item.id },
+          itemName: item.item_id?.name ?? "-",
+          currentQty: item.qty,
+          unit: item.item_id?.unit,
+          type: "in",
+        }
+      : null;
 
   return (
     <>
@@ -435,7 +486,7 @@ function TabelPenerimaanStok({ data, loading, error }: TabelPenerimaanStokProps)
                 <p className="break-words text-sm font-semibold text-[#112D4E]">{item.item_id?.name ?? "—"}</p>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <BadgeKategori value={item.item_id?.category} />
-                  <span className="text-xs text-[#50688C]">{item.date}</span>
+                  <span className="text-xs text-[#50688C]">{formatServerDate(item.date)}</span>
                 </div>
               </div>
               <span className="shrink-0 text-base font-extrabold text-[#112D4E]">
@@ -449,31 +500,40 @@ function TabelPenerimaanStok({ data, loading, error }: TabelPenerimaanStokProps)
                 <BadgeKategori value={item.supplier_id?.spesialis} />
               </span>
               <span className="text-[#50688C]">
-                Stok akhir: <b className="text-[#112D4E]">{item.item_id?.current_stock ?? "—"}</b>
+                Ending stock: <b className="text-[#112D4E]">{item.item_id?.current_stock ?? "—"}</b>
               </span>
             </div>
+            {editFor(item) && (
+              <div className="mt-2 flex justify-end">
+                <EditButton
+                  label={`Edit quantity of ${item.item_id?.name ?? "item"}`}
+                  onClick={() => onEdit(editFor(item)!)}
+                />
+              </div>
+            )}
           </li>
         ))}
       </ul>
 
       {/* Tablet & desktop */}
       <div className="hidden overflow-x-auto md:block">
-        <table className="w-full min-w-[820px] text-left text-sm">
+        <table className="w-full min-w-[900px] text-left text-sm">
           <thead>
             <tr className={THEAD}>
-              <th className={TH}>Tanggal</th>
-              <th className={TH}>Barang</th>
+              <th className={TH}>Date</th>
+              <th className={TH}>Item</th>
               <th className={TH}>Category</th>
               <th className={TH}>Supplier</th>
-              <th className={TH}>Spesialis</th>
+              <th className={TH}>Specialty</th>
               <th className={TH}>Qty</th>
-              <th className={TH}>Stock Akhir</th>
+              <th className={TH}>Ending Stock</th>
+              {canEdit && <th className={TH}>Edit</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-[#DBE2EF]">
             {dataMasuk.map((item, index) => (
               <tr key={index} className={TR}>
-                <td className={`${TD} whitespace-nowrap text-[#50688C]`}>{item.date}</td>
+                <td className={`${TD} whitespace-nowrap text-[#50688C]`}>{formatServerDate(item.date)}</td>
                 <td className={`${TD} font-medium`}>{item.item_id?.name ?? "—"}</td>
                 <td className={TD}>
                   <BadgeKategori value={item.item_id?.category} />
@@ -486,6 +546,16 @@ function TabelPenerimaanStok({ data, loading, error }: TabelPenerimaanStokProps)
                   +{item.qty} {item.item_id?.unit ?? ""}
                 </td>
                 <td className={`${TD} text-[#50688C]`}>{item.item_id?.current_stock ?? "—"}</td>
+                {canEdit && (
+                  <td className={TD}>
+                    {editFor(item) && (
+                      <EditButton
+                        label={`Edit quantity of ${item.item_id?.name ?? "item"}`}
+                        onClick={() => onEdit(editFor(item)!)}
+                      />
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -503,14 +573,53 @@ interface TabelBarangKeluarProps {
   data: TransactionData[];
   loading: boolean;
   error: string;
+  canEdit: boolean;
+  onEdit: (state: EditQuantityState) => void;
 }
 
-function TabelBarangKeluar({ data, loading, error }: TabelBarangKeluarProps) {
+// One edit button per item inside a transaction (a transaction can hold several items).
+function TransactionEditCell({
+  items,
+  onEdit,
+}: {
+  items: TransactionLineItem[];
+  onEdit: (state: EditQuantityState) => void;
+}) {
+  if (items.length === 0) return <span className="text-[#7B8FAE]">-</span>;
+  const multi = items.length > 1;
+  return (
+    <ul className="space-y-1.5">
+      {items.map((it) => (
+        <li key={it.id} className="flex items-center gap-2">
+          <EditButton
+            label={`Edit quantity of ${it.item_name}`}
+            onClick={() =>
+              onEdit({
+                target: { kind: "transaction-item", id: it.id },
+                itemName: it.item_name,
+                currentQty: it.qty,
+                unit: it.unit ?? undefined,
+                type: "out",
+              })
+            }
+          />
+          {multi && (
+            <span className="min-w-0 break-words text-xs text-[#50688C]">
+              {it.item_name} <b className="text-[#112D4E]">(-{it.qty})</b>
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function TabelBarangKeluar({ data, loading, error, canEdit, onEdit }: TabelBarangKeluarProps) {
   const status = statusView({
     loading,
     error,
     empty: data.length === 0,
-    emptyText: "Belum ada data barang keluar untuk periode ini",
+    emptyText: "No stock out records for this period",
   });
   if (status) return status;
 
@@ -528,35 +637,47 @@ function TabelBarangKeluar({ data, loading, error }: TabelBarangKeluarProps) {
               <span className="shrink-0 text-base font-extrabold text-[#B3261E]">-{trx.total_qty}</span>
             </div>
             <div className="mt-2 flex items-center justify-between text-xs">
-              <span className="text-[#50688C]">{trx.date}</span>
+              <span className="text-[#50688C]">{formatServerDate(trx.date)}</span>
               <span className="text-[#50688C]">
-                Stok akhir: <b className="text-[#112D4E]">{trx.total_stock}</b>
+                Ending stock: <b className="text-[#112D4E]">{trx.total_stock}</b>
               </span>
             </div>
+            {canEdit && (
+              <div className="mt-3 border-t border-[#DBE2EF] pt-3">
+                <p className="mb-1.5 text-xs font-semibold text-[#112D4E]">Edit</p>
+                <TransactionEditCell items={trx.items ?? []} onEdit={onEdit} />
+              </div>
+            )}
           </li>
         ))}
       </ul>
 
       {/* Tablet & desktop */}
       <div className="hidden overflow-x-auto md:block">
-        <table className="w-full min-w-[680px] text-left text-sm">
+        <table className="w-full min-w-[760px] text-left text-sm">
           <thead>
             <tr className={THEAD}>
-              <th className={TH}>Tanggal</th>
-              <th className={TH}>Barang</th>
-              <th className={TH}>Karyawan</th>
+              <th className={TH}>Date</th>
+              <th className={TH}>Item</th>
+              <th className={TH}>Employee</th>
               <th className={TH}>Qty</th>
-              <th className={TH}>Stock Akhir</th>
+              <th className={TH}>Ending Stock</th>
+              {canEdit && <th className={TH}>Edit</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-[#DBE2EF]">
             {data.map((trx) => (
               <tr key={trx.id} className={TR}>
-                <td className={`${TD} whitespace-nowrap text-[#50688C]`}>{trx.date}</td>
+                <td className={`${TD} whitespace-nowrap text-[#50688C]`}>{formatServerDate(trx.date)}</td>
                 <td className={`${TD} font-medium`}>{trx.barang || "—"}</td>
                 <td className={`${TD} text-[#50688C]`}>{trx.employe_name ?? "—"}</td>
                 <td className={`${TD} font-bold text-[#B3261E]`}>-{trx.total_qty}</td>
                 <td className={`${TD} font-semibold text-[#112D4E]`}>{trx.total_stock}</td>
+                {canEdit && (
+                  <td className={TD}>
+                    <TransactionEditCell items={trx.items ?? []} onEdit={onEdit} />
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -586,7 +707,7 @@ function StatusBadge({ habis }: { habis: boolean }) {
       }`}
     >
       <span className={`h-1.5 w-1.5 rounded-full ${habis ? "bg-[#B3261E]" : "bg-[#F2A900]"}`} />
-      {habis ? "Habis" : "Menipis"}
+      {habis ? "Out of stock" : "Low"}
     </span>
   );
 }
@@ -596,7 +717,7 @@ function TabelStokKritis({ data, loading, error }: TabelStokKritisProps) {
     loading,
     error,
     empty: data.length === 0,
-    emptyText: "Tidak ada barang dengan stok kritis",
+    emptyText: "No items with low stock",
   });
   if (status) return status;
 
@@ -646,10 +767,10 @@ function TabelStokKritis({ data, loading, error }: TabelStokKritisProps) {
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className={THEAD}>
-              <th className={TH}>Barang</th>
-              <th className={TH}>Kategori</th>
-              <th className={TH}>Stok Saat Ini</th>
-              <th className={TH}>Min. Stok</th>
+              <th className={TH}>Item</th>
+              <th className={TH}>Category</th>
+              <th className={TH}>Current Stock</th>
+              <th className={TH}>Min. Stock</th>
               <th className={TH}>Status</th>
             </tr>
           </thead>

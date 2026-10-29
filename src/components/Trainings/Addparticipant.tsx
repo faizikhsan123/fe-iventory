@@ -19,7 +19,7 @@ import AddParticipantsHooks from "@/hooks/Trainingparticipant/create";
 type Props = {
   open: boolean;
   trainingId: number;
-  existingIds: number[]; // employes_id yang sudah jadi peserta
+  existingIds: number[]; // employes_id already added as participants
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 };
@@ -83,19 +83,19 @@ const AddParticipants = ({ open, trainingId, existingIds, onOpenChange, onSucces
               <Users className="h-5 w-5" />
             </div>
             <div className="min-w-0 text-left">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Tambah Peserta</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Add Participant</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Pilih karyawan yang ikut training ini
+                Select the employees attending this training
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-6">
-          {/* Tanggal pelaksanaan */}
+          {/* Training date */}
           <div className="space-y-2">
             <Label htmlFor="participant_date" className="text-sm font-semibold text-[#112D4E]">
-              Tanggal Pelaksanaan <span className="text-[#B3261E]">*</span>
+              Training Date <span className="text-[#B3261E]">*</span>
             </Label>
             <Input
               id="participant_date"
@@ -106,11 +106,11 @@ const AddParticipants = ({ open, trainingId, existingIds, onOpenChange, onSucces
               className="h-11 w-full rounded-lg border border-[#BFCCE3] bg-white text-sm text-[#112D4E] outline-none focus-visible:border-[#3F72AF] focus-visible:ring-4 focus-visible:ring-[#DBE2EF]"
             />
             <p className="text-xs text-[#50688C]">
-              Berlaku untuk semua yang dipilih, bisa diubah per orang nanti
+              Applies to everyone selected; can be changed per person later
             </p>
           </div>
 
-          {/* Search + pilih semua */}
+          {/* Search + select all */}
           <div className="flex items-center justify-between gap-2">
             <div className="relative flex-1">
               <Search
@@ -120,7 +120,7 @@ const AddParticipants = ({ open, trainingId, existingIds, onOpenChange, onSucces
               <Input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Cari karyawan..."
+                placeholder="Search employee..."
                 disabled={loadingAdd}
                 className="h-10 w-full rounded-lg border border-[#BFCCE3] bg-white pl-9 text-sm text-[#112D4E] outline-none focus-visible:border-[#3F72AF] focus-visible:ring-4 focus-visible:ring-[#DBE2EF]"
               />
@@ -132,17 +132,17 @@ const AddParticipants = ({ open, trainingId, existingIds, onOpenChange, onSucces
               disabled={loadingAdd || selectable.length === 0}
               className="h-10 shrink-0 rounded-lg border-[#BFCCE3] bg-white px-3 text-xs font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
             >
-              {allSelected ? "Hapus semua" : "Pilih semua"}
+              {allSelected ? "Deselect all" : "Select all"}
             </Button>
             <span className="shrink-0 rounded-full bg-[#112D4E] px-2.5 py-1 text-xs font-semibold text-white">
-              {selected.length} dipilih
+              {selected.length} selected
             </span>
           </div>
 
-          {/* List karyawan */}
+          {/* Employee list */}
           <div className="max-h-72 divide-y divide-[#EBEFF6] overflow-y-auto rounded-lg border border-[#BFCCE3]">
             {filtered.length === 0 && (
-              <p className="py-8 text-center text-sm text-[#7B8FAE]">Karyawan tidak ditemukan</p>
+              <p className="py-8 text-center text-sm text-[#7B8FAE]">Employee not found</p>
             )}
 
             {filtered.map((employee) => {
@@ -179,7 +179,7 @@ const AddParticipants = ({ open, trainingId, existingIds, onOpenChange, onSucces
                   </div>
                   {already && (
                     <span className="shrink-0 rounded-full bg-[#DBE2EF] px-2 py-0.5 text-[10px] font-semibold text-[#112D4E]">
-                      Sudah peserta
+                      Already a participant
                     </span>
                   )}
                 </label>
@@ -207,7 +207,7 @@ const AddParticipants = ({ open, trainingId, existingIds, onOpenChange, onSucces
                 disabled={loadingAdd}
                 className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
               >
-                Batal
+                Cancel
               </Button>
             }
           />
@@ -220,10 +220,10 @@ const AddParticipants = ({ open, trainingId, existingIds, onOpenChange, onSucces
             {loadingAdd ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Menyimpan...
+                Saving...
               </>
             ) : (
-              `Tambah ${selected.length || ""} Peserta`
+              `Add ${selected.length || ""} Participant${selected.length === 1 ? "" : "s"}`
             )}
           </Button>
         </DialogFooter>

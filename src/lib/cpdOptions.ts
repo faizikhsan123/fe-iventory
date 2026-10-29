@@ -1,4 +1,5 @@
-// Sumber tunggal pilihan dropdown field CPD. Nilai tersimpan = label (bahasa Indonesia).
+// Single source of dropdown options for CPD fields. Stored value = Indonesian (matches backend validation);
+// the UI shows the English label via cpdOptionLabel().
 // Urutan = urutan tampil di dropdown.
 export const GENDER_OPTIONS = ["Laki-laki", "Perempuan"] as const;
 
@@ -48,3 +49,30 @@ export const CPD_SELECT_OPTIONS: Record<string, readonly string[]> = {
   marital_status: MARITAL_STATUS_OPTIONS,
   emergency_relationship: EMERGENCY_RELATIONSHIP_OPTIONS,
 };
+
+// Display mapping: stored (Indonesian) value -> English label.
+export const CPD_VALUE_LABEL: Record<string, string> = {
+  "Laki-laki": "Male",
+  Perempuan: "Female",
+  Islam: "Islam",
+  "Kristen Protestan": "Protestant",
+  Katolik: "Catholic",
+  Hindu: "Hindu",
+  Buddha: "Buddhist",
+  Konghucu: "Confucian",
+  "Belum Menikah": "Single",
+  Menikah: "Married",
+  "Cerai Hidup": "Divorced",
+  "Cerai Mati": "Widowed",
+  Suami: "Husband",
+  Istri: "Wife",
+  Ayah: "Father",
+  Ibu: "Mother",
+  Anak: "Child",
+  "Saudara Kandung": "Sibling",
+  Lainnya: "Other",
+};
+
+// Unknown (legacy) values are shown as-is.
+export const cpdOptionLabel = (value?: string | null): string =>
+  value ? (CPD_VALUE_LABEL[value] ?? value) : "";

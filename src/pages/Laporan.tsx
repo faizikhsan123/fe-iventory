@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar"
 const Activityy = () => {
   return (
     <div>
-      <Navbar title="Laporan" />
+      <Navbar title="Reports" />
       <br />
 
       <StockDashboardSection />

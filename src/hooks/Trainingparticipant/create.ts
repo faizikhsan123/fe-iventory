@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { AxiosInstance } from "@/lib/axios";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const AddParticipantsHooks = () => {
   const [loadingAdd, setLoading] = useState(false);
@@ -18,7 +19,8 @@ const AddParticipantsHooks = () => {
       } catch (e: any) {
         const errors = e?.response?.data?.errors;
         const firstError = errors ? (Object.values(errors)[0] as string[])?.[0] : null;
-        setError(firstError ?? e?.response?.data?.message ?? "Gagal menambah peserta");
+        const raw = firstError ?? e?.response?.data?.message;
+        setError(raw ? translateServerMessage(String(raw)) : "Failed to add participant");
         return false;
       } finally {
         setLoading(false);

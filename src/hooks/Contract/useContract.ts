@@ -47,7 +47,7 @@ export const useContractList = (params: { search: string; page: number }) => {
       return { items: res.data.data as ContractSummary[], meta: res.data.meta as PageMeta };
     },
     [params.search, params.page],
-    { errorMessage: "Gagal mengambil data contract" },
+    { errorMessage: "Failed to load contract data" },
   );
 
   return { data: data?.items ?? [], meta: data?.meta ?? null, loading, error, isFetching };
@@ -63,7 +63,7 @@ export const useContractDetail = (id?: string) => {
       return res.data.data as ContractDetail;
     },
     [id],
-    { enabled: Boolean(id), errorMessage: "Gagal mengambil detail contract" },
+    { enabled: Boolean(id), errorMessage: "Failed to load contract details" },
   );
 
   // return pesan error kalau gagal, null kalau berhasil
@@ -74,7 +74,7 @@ export const useContractDetail = (id?: string) => {
       reload();
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal memperpanjang kontrak");
+      return getErrorMessage(e, "Failed to renew contract");
     } finally {
       setSaving(false);
     }
@@ -86,7 +86,7 @@ export const useContractDetail = (id?: string) => {
       reload();
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal menghapus perpanjangan");
+      return getErrorMessage(e, "Failed to delete renewal");
     }
   };
 
@@ -97,7 +97,7 @@ export const useContractDetail = (id?: string) => {
       reload();
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal memproses resign");
+      return getErrorMessage(e, "Failed to process resignation");
     } finally {
       setSaving(false);
     }

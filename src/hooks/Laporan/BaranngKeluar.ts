@@ -2,6 +2,14 @@
 import { AxiosInstance } from "@/lib/axios";
 import { useCallback, useState } from "react";
 
+export interface TransactionLineItem {
+  id: number;
+  item_id: number;
+  item_name: string;
+  unit: string | null;
+  qty: number;
+}
+
 export interface TransactionData {
   id: number;
   transaction_number: string;
@@ -12,7 +20,8 @@ export interface TransactionData {
   position: string | null;
   barang: string;
   total_qty: number;
-  total_stock : number
+  total_stock : number;
+  items?: TransactionLineItem[];
 }
 
 interface Meta {
@@ -54,7 +63,7 @@ const useTransaction = () => {
       setData(response.data.data);
       setMeta(response.data.meta ?? null);
     } catch (err) {
-      setError("Gagal mengambil data barang keluar");
+      setError("Failed to load stock out data");
     }
 
     setLoading(false);

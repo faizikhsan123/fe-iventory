@@ -51,18 +51,18 @@ const EditParticipant = ({ open, participant, onOpenChange, onSuccess }: Props) 
     if (!f) return setFile(null);
     if (!ALLOWED.includes(f.type)) {
       setFile(null);
-      return setLocalError("Format harus PDF, JPG, atau PNG");
+      return setLocalError("File must be a PDF, JPG, or PNG");
     }
     if (f.size > MAX_SIZE) {
       setFile(null);
-      return setLocalError("Ukuran file maksimal 5 MB");
+      return setLocalError("Maximum file size is 5 MB");
     }
     setFile(f);
   };
 
   const submit = async () => {
     if (!participant) return;
-    if (!date) return setLocalError("Tanggal pelaksanaan wajib diisi");
+    if (!date) return setLocalError("Training date is required");
 
     const ok = await handleUpdate(participant.id, { date, notes: notes.trim(), file });
     if (ok) {
@@ -82,7 +82,7 @@ const EditParticipant = ({ open, participant, onOpenChange, onSuccess }: Props) 
               <Pencil className="h-5 w-5" />
             </div>
             <div className="min-w-0 text-left">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Edit Data Peserta</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Edit Participant</DialogTitle>
               <DialogDescription className="mt-0.5 truncate text-sm text-[#50688C]">
                 {participant?.name ?? "-"}
               </DialogDescription>
@@ -93,7 +93,7 @@ const EditParticipant = ({ open, participant, onOpenChange, onSuccess }: Props) 
         <div className="space-y-4 p-4 sm:p-6">
           <div className="space-y-2">
             <Label htmlFor="edit_date" className="text-sm font-semibold text-[#112D4E]">
-              Tanggal Pelaksanaan <span className="text-[#B3261E]">*</span>
+              Training Date <span className="text-[#B3261E]">*</span>
             </Label>
             <Input
               id="edit_date"
@@ -107,7 +107,7 @@ const EditParticipant = ({ open, participant, onOpenChange, onSuccess }: Props) 
 
           <div className="space-y-2">
             <Label htmlFor="edit_file" className="text-sm font-semibold text-[#112D4E]">
-              File pendukung
+              Supporting file
             </Label>
             <Input
               id="edit_file"
@@ -119,21 +119,21 @@ const EditParticipant = ({ open, participant, onOpenChange, onSuccess }: Props) 
             />
             <p className="text-xs text-[#50688C]">
               {participant?.file
-                ? "Sudah ada file. Kosongkan kalau nggak mau diganti."
-                : "Belum ada file."}{" "}
-              PDF / JPG / PNG, maks 5 MB.
+                ? "A file already exists. Leave empty to keep it."
+                : "No file yet."}{" "}
+              PDF / JPG / PNG, max 5 MB.
             </p>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="edit_notes" className="text-sm font-semibold text-[#112D4E]">
-              Catatan
+              Notes
             </Label>
             <Input
               id="edit_notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Opsional"
+              placeholder="Optional"
               maxLength={255}
               disabled={loadingUpdate}
               className={inputClass}
@@ -160,7 +160,7 @@ const EditParticipant = ({ open, participant, onOpenChange, onSuccess }: Props) 
                 disabled={loadingUpdate}
                 className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
               >
-                Batal
+                Cancel
               </Button>
             }
           />
@@ -173,10 +173,10 @@ const EditParticipant = ({ open, participant, onOpenChange, onSuccess }: Props) 
             {loadingUpdate ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Menyimpan...
+                Saving...
               </>
             ) : (
-              "Simpan"
+              "Save"
             )}
           </Button>
         </DialogFooter>

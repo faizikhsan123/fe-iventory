@@ -4,6 +4,7 @@ import { isAxiosError } from "axios";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const MySwal = withReactContent(Swal);
 
@@ -27,11 +28,11 @@ export const useCreateSupplier = () => {
       
       });
 
-      MySwal.fire("Berhasil!", "Data supplier berhasil ditambahkan.", "success");
+      MySwal.fire("Success!", "Supplier added successfully.", "success");
       onSuccess?.();
     } catch (error) {
       // kita kasi error generic dulu
-              let message = "Terjadi kesalahan, coba lagi.";
+              let message = "Something went wrong, please try again.";
         
               if (isAxiosError(error)) {
                 // eh error ini beneran gara-gara request ke server
@@ -53,18 +54,18 @@ export const useCreateSupplier = () => {
         
                 if (data?.errors) {
                   //Kalau ada errors (yang isinya per-field kayak contoh di atas), kita gabungin SEMUA pesan errornya jadi satu kalimat panjang dipisah koma. // { email: ["Email sudah dipakai"], password: ["Password kurang panjang"] }
-                  message = Object.values(data.errors).flat().join(", ");
+                  message = (Object.values(data.errors).flat() as unknown[]).map((m) => translateServerMessage(String(m))).join(", ");
                   //// "Email sudah dipakai, Password kurang panjang"
                   // digabung jadi satu string, dipisah koma
                 } else if (data?.message) {
                   //Kadang server nggak kirim error per-field, cuma kirim satu pesan doang, misal:
-                  message = data.message;
+                  message = translateServerMessage(data.message);
                   //Kalau kayak gini, ya langsung pake message itu aja.
                 }
               }
         
               SetErrorCreate(message);
-              MySwal.fire("Gagal!", message, "error");
+              MySwal.fire("Failed!", message, "error");
     } finally {
       SetLoadingCreate(false);
     }

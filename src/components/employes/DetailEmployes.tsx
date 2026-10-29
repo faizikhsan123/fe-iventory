@@ -3,7 +3,7 @@ import { useEffect, type CSSProperties } from "react";
 import { useParams, useNavigate } from "react-router"; // sebelumnya "react-router-dom"
 import { AlertCircle, ArrowLeft, GraduationCap, Inbox, Package, RefreshCw, User } from "lucide-react";
 import useEmployeDetail, { type EmployeTraining } from "@/hooks/employes/detail";
-import { formatTanggalIndo } from "@/lib/tanggal";
+import { formatTanggalIndo, formatServerDate } from "@/lib/tanggal";
 import { STORAGE_URL } from "@/lib/axios";
 import { expiringLabel, isExpiring } from "@/lib/contract";
 import { useAuth } from "@/hooks/auth/useAuth";
@@ -44,7 +44,7 @@ const DetailKaryawan = () => {
       className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-[#BFCCE3] bg-white px-3 text-sm font-semibold text-[#112D4E] transition hover:bg-[#DBE2EF] active:scale-[0.98]"
     >
       <ArrowLeft size={16} />
-      Kembali
+      Back
     </button>
   );
 
@@ -71,7 +71,7 @@ const DetailKaryawan = () => {
               className="inline-flex h-11 items-center gap-2 rounded-lg border border-[#F2B8B5] bg-white px-5 text-sm font-semibold text-[#B3261E] transition hover:bg-[#FDECEA] active:scale-95"
             >
               <RefreshCw className="h-4 w-4" />
-              Coba lagi
+              Try again
             </button>
           )}
         </div>
@@ -133,7 +133,7 @@ const DetailKaryawan = () => {
                 <p className="text-2xl font-extrabold tabular-nums leading-none text-[#112D4E]">
                   {statistik.total_barang_diterima}
                 </p>
-                <p className="mt-1 text-xs text-[#50688C]">Total Barang Diterima</p>
+                <p className="mt-1 text-xs text-[#50688C]">Total Items Received</p>
               </div>
             </div>
           </div>
@@ -144,7 +144,7 @@ const DetailKaryawan = () => {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {(
           [
-            { label: "Group", value: employe.group_name ?? "Belum masuk group" },
+            { label: "Group", value: employe.group_name ?? "Not in a group yet" },
             {
               label: "Contract When Joined",
               value: employe.contract_start ? formatTanggalIndo(employe.contract_start) : "-",
@@ -155,7 +155,7 @@ const DetailKaryawan = () => {
               danger: isExpiring(employe.contract_end),
               hint: expiringLabel(employe.contract_end),
             },
-            { label: "Perpanjangan Kontrak", value: `${employe.contract_renewals ?? 0}x` },
+            { label: "Contract Renewals", value: `${employe.contract_renewals ?? 0}x` },
           ] as { label: string; value: string; danger?: boolean; hint?: string | null }[]
         ).map(({ label, value, danger, hint }) => (
           <div
@@ -178,7 +178,7 @@ const DetailKaryawan = () => {
       <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
         <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
           <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
-          <h3 className="font-bold text-[#112D4E]">Ukuran APD</h3>
+          <h3 className="font-bold text-[#112D4E]">PPE Sizes</h3>
         </div>
         <dl className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 sm:p-6 lg:grid-cols-6">
           {PPE_FIELDS.map((f) => (
@@ -199,7 +199,7 @@ const DetailKaryawan = () => {
       <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
         <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
           <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
-          <h3 className="font-bold text-[#112D4E]">Riwayat Training</h3>
+          <h3 className="font-bold text-[#112D4E]">Training History</h3>
         </div>
         <TabelRiwayatTraining data={data.trainings ?? []} />
       </div>
@@ -208,10 +208,10 @@ const DetailKaryawan = () => {
       <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
         <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
           <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
-          <h3 className="font-bold text-[#112D4E]">Riwayat MCU</h3>
+          <h3 className="font-bold text-[#112D4E]">MCU History</h3>
         </div>
         {(data.mcus ?? []).length === 0 ? (
-          <p className="px-4 py-10 text-center text-sm text-[#50688C]">Belum ada data MCU untuk karyawan ini</p>
+          <p className="px-4 py-10 text-center text-sm text-[#50688C]">No MCU records for this employee yet</p>
         ) : (
           <ul className="divide-y divide-[#DBE2EF]">
             {data.mcus.map((m) => (
@@ -223,10 +223,10 @@ const DetailKaryawan = () => {
                   </p>
                   <p className="text-xs font-semibold text-[#50688C]">{formatTanggalIndo(m.mcu_date)}</p>
                 </div>
-                <p className="text-xs text-[#50688C]">Alergi: {m.allergies || "-"}</p>
+                <p className="text-xs text-[#50688C]">Allergies: {m.allergies || "-"}</p>
                 {m.summary && <p className="text-sm text-[#112D4E]">{m.summary}</p>}
                 <p className="text-xs">
-                  <span className="text-[#50688C]">MCU berikutnya: </span>
+                  <span className="text-[#50688C]">Next MCU: </span>
                   <span className={m.is_latest !== false && isExpiring(m.next_mcu_date) ? "font-semibold text-[#B3261E]" : "text-[#112D4E]"}>
                     {m.next_mcu_date ? formatTanggalIndo(m.next_mcu_date) : "-"}
                   </span>
@@ -242,7 +242,7 @@ const DetailKaryawan = () => {
                         rel="noreferrer"
                         className="font-semibold text-[#3F72AF] underline"
                       >
-                        {arr.length > 1 ? `Dokumen ${i + 1}` : "Dokumen"}
+                        {arr.length > 1 ? `Document ${i + 1}` : "Document"}
                       </a>
                     </span>
                   ))}
@@ -257,7 +257,7 @@ const DetailKaryawan = () => {
       <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
         <div className="flex items-center gap-2.5 border-b border-[#BFCCE3] bg-[#DBE2EF] px-4 py-3.5 sm:px-6 sm:py-4">
           <span className="h-4 w-1 rounded-full bg-[#3F72AF]" aria-hidden="true" />
-          <h3 className="font-bold text-[#112D4E]">Riwayat Diberikan</h3>
+          <h3 className="font-bold text-[#112D4E]">Items Issued History</h3>
         </div>
         <TabelRiwayatDiberikan data={riwayat_diberikan} />
       </div>
@@ -286,7 +286,7 @@ function TabelRiwayatDiberikan({ data }: { data: RiwayatDiberikanItem[] }) {
         <div className="grid h-14 w-14 place-items-center rounded-xl bg-[#DBE2EF]">
           <Inbox className="h-6 w-6 text-[#3F72AF]" />
         </div>
-        <p className="text-sm text-[#50688C]">Belum ada barang yang diberikan ke karyawan ini</p>
+        <p className="text-sm text-[#50688C]">No items have been issued to this employee yet</p>
       </div>
     );
   }
@@ -307,7 +307,7 @@ function TabelRiwayatDiberikan({ data }: { data: RiwayatDiberikanItem[] }) {
             <div className="mt-2 flex items-start justify-between gap-3 text-xs">
               <span className="min-w-0 break-words text-[#50688C]">{row.note || "-"}</span>
               <span className="shrink-0 text-[#50688C]">{formatTanggalIndo(row.date)}</span>
-            </div>z
+            </div>
           </li>
         ))}
       </ul>
@@ -317,11 +317,11 @@ function TabelRiwayatDiberikan({ data }: { data: RiwayatDiberikanItem[] }) {
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className="bg-[#F9F7F7] text-xs uppercase tracking-wide text-[#50688C]">
-              <th className="px-6 py-3 font-semibold">No. Transaksi</th>
-              <th className="px-4 py-3 font-semibold">Tanggal</th>
-              <th className="px-4 py-3 font-semibold">Barang</th>
+              <th className="px-6 py-3 font-semibold">Transaction No.</th>
+              <th className="px-4 py-3 font-semibold">Date</th>
+              <th className="px-4 py-3 font-semibold">Item</th>
               <th className="px-4 py-3 font-semibold">Qty</th>
-              <th className="px-6 py-3 font-semibold">Catatan</th>
+              <th className="px-6 py-3 font-semibold">Notes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#DBE2EF]">
@@ -349,7 +349,7 @@ function TrainingFileLink({ file }: { file: string | null }) {
   if (!file) return <span className="text-[#7B8FAE]">-</span>;
   return (
     <a href={`${STORAGE_URL}${file}`} target="_blank" rel="noreferrer" className="font-semibold text-[#3F72AF] underline">
-      Lihat file
+      View file
     </a>
   );
 }
@@ -361,7 +361,7 @@ function TabelRiwayatTraining({ data }: { data: EmployeTraining[] }) {
         <div className="grid h-14 w-14 place-items-center rounded-xl bg-[#DBE2EF]">
           <GraduationCap className="h-6 w-6 text-[#3F72AF]" />
         </div>
-        <p className="text-sm text-[#50688C]">Belum ada riwayat training untuk karyawan ini</p>
+        <p className="text-sm text-[#50688C]">No training history for this employee yet</p>
       </div>
     );
   }
@@ -377,8 +377,8 @@ function TabelRiwayatTraining({ data }: { data: EmployeTraining[] }) {
               {t.id_training} · {t.division_training}
             </p>
             <p className="text-xs text-[#50688C]">
-              {t.date ? formatTanggalIndo(t.date) : "-"}
-              {t.by ? ` · oleh ${t.by}` : ""}
+              {t.date ? formatServerDate(t.date) : "-"}
+              {t.by ? ` · by ${t.by}` : ""}
             </p>
             {t.notes && <p className="break-words text-xs text-[#112D4E]">{t.notes}</p>}
             <p className="text-xs">
@@ -394,11 +394,11 @@ function TabelRiwayatTraining({ data }: { data: EmployeTraining[] }) {
           <thead>
             <tr className="bg-[#F9F7F7] text-xs uppercase tracking-wide text-[#50688C]">
               <th className="px-6 py-3 font-semibold">ID Training</th>
-              <th className="px-4 py-3 font-semibold">Nama Training</th>
-              <th className="px-4 py-3 font-semibold">Divisi</th>
-              <th className="px-4 py-3 font-semibold">Tanggal</th>
+              <th className="px-4 py-3 font-semibold">Training Name</th>
+              <th className="px-4 py-3 font-semibold">Division</th>
+              <th className="px-4 py-3 font-semibold">Date</th>
               <th className="px-4 py-3 font-semibold">By</th>
-              <th className="px-4 py-3 font-semibold">Catatan</th>
+              <th className="px-4 py-3 font-semibold">Notes</th>
               <th className="px-6 py-3 font-semibold">File</th>
             </tr>
           </thead>
@@ -408,7 +408,7 @@ function TabelRiwayatTraining({ data }: { data: EmployeTraining[] }) {
                 <td className="whitespace-nowrap px-6 py-3.5 font-semibold">{t.id_training}</td>
                 <td className="px-4 py-3.5 font-medium">{t.name_training}</td>
                 <td className="whitespace-nowrap px-4 py-3.5 text-[#50688C]">{t.division_training}</td>
-                <td className="whitespace-nowrap px-4 py-3.5 text-[#50688C]">{t.date ? formatTanggalIndo(t.date) : "-"}</td>
+                <td className="whitespace-nowrap px-4 py-3.5 text-[#50688C]">{t.date ? formatServerDate(t.date) : "-"}</td>
                 <td className="px-4 py-3.5 text-[#50688C]">{t.by || "-"}</td>
                 <td className="px-4 py-3.5 text-[#50688C]">{t.notes || "-"}</td>
                 <td className="px-6 py-3.5">

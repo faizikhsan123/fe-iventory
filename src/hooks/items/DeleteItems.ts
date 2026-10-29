@@ -3,6 +3,7 @@ import { isAxiosError } from "axios";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const UseDelete = () => {
   const [deleteloading, Setdeleteloading] = useState(false);
@@ -13,12 +14,12 @@ const UseDelete = () => {
   // onSuccess dipanggil HANYA kalau delete berhasil
   const handleDelete = async (id: number, onSuccess?: () => void) => {
     const result = await Swal.fire({
-      title: "Yakin mau hapus?",
-      text: "Data yang dihapus tidak bisa dikembalikan!",
+      title: "Are you sure you want to delete?",
+      text: "Deleted data cannot be recovered!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Ya, hapus",
-      cancelButtonText: "Batal",
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
     });
 
     // kalau user klik Batal atau tutup dialog, stop di sini
@@ -29,10 +30,10 @@ const UseDelete = () => {
       Seterrordelete("");
 
       await AxiosInstance.delete(`/items/${id}`);
-      MySwal.fire("Terhapus!", "Data berhasil dihapus.", "success");
+      MySwal.fire("Deleted!", "Data deleted successfully.", "success");
       onSuccess?.();
     } catch (error) {
-      let message = "Terjadi kesalahan, coba lagi.";
+      let message = "Something went wrong, please try again.";
 
       if (isAxiosError(error)) {
         console.log("Validation error response:", error.response?.data);
@@ -40,14 +41,14 @@ const UseDelete = () => {
         const data = error.response?.data;
 
         if (data?.errors) {
-          message = Object.values(data.errors).flat().join(", ");
+          message = (Object.values(data.errors).flat() as unknown[]).map((m) => translateServerMessage(String(m))).join(", ");
         } else if (data?.message) {
-          message = data.message;
+          message = translateServerMessage(data.message);
         }
       }
 
       Seterrordelete(message);
-      MySwal.fire("Gagal!", message, "error");
+      MySwal.fire("Failed!", message, "error");
     } finally {
       Setdeleteloading(false);
     }

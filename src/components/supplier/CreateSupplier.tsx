@@ -69,9 +69,9 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
           <div className="flex items-start gap-3">
             <span className="mt-1 h-9 w-1 shrink-0 rounded-full bg-[#3F72AF]" aria-hidden="true" />
             <div className="min-w-0">
-              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Tambah Supplier Baru</DialogTitle>
+              <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Add New Supplier</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Lengkapi informasi supplier di bawah
+                Complete the supplier information below
               </DialogDescription>
             </div>
           </div>
@@ -82,7 +82,7 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
           <FieldGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field className="gap-2 sm:col-span-2">
               <Label htmlFor="nama" className={labelClassName}>
-                Nama Supplier / Perusahaan <span className="text-[#B3261E]">*</span>
+                Supplier / Company Name <span className="text-[#B3261E]">*</span>
               </Label>
               <Input
                 type="text"
@@ -97,7 +97,7 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
 
             <Field className="gap-2">
               <Label htmlFor="pic" className={labelClassName}>
-                Nama PIC <span className="text-[#B3261E]">*</span>
+                PIC Name <span className="text-[#B3261E]">*</span>
               </Label>
               <Input
                 type="text"
@@ -112,7 +112,7 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
 
             <Field className="gap-2">
               <Label htmlFor="spesialis" className={labelClassName}>
-                Spesialis <span className="text-[#B3261E]">*</span>
+                Specialty <span className="text-[#B3261E]">*</span>
               </Label>
               <select
                 id="spesialis"
@@ -120,7 +120,7 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
                 disabled={loadingCreate}
                 {...form.register("spesialis")}
               >
-                <option value=""> -- Pilih Kategori --</option>
+                <option value=""> -- Select Category --</option>
                 {ITEM_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
                     {c.label}
@@ -132,7 +132,7 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
 
             <Field className="gap-2">
               <Label htmlFor="phone" className={labelClassName}>
-                No. Telepon
+                Phone Number
               </Label>
               <Input
                 type="text"
@@ -164,7 +164,7 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
 
             <Field className="gap-2 sm:col-span-2">
               <Label htmlFor="address" className={labelClassName}>
-                Alamat
+                Address
               </Label>
               <Input
                 type="text"
@@ -199,7 +199,7 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
                 disabled={loadingCreate}
                 className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
               >
-                Batal
+                Cancel
               </Button>
             }
           />
@@ -212,10 +212,10 @@ export function CreateSupplier({ open, onOpenChange, onSuccess }: CreateSupplier
             {loadingCreate ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Menyimpan...
+                Saving...
               </>
             ) : (
-              "Tambah Supplier"
+              "Add Supplier"
             )}
           </Button>
         </DialogFooter>

@@ -84,20 +84,20 @@ function DocField({
         />
       </label>
       <p className="text-xs text-[#50688C]">
-        PDF / JPG / PNG, maksimal 5 MB, opsional.
+        PDF / JPG / PNG, max 5 MB, optional.
         {current && (
           <>
             {" "}
-            File saat ini:{" "}
+            Current file:{" "}
             <a
               href={`${STORAGE_URL}${current}`}
               target="_blank"
               rel="noreferrer"
               className="font-semibold text-[#3F72AF] underline"
             >
-              lihat
+              view
             </a>
-            {file ? ". Akan diganti file baru." : ". Pilih file baru untuk mengganti."}
+            {file ? ". It will be replaced by the new file." : ". Choose a new file to replace it."}
           </>
         )}
       </p>
@@ -110,7 +110,7 @@ function DocField({
             disabled={disabled}
             onChange={(e) => onRemove(e.target.checked)}
           />
-          Hapus file saat ini
+          Remove current file
         </label>
       )}
     </div>
@@ -131,22 +131,22 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.employes_id || !form.place_name.trim() || !form.mcu_date) {
-      setError("Karyawan, nama tempat, dan tanggal MCU wajib diisi");
+      setError("Employee, MCU location, and MCU date are required");
       return;
     }
     for (const file of [form.document, form.document_2]) {
       if (!file) continue;
       if (!MCU_DOC_TYPES.includes(file.type)) {
-        setError("Dokumen harus berupa PDF, JPG, atau PNG");
+        setError("Documents must be PDF, JPG, or PNG");
         return;
       }
       if (file.size > MCU_DOC_MAX_BYTES) {
-        setError("Ukuran dokumen maksimal 5 MB");
+        setError("Document size must be at most 5 MB");
         return;
       }
     }
     if (form.next_mcu_date && form.next_mcu_date < form.mcu_date) {
-      setError("Tanggal MCU berikutnya tidak boleh sebelum tanggal MCU");
+      setError("Next Annual MCU Date cannot be before Date MCU");
       return;
     }
     setError("");
@@ -168,9 +168,9 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
           </div>
           <div className="min-w-0 text-left">
             <DialogTitle className="text-lg font-extrabold text-[#112D4E]">
-              {isEdit ? "Update Data MCU" : "Tambah Data MCU"}
+              {isEdit ? "Update MCU Record" : "Add MCU Record"}
             </DialogTitle>
-            <DialogDescription className="mt-0.5 text-sm text-[#50688C]">Medical check up karyawan</DialogDescription>
+            <DialogDescription className="mt-0.5 text-sm text-[#50688C]">Employee medical check-up</DialogDescription>
           </div>
         </div>
       </DialogHeader>
@@ -180,7 +180,7 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="space-y-2 sm:col-span-2">
               <span className={labelClass}>
-                Karyawan <span className="text-[#B3261E]">*</span>
+                Employee Name <span className="text-[#B3261E]">*</span>
               </span>
               <select
                 className={selectClass}
@@ -188,7 +188,7 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
                 onChange={(e) => set("employes_id", e.target.value)}
                 disabled={saving}
               >
-                <option value="">-- Pilih Karyawan --</option>
+                <option value="">-- Select Employee --</option>
                 {employees.map((o) => (
                   <option key={o.id} value={o.id}>
                     {o.name} ({o.id_number})
@@ -199,31 +199,31 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
 
             <label className="space-y-2">
               <span className={labelClass}>
-                Nama Tempat <span className="text-[#B3261E]">*</span>
+                MCU Location <span className="text-[#B3261E]">*</span>
               </span>
               <Input
                 className={inputClass}
                 value={form.place_name}
                 onChange={(e) => set("place_name", e.target.value)}
-                placeholder="Klinik / rumah sakit"
+                placeholder="Clinic / hospital"
                 disabled={saving}
               />
             </label>
 
             <label className="space-y-2">
-              <span className={labelClass}>MCU</span>
+              <span className={labelClass}>MCU Type</span>
               <Input
                 className={inputClass}
                 value={form.mcu_name}
                 onChange={(e) => set("mcu_name", e.target.value)}
-                placeholder="Contoh: MCU Tahunan"
+                placeholder="e.g. Annual MCU"
                 disabled={saving}
               />
             </label>
 
             <label className="space-y-2">
               <span className={labelClass}>
-                Tanggal MCU <span className="text-[#B3261E]">*</span>
+                Date MCU <span className="text-[#B3261E]">*</span>
               </span>
               <Input
                 type="date"
@@ -235,7 +235,7 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
             </label>
 
             <label className="space-y-2">
-              <span className={labelClass}>MCU Selanjutnya</span>
+              <span className={labelClass}>Next Annual MCU Date</span>
               <Input
                 type="date"
                 className={inputClass}
@@ -246,30 +246,30 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
             </label>
 
             <label className="space-y-2 sm:col-span-2">
-              <span className={labelClass}>Alergi</span>
+              <span className={labelClass}>Allergy</span>
               <Input
                 className={inputClass}
                 value={form.allergies}
                 onChange={(e) => set("allergies", e.target.value)}
-                placeholder="Kosongkan jika tidak ada"
+                placeholder="Leave empty if none"
                 disabled={saving}
               />
             </label>
 
             <label className="space-y-2 sm:col-span-2">
-              <span className={labelClass}>Summary Singkat</span>
+              <span className={labelClass}>Summary</span>
               <textarea
                 className={textareaClass}
                 value={form.summary}
                 onChange={(e) => set("summary", e.target.value)}
-                placeholder="Ringkasan hasil MCU"
+                placeholder="MCU result summary"
                 maxLength={2000}
                 disabled={saving}
               />
             </label>
 
             <DocField
-              label="Dokumen Pendukung 1"
+              label="Supporting Document 1"
               current={mcu?.document ?? null}
               file={form.document}
               remove={form.remove_document}
@@ -279,7 +279,7 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
             />
 
             <DocField
-              label="Dokumen Pendukung 2"
+              label="Supporting Document 2"
               current={mcu?.document_2 ?? null}
               file={form.document_2}
               remove={form.remove_document_2}
@@ -302,7 +302,7 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
             onClick={onClose}
             className="h-11 rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
           >
-            Batal
+            Cancel
           </Button>
           <Button
             type="submit"
@@ -311,12 +311,12 @@ function McuFormBody({ mcu, onClose, onSuccess }: { mcu: Mcu | null; onClose: ()
           >
             {saving ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Menyimpan...
+                <Loader2 className="h-4 w-4 animate-spin" /> Saving...
               </>
             ) : isEdit ? (
               "Update MCU"
             ) : (
-              "Tambah MCU"
+              "Add MCU"
             )}
           </Button>
         </div>

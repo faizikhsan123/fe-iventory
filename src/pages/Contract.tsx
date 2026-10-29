@@ -8,8 +8,8 @@ const ContractPage = () => {
       <Navbar title="Contract" />
 
       <SambutanComponent
-        paragraf1="Contract Karyawan"
-        paragraf2="Kelola perpanjangan kontrak dan performance review karyawan"
+        paragraf1="Employee Contracts"
+        paragraf2="Manage contract renewals and employee performance reviews"
       />
 
       <TableContract />

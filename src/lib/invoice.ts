@@ -1,12 +1,12 @@
 // Tahapan invoice jasa, berurutan. Samakan dengan Invoice::STATUSES di backend kalau tahapannya diubah.
 export const INVOICE_STATUSES = [
-  { value: "drafting_timesheet", label: "Drafting Timesheet", hint: "Timesheet disusun" },
-  { value: "waiting_approved_timesheet", label: "Waiting Approved Timesheet", hint: "Menunggu timesheet disetujui" },
-  { value: "waiting_quote_or_invoicing", label: "Waiting Quote or Invoicing", hint: "Menunggu quote atau penagihan" },
-  { value: "waiting_service_receipt", label: "Waiting Service Receipt", hint: "Menunggu service receipt" },
-  { value: "waiting_work_order", label: "Waiting Work Order", hint: "Menunggu work order" },
-  { value: "waiting_payment", label: "Waiting Payment", hint: "Menunggu pembayaran" },
-  { value: "paid", label: "Paid", hint: "Pembayaran diterima" },
+  { value: "drafting_timesheet", label: "Drafting Timesheet", hint: "Timesheet is being drafted" },
+  { value: "waiting_approved_timesheet", label: "Waiting Approved Timesheet", hint: "Waiting for timesheet approval" },
+  { value: "waiting_quote_or_invoicing", label: "Waiting Quote or Invoicing", hint: "Waiting for quote or invoicing" },
+  { value: "waiting_service_receipt", label: "Waiting Service Receipt", hint: "Waiting for service receipt" },
+  { value: "waiting_work_order", label: "Waiting Work Order", hint: "Waiting for work order" },
+  { value: "waiting_payment", label: "Waiting Payment", hint: "Waiting for payment" },
+  { value: "paid", label: "Paid", hint: "Payment received" },
 ] as const;
 
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number]["value"];
@@ -50,8 +50,8 @@ export const INVOICE_DOC_ACCEPT = INVOICE_DOC_EXTENSIONS.map((e) => `.${e}`).joi
 export const validateInvoiceDoc = (file: File): string | null => {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
   if (!(INVOICE_DOC_EXTENSIONS as readonly string[]).includes(ext))
-    return `Format .${ext || "?"} tidak didukung. Gunakan: ${INVOICE_DOC_EXTENSIONS.join(", ")}`;
-  if (file.size > INVOICE_DOC_MAX_BYTES) return "Ukuran file maksimal 10 MB";
-  if (file.size === 0) return "File kosong";
+    return `Format .${ext || "?"} is not supported. Use: ${INVOICE_DOC_EXTENSIONS.join(", ")}`;
+  if (file.size > INVOICE_DOC_MAX_BYTES) return "Maximum file size is 10 MB";
+  if (file.size === 0) return "File is empty";
   return null;
 };

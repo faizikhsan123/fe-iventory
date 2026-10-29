@@ -1,6 +1,7 @@
 import { AxiosInstance } from "@/lib/axios";
 import type { GroupsForm } from "@/schemas/Group";
 import { useCallback, useState } from "react";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const UpdateGroupsHooks = () => {
   const [loadingUpdate, setLoading] = useState(false);
@@ -18,7 +19,8 @@ const UpdateGroupsHooks = () => {
     } catch (e: any) {
       const errors = e?.response?.data?.errors;
       const firstError = errors ? (Object.values(errors)[0] as string[])?.[0] : null;
-      setError(firstError ?? e?.response?.data?.message ?? "Gagal mengubah group");
+      const raw = firstError ?? e?.response?.data?.message;
+      setError(raw ? translateServerMessage(String(raw)) : "Failed to update group");
       return false;
     } finally {
       setLoading(false);

@@ -17,8 +17,8 @@ const Employes = () => {
 
       <SambutanComponent
         paragraf1="Master Employees"
-        paragraf2="Kelola  Data karyawan "
-        button={isAdmin ? "+ Tambah Karyawan" : undefined}
+        paragraf2="Manage employee data"
+        button={isAdmin ? "+ Add Employee" : undefined}
         onclick={isAdmin ? () => setIsDialogOpen(true) : undefined}
       />
 

@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { AxiosInstance } from "@/lib/axios";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const DeleteParticipantHooks = () => {
   const [loadingDelete, setLoading] = useState(false);
@@ -12,7 +13,8 @@ const DeleteParticipantHooks = () => {
       await AxiosInstance.delete(`/participants/${participantId}`);
       return true;
     } catch (e: any) {
-      setError(e?.response?.data?.message ?? "Gagal menghapus peserta");
+      const raw = e?.response?.data?.message;
+      setError(raw ? translateServerMessage(String(raw)) : "Failed to delete participant");
       return false;
     } finally {
       setLoading(false);

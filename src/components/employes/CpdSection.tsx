@@ -8,6 +8,7 @@ import { CpdFields } from "./PpeCpdFields";
 import { cpdToForm, useSaveCpd, type Cpd } from "@/hooks/employes/cpd";
 import { CPD_FIELDS, cpdSchema, type CpdForm } from "@/schemas/cpd";
 import { formatTanggalIndo } from "@/lib/tanggal";
+import { cpdOptionLabel } from "@/lib/cpdOptions";
 
 type Props = {
   employeId: number;
@@ -51,7 +52,7 @@ function CpdEditForm({ employeId, cpd, onCancel, onSaved }: Omit<Props, "canEdit
             onClick={onCancel}
             className="h-11 rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF]"
           >
-            Batal
+            Cancel
           </Button>
           <Button
             type="submit"
@@ -60,10 +61,10 @@ function CpdEditForm({ employeId, cpd, onCancel, onSaved }: Omit<Props, "canEdit
           >
             {saving ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Menyimpan...
+                <Loader2 className="h-4 w-4 animate-spin" /> Saving...
               </>
             ) : (
-              "Simpan CPD"
+              "Save CPD"
             )}
           </Button>
         </div>
@@ -111,13 +112,13 @@ const CpdSection = ({ employeId, cpd, canEdit, onSaved }: Props) => {
           <div className="grid h-14 w-14 place-items-center rounded-xl bg-[#DBE2EF]">
             <IdCard className="h-6 w-6 text-[#3F72AF]" />
           </div>
-          <p className="text-sm text-[#50688C]">Data CPD belum diisi</p>
+          <p className="text-sm text-[#50688C]">No CPD data yet</p>
         </div>
       ) : (
         <dl className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-3">
           {fields.map((f) => {
             const raw = cpd?.[f.name];
-            const value = raw ? (f.name === "date_of_birth" ? formatTanggalIndo(raw) : raw) : "-";
+            const value = raw ? (f.name === "date_of_birth" ? formatTanggalIndo(raw) : cpdOptionLabel(raw)) : "-";
             return (
               <div
                 key={f.name}

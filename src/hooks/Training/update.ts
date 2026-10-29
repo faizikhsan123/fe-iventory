@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { AxiosInstance } from "@/lib/axios";
 import type { TrainingForm } from "@/schemas/Training";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const UpdateTrainingHooks = () => {
   const [loadingUpdate, setLoading] = useState(false);
@@ -15,7 +16,8 @@ const UpdateTrainingHooks = () => {
     } catch (e: any) {
       const errors = e?.response?.data?.errors;
       const firstError = errors ? (Object.values(errors)[0] as string[])?.[0] : null;
-      setError(firstError ?? e?.response?.data?.message ?? "Gagal mengubah training");
+      const raw = firstError ?? e?.response?.data?.message;
+      setError(raw ? translateServerMessage(String(raw)) : "Failed to update training");
       return false;
     } finally {
       setLoading(false);

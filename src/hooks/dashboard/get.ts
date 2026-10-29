@@ -71,7 +71,7 @@ const useDashboard = () => {
       const response = await AxiosInstance.get("/dashboard/summary");
       setData(response.data.data);
     } catch (err) {
-      setError("Gagal mengambil data dashboard");
+      setError("Failed to load dashboard data");
     }
 
     setLoading(false);

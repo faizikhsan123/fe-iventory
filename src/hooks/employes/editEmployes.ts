@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { isAxiosError } from "axios";
 import type { employes } from "@/types/employes";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const UseeditEmployes = () => {
   const [loadingupdate, Setloadingupdate] = useState(false);
@@ -53,11 +54,11 @@ const UseeditEmployes = () => {
         },
       });
       Setdata(response.data.data);
-      Myswal.fire("Berhasil!", "Data supplier berhasil dirubah.", "success");
+      Myswal.fire("Success!", "Employee updated successfully.", "success");
       onSucces?.();
     } catch (error) {
       // kita kasi error generic dulu
-      let message = "Terjadi kesalahan, coba lagi.";
+      let message = "Something went wrong, please try again.";
 
       if (isAxiosError(error)) {
         // eh error ini beneran gara-gara request ke server
@@ -79,18 +80,18 @@ const UseeditEmployes = () => {
 
         if (data?.errors) {
           //Kalau ada errors (yang isinya per-field kayak contoh di atas), kita gabungin SEMUA pesan errornya jadi satu kalimat panjang dipisah koma. // { email: ["Email sudah dipakai"], password: ["Password kurang panjang"] }
-          message = Object.values(data.errors).flat().join(", ");
+          message = (Object.values(data.errors).flat() as unknown[]).map((m) => translateServerMessage(String(m))).join(", ");
           //// "Email sudah dipakai, Password kurang panjang"
           // digabung jadi satu string, dipisah koma
         } else if (data?.message) {
           //Kadang server nggak kirim error per-field, cuma kirim satu pesan doang, misal:
-          message = data.message;
+          message = translateServerMessage(data.message);
           //Kalau kayak gini, ya langsung pake message itu aja.
         }
       }
 
       SetErrorupdate(message);
-      Myswal.fire("Gagal!", message, "error");
+      Myswal.fire("Failed!", message, "error");
     } finally {
       Setloadingupdate(false);
     }

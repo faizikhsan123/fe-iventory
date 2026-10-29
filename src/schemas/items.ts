@@ -4,31 +4,31 @@ import { ITEM_CATEGORY_VALUES } from "@/lib/itemCategory";
 export const itemsSchema = z.object({
   file: z.instanceof(File).optional().nullable(),
 
-  name: z.string("Minimal 1 karakter dan 50 karakter").min(1).max(50),
+  name: z.string("Must be 1 to 50 characters").min(1).max(50),
 
   category: z.enum(ITEM_CATEGORY_VALUES, {
-    message: "Pilih  Salah Satu Kategori ",
+    message: "Select a category",
   }),
 
-  brand: z.string("Minimal 1 karakter dan 20 karakter").min(1).max(50).optional().or(z.literal("")),
+  brand: z.string("Must be 1 to 50 characters").min(1).max(50).optional().or(z.literal("")),
 
-  type: z.string("maksimal 50 karakter").max(50).optional().or(z.literal("")),
+  type: z.string("Maximum 50 characters").max(50).optional().or(z.literal("")),
 
-  min_stock: z.coerce.number("Masukkan Angka Bulat").optional().nullable(),
+  min_stock: z.coerce.number("Enter a whole number").optional().nullable(),
 
   part_number: z.string().max(50).optional().or(z.literal("")),
 
   // size: z.enum(["s", "m", "l", "xl", "xxl", "universal"], {
-  //   message : "Pilih diantara satu kategori yang tersedia"
+  //   message : "Select one of the available units"
   // }),
 
   unit: z.enum(["pcs", "set", "unit", "pair", "others"], {
-    message: "Pilih diantara satu kategori yang tersedia",
+    message: "Select one of the available units",
   }),
 
   price: z.coerce.number().optional(),
 
-  description: z.string("Maksimal 200 karakter").max(200).optional().or(z.literal("")),
+  description: z.string("Maximum 200 characters").max(200).optional().or(z.literal("")),
 });
 
 export type ItemsCreate = z.infer<typeof itemsSchema>;

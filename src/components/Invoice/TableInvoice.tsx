@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Receipt, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -28,7 +28,7 @@ function SortIcon({ sort }: { sort: SortDirection | "" }) {
 }
 
 const sortLabel = (s: SortDirection | "") =>
-  s === "asc" ? "Urut status: tahap awal dulu" : s === "desc" ? "Urut status: tahap akhir dulu" : "Urutkan berdasarkan status";
+  s === "asc" ? "Sorted by status: earliest stage first" : s === "desc" ? "Sorted by status: latest stage first" : "Sort by status";
 
 const th = "px-4 text-center font-bold text-[#112D4E]";
 const td = "px-4 py-4 text-center align-middle";
@@ -71,7 +71,7 @@ function Actions({ invoice, onDetail, onEdit, onDelete }: { invoice: Invoice } &
           size="icon"
           variant="outline"
           className={dangerIconButtonClass}
-          aria-label={`Hapus ${invoice.service_name}`}
+          aria-label={`Delete ${invoice.service_name}`}
           onClick={() => onDelete(invoice)}
         >
           <Trash2 size={16} className="text-[#B3261E]" />
@@ -91,17 +91,17 @@ const InvoiceRow = memo(function InvoiceRow({
   return (
     <TableRow className="border-[#DBE2EF] text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
       <TableCell className={`${td} text-[#50688C]`}>{number}</TableCell>
+      <TableCell className={`${td} max-w-60 whitespace-normal break-words font-medium`}>{inv.service_name}
+        {inv.service_date && (
+          <span className="block text-xs font-normal text-[#50688C]">{formatTanggalIndo(inv.service_date)}</span>
+        )}
+      </TableCell>
       <TableCell className={td}>
         {inv.invoice_number || "-"}
         {inv.documents && (
           <span className="block text-xs text-[#50688C]">
-            {Object.values(inv.documents).filter((d) => d?.has_file).length}/3 dokumen
+            {Object.values(inv.documents).filter((d) => d?.has_file).length}/3 documents
           </span>
-        )}
-      </TableCell>
-      <TableCell className={`${td} max-w-60 whitespace-normal break-words font-medium`}>{inv.service_name}
-        {inv.service_date && (
-          <span className="block text-xs font-normal text-[#50688C]">{formatTanggalIndo(inv.service_date)}</span>
         )}
       </TableCell>
       <TableCell className={td}>{inv.division}</TableCell>
@@ -127,6 +127,18 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
   const [filters, setFilters] = useState<InvoiceFilters>({ search: "", division: "", status: "", sort_status: "", page: 1 });
   const { data, meta, summary, loading, error, isFetching } = useInvoiceList(filters, refreshKey);
   const offset = ((meta?.current_page ?? 1) - 1) * (meta?.per_page ?? 10);
+
+  // Newest Invoice Submitted Date first. Client-side, so only within the current page (server paginates).
+  // Skipped while the status sort is active so that sort is not overridden. Rows without a date go last.
+  const rows = useMemo(() => {
+    if (filters.sort_status) return data;
+    return [...data].sort((a, b) => {
+      if (!a.invoice_date && !b.invoice_date) return 0;
+      if (!a.invoice_date) return 1;
+      if (!b.invoice_date) return -1;
+      return a.invoice_date < b.invoice_date ? 1 : a.invoice_date > b.invoice_date ? -1 : 0;
+    });
+  }, [data, filters.sort_status]);
 
   // setiap filter berubah, kembali ke halaman 1
   const patch = (p: Partial<typeof filters>) => setFilters((f) => ({ ...f, ...p, page: 1 }));
@@ -159,7 +171,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
 
       <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
         <div className="space-y-3 border-b border-[#BFCCE3] bg-[#DBE2EF] p-4">
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter divisi">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by division">
             {["", ...INVOICE_DIVISIONS].map((d) => (
               <button
                 key={d || "all"}
@@ -172,7 +184,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                     : "border border-[#BFCCE3] bg-white text-[#112D4E] hover:bg-[#F9F7F7]"
                 }`}
               >
-                {d || "Semua"}
+                {d || "All"}
                 {d && summary?.by_division ? ` (${summary.by_division[d] ?? 0})` : ""}
               </button>
             ))}
@@ -187,7 +199,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
           </button>
 
           <SearchBar
-            placeholder="Cari no. invoice, jasa, atau client..."
+            placeholder="Search invoice no, service, or client..."
             busy={isFetching}
             onSearch={(search) => patch({ search })}
           />
@@ -199,8 +211,8 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
         {!loading && !error && data.length === 0 && (
           <ListEmpty
             icon={<Receipt size={28} />}
-            title="Invoice tidak ditemukan"
-            hint="Ubah filter atau tambah invoice baru"
+            title="No invoices found"
+            hint="Change the filters or add a new invoice"
           />
         )}
 
@@ -208,7 +220,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
           <div className={isFetching ? "opacity-60 transition-opacity" : "transition-opacity"}>
             {/* Mobile: kartu */}
             <ul className="divide-y divide-[#DBE2EF] md:hidden">
-              {data.map((inv) => (
+              {rows.map((inv) => (
                 <li key={inv.id} className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
@@ -226,8 +238,8 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                   </div>
                   <p className="mt-2 text-xs text-[#50688C]">
                     {rupiah(inv.amount)}
-                    {inv.service_date ? ` · Jasa ${formatTanggalIndo(inv.service_date)}` : ""}
-                    {inv.invoice_date ? ` · Submit ${formatTanggalIndo(inv.invoice_date)}` : ""}
+                    {inv.service_date ? ` · Service ${formatTanggalIndo(inv.service_date)}` : ""}
+                    {inv.invoice_date ? ` · Submitted ${formatTanggalIndo(inv.invoice_date)}` : ""}
                   </p>
                   <div className="mt-3 flex">
                     <Actions invoice={inv} onDetail={onDetail} onEdit={onEdit} onDelete={onDelete} />
@@ -242,12 +254,12 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                 <TableHeader>
                   <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                     <TableHead className={`${th} w-12`}>No</TableHead>
-                    <TableHead className={th}>No. Invoice</TableHead>
-                    <TableHead className={th}>Jasa</TableHead>
-                    <TableHead className={th}>Divisi</TableHead>
+                    <TableHead className={th}>Service Description</TableHead>
+                    <TableHead className={th}>Invoice No</TableHead>
+                    <TableHead className={th}>Division</TableHead>
                     <TableHead className={th}>Client</TableHead>
-                    <TableHead className={th}>Nilai</TableHead>
-                    <TableHead className={th}>Tgl Invoice Submit</TableHead>
+                    <TableHead className={th}>Amount</TableHead>
+                    <TableHead className={th}>Invoice Submitted Date</TableHead>
                     <TableHead
                       className={th}
                       aria-sort={
@@ -263,11 +275,11 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                         Status <SortIcon sort={filters.sort_status} />
                       </button>
                     </TableHead>
-                    <TableHead className={th}>Aksi</TableHead>
+                    <TableHead className={th}>Edit</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.map((inv, i) => (
+                  {rows.map((inv, i) => (
                     <InvoiceRow
                       key={inv.id}
                       invoice={inv}

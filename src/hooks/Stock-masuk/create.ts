@@ -5,6 +5,7 @@ import { isAxiosError } from "axios";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const Usecreate = () => {
   const [loadingStockMasuk, SetloadingStockMasuk] = useState(false);
@@ -26,23 +27,23 @@ const Usecreate = () => {
       });
 
       SetStockIn(response.data.data);
-      MySwal.fire("Berhasil!", "Data Barang  berhasil ditambahkan.", "success");
+      MySwal.fire("Success!", "Stock added successfully.", "success");
       return response.data.data;
     } catch (error) {
-      let message = "Terjadi Kesalahan Coba lagi";
+      let message = "Something went wrong, please try again.";
 
       if (isAxiosError(error)) {
         console.log("validation error response");
 
         const data = error.response?.data;
         if (data.errors) {
-          message = Object.values(data.errors).flat().join(", ");
+          message = (Object.values(data.errors).flat() as unknown[]).map((m) => translateServerMessage(String(m))).join(", ");
         } else if (data.message) {
-          message = data.message;
+          message = translateServerMessage(data.message);
         }
       }
       SeterrorStockMasuk(message);
-      MySwal.fire("Gagal!", message, "error");
+      MySwal.fire("Failed!", message, "error");
       return null;
     } finally {
       SetloadingStockMasuk(false);

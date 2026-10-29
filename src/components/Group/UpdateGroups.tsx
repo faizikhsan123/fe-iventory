@@ -96,7 +96,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
             <div className="min-w-0 text-left">
               <DialogTitle className="text-lg font-extrabold text-[#112D4E]">Edit Group</DialogTitle>
               <DialogDescription className="mt-0.5 text-sm text-[#50688C]">
-                Ubah data group di bawah
+                Update the group details below
               </DialogDescription>
             </div>
           </div>
@@ -107,7 +107,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
             {loadingDetail && (
               <div className="flex items-center gap-2 text-sm text-[#50688C]">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Memuat data group...
+                Loading group data...
               </div>
             )}
 
@@ -124,13 +124,13 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
             <FieldGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field className="gap-2 sm:col-span-2">
                 <Label htmlFor="nama" className={labelClassName}>
-                  Nama Group <span className="text-[#B3261E]">*</span>
+                  Group Name <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("group_name")}
                   type="text"
                   id="nama"
-                  placeholder="Nama Group"
+                  placeholder="Group name"
                   className={inputClassName}
                   disabled={busy}
                 />
@@ -139,7 +139,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
 
               {/* <Field className="gap-2">
                 <Label htmlFor="start_time" className={labelClassName}>
-                  Waktu Mulai <span className="text-[#B3261E]">*</span>
+                  Start Time <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("start_time")}
@@ -153,7 +153,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
 
               {/* <Field className="gap-2">
                 <Label htmlFor="end_time" className={labelClassName}>
-                  Waktu Selesai <span className="text-[#B3261E]">*</span>
+                  End Time <span className="text-[#B3261E]">*</span>
                 </Label>
                 <Input
                   {...form.register("end_time")}
@@ -167,7 +167,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
             </FieldGroup> 
 
             <FieldSet>
-              <FieldLegend variant="label">Pilih Karyawan yang akan terlibat</FieldLegend>
+              <FieldLegend variant="label">Select the employees involved</FieldLegend>
 
               <Controller
                 control={form.control}
@@ -182,10 +182,10 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
 
                   return (
                     <div className="max-h-56 space-y-1 overflow-y-auto rounded-lg border border-[#BFCCE3] p-2">
-                      {loadingEmployees && <p role="status" className="py-4 text-center text-sm text-[#50688C]">Memuat seluruh karyawan...</p>}
+                      {loadingEmployees && <p role="status" className="py-4 text-center text-sm text-[#50688C]">Loading all employees...</p>}
                       {errorEmployees && <p role="alert" className="py-4 text-center text-sm text-[#B3261E]">{errorEmployees}</p>}
                       {!loadingEmployees && !errorEmployees && data.length === 0 && (
-                        <p className="py-4 text-center text-sm text-[#7B8FAE]">Belum ada karyawan</p>
+                        <p className="py-4 text-center text-sm text-[#7B8FAE]">No employees yet</p>
                       )}
 
                       {data.map((employee) => (
@@ -214,7 +214,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
               />
 
               <p className="text-xs text-[#50688C]">
-                {selectedCount} karyawan dipilih
+                {selectedCount} employee{selectedCount === 1 ? "" : "s"} selected
               </p>
             </FieldSet>
 
@@ -238,7 +238,7 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
                   disabled={loadingUpdate}
                   className="h-11 w-full rounded-lg border-[#BFCCE3] bg-white font-semibold text-[#112D4E] hover:bg-[#DBE2EF] sm:w-auto"
                 >
-                  Batal
+                  Cancel
                 </Button>
               }
             />
@@ -250,10 +250,10 @@ const UpdateGroups = ({ open, groupId, onOpenChange, onSuccess }: UpdateGroupsPr
               {loadingUpdate ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Menyimpan...
+                  Saving...
                 </>
               ) : (
-                "Simpan Perubahan"
+                "Save Changes"
               )}
             </Button>
           </DialogFooter>

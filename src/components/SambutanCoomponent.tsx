@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 
 interface SambutanProps {
   paragraf1: string;
-  paragraf2: string;
+  paragraf2?: string;
   button?: string;
   onclick?: () => void;
 }
@@ -28,9 +28,11 @@ const SambutanComponent = ({
             {paragraf1}
           </h2>
 
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-[#DBE2EF] sm:text-base">
-            {paragraf2}
-          </p>
+          {paragraf2 && (
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#DBE2EF] sm:text-base">
+              {paragraf2}
+            </p>
+          )}
         </div>
 
         {button && (

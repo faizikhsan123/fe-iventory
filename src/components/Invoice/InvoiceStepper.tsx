@@ -10,7 +10,7 @@ const InvoiceStepper = ({ status, compact = false }: { status: string; compact?:
   return (
     <ol
       className={`flex ${compact ? "items-center" : "w-full items-start"}`}
-      aria-label={`Status invoice: ${INVOICE_STATUSES[current]?.label ?? status}`}
+      aria-label={`Invoice status: ${INVOICE_STATUSES[current]?.label ?? status}`}
     >
       {INVOICE_STATUSES.map((s, i) => {
         const done = i < current;

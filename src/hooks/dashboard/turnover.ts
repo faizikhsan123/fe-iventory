@@ -47,7 +47,7 @@ const useTurnover = (year: number, months: number[]) =>
       return res.data.data as TurnoverData;
     },
     [year, months.join(",")],
-    { errorMessage: "Gagal mengambil data turn over rate" },
+    { errorMessage: "Failed to load turnover rate data" },
   );
 
 export default useTurnover;

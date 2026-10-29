@@ -1,5 +1,6 @@
 import { AxiosInstance } from "@/lib/axios";
 import { useState } from "react";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 type CreateTransactionItemPayload = {
   transactions_id: number;
@@ -19,9 +20,10 @@ const useCreateTransactionItem = () => {
       const response = await AxiosInstance.post("/transaction-items", payload);
       return response.data.data;
     } catch (err) {
-      const message = (err as any)?.response?.data?.message || "Gagal menyimpan barang";
+      const raw = (err as any)?.response?.data?.message;
+      const message = raw ? translateServerMessage(String(raw)) : "Failed to save item";
       SetError(message);
-      throw new Error(message); // lempar, bawa message asli
+      throw new Error(message); // rethrow carrying the message
     } finally {
       setLoading(false);
     }

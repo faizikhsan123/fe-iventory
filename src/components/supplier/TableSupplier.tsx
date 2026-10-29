@@ -41,8 +41,8 @@ const actionBtnClass =
   "h-10 w-10 rounded-lg border border-[#BFCCE3] bg-white p-0 text-[#112D4E] hover:bg-[#DBE2EF] disabled:opacity-50";
 
 const STATUS_LABEL: Record<string, string> = {
-  active: "Aktif",
-  inactive: "Tidak Aktif",
+  active: "Active",
+  inactive: "Inactive",
 };
 
 function BadgeSpesialis({ value }: { value?: string | null }) {
@@ -167,7 +167,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
         size="icon"
         variant="outline"
         className={`${actionBtnClass} hover:border-[#F2B8B5] hover:bg-[#FDECEA]`}
-        aria-label={`Hapus ${supplier.name}`}
+        aria-label={`Delete ${supplier.name}`}
         disabled={loading}
         onClick={() => onDelete(supplier.id)}
       >
@@ -199,7 +199,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
 
             <Input
               className={searchClass}
-              placeholder="Cari supplier..."
+              placeholder="Search suppliers..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
@@ -208,7 +208,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
               <button
                 type="button"
                 onClick={clearSearch}
-                aria-label="Hapus pencarian"
+                aria-label="Clear search"
                 className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[#50688C] transition hover:bg-[#DBE2EF] hover:text-[#112D4E]"
               >
                 <X size={15} />
@@ -220,7 +220,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
             className="h-11 rounded-lg bg-[#112D4E] px-5 font-semibold text-white hover:bg-[#0B2240] disabled:opacity-60"
             disabled={loading}
           >
-            Cari
+            Search
           </Button>
         </form>
 
@@ -234,11 +234,11 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
           }}
           aria-label="Filter status"
         >
-          <option value="all">Semua Status</option>
+          <option value="all">All Statuses</option>
 
-          <option value="active">Aktif</option>
+          <option value="active">Active</option>
 
-          <option value="inactive">Tidak Aktif</option>
+          <option value="inactive">Inactive</option>
         </select>
       </div>
 
@@ -271,8 +271,8 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
           <div className="grid h-16 w-16 place-items-center rounded-xl bg-[#DBE2EF]">
             <Search size={28} className="text-[#3F72AF]" />
           </div>
-          <p className="font-semibold text-[#112D4E]">Supplier tidak ditemukan</p>
-          <p className="text-sm text-[#50688C]">Coba gunakan kata kunci lain</p>
+          <p className="font-semibold text-[#112D4E]">No suppliers found</p>
+          <p className="text-sm text-[#50688C]">Try a different keyword</p>
         </div>
       )}
 
@@ -325,12 +325,12 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
               <TableHeader>
                 <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Nama</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Name</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">PIC</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Spesialis</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Telepon</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Specialty</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Phone</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Email</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Alamat</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Address</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Status</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">{isAdmin ? "AKSI" : null}</TableHead>
                 </TableRow>
@@ -376,7 +376,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
           {/* ================= PAGINATION ================= */}
           <div className="flex items-center justify-between gap-3 border-t border-[#DBE2EF] bg-[#F9F7F7] p-4">
             <span className="text-sm text-[#50688C]">
-              Halaman <b className="text-[#112D4E]">{page}</b> dari <b className="text-[#112D4E]">{lastPage}</b>
+              Page <b className="text-[#112D4E]">{page}</b> of <b className="text-[#112D4E]">{lastPage}</b>
             </span>
 
             <div className="flex gap-2">
@@ -384,7 +384,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
                 size="icon"
                 variant="outline"
                 className={pageBtnClass}
-                aria-label="Halaman sebelumnya"
+                aria-label="Previous page"
                 disabled={page <= 1 || loading}
                 onClick={() => setPage(page - 1)}
               >
@@ -395,7 +395,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
                 size="icon"
                 variant="outline"
                 className={pageBtnClass}
-                aria-label="Halaman berikutnya"
+                aria-label="Next page"
                 disabled={page >= lastPage || loading}
                 onClick={() => setPage(page + 1)}
               >

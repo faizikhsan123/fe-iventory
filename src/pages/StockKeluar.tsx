@@ -8,7 +8,7 @@ const StockKeluarPage = () => {
   const { isAdmin } = useAuth();
   return (
     <div>
-      <Navbar title="Barang Keluar" />
+      <Navbar title="Stock Out" />
 
       {isAdmin ? <StockKeluar /> : <StockOutReadOnly />}
 

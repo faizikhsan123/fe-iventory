@@ -19,14 +19,14 @@ const Navbar = ({ title }: NavbarProps) => {
     return () => clearInterval(timer);
   }, []);
 
-  const tanggal = now.toLocaleDateString("id-ID", {
+  const dateText = now.toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 
-  const jam = now.toLocaleTimeString("id-ID", {
+  const timeText = now.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -42,7 +42,7 @@ const Navbar = ({ title }: NavbarProps) => {
               {title}
             </h1>
             <p className="mt-1 text-xs leading-5 text-[#50688C] sm:text-sm">
-              Inventaris APD &amp; Tools, PT Vando Teknik Solusi
+              Inventory Management, PT Vando Teknik Solusi
             </p>
           </div>
         </div>
@@ -51,12 +51,12 @@ const Navbar = ({ title }: NavbarProps) => {
         <div className="flex flex-wrap gap-2">
           <span className={chipClass}>
             <CalendarDays className="h-4 w-4 shrink-0 text-[#3F72AF]" />
-            <span className="truncate">{tanggal}</span>
+            <span className="truncate">{dateText}</span>
           </span>
 
           <span className={chipClass}>
             <Clock className="h-4 w-4 shrink-0 text-[#3F72AF]" />
-            {jam}
+            {timeText}
           </span>
         </div>
       </div>

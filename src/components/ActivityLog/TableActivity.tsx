@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import useActivity from "@/hooks/Activity/get";
+import { translateActivityDetail, translateActivityName } from "@/lib/serverMessages";
 
 /*
   Palet:
@@ -34,21 +35,21 @@ interface TypeConfig {
 
 const TYPE_CONFIG: Record<string, TypeConfig> = {
   stockin: {
-    label: "Barang Masuk",
+    label: "Stock In",
     badge: "bg-[#DBE2EF] text-[#112D4E] ring-[#BFCCE3]",
     iconBg: "bg-[#DBE2EF]",
     iconColor: "text-[#112D4E]",
     icon: ArrowDownToLine,
   },
   stockout: {
-    label: "Barang Keluar",
+    label: "Stock Out",
     badge: "bg-[#FDECEA] text-[#B3261E] ring-[#F2B8B5]",
     iconBg: "bg-[#FDECEA]",
     iconColor: "text-[#B3261E]",
     icon: ArrowUpFromLine,
   },
   system: {
-    label: "Sistem",
+    label: "System",
     badge: "bg-[#F9F7F7] text-[#50688C] ring-[#DBE2EF]",
     iconBg: "bg-[#F9F7F7]",
     iconColor: "text-[#50688C]",
@@ -60,10 +61,10 @@ const getConfig = (type?: string | null): TypeConfig =>
   TYPE_CONFIG[type ?? ""] ?? { ...TYPE_CONFIG.system, label: type ?? "-" };
 
 const FILTERS = [
-  { value: "all", label: "Semua Aktivitas" },
-  { value: "stockin", label: "Barang Masuk" },
-  { value: "stockout", label: "Barang Keluar" },
-  { value: "system", label: "Sistem" },
+  { value: "all", label: "All Activities" },
+  { value: "stockin", label: "Stock In" },
+  { value: "stockout", label: "Stock Out" },
+  { value: "system", label: "System" },
 ];
 
 // Input solid putih. text-base di HP biar iOS tidak auto-zoom.
@@ -133,7 +134,7 @@ const TableAvtivity = () => {
               />
               <Input
                 className={searchClass}
-                placeholder="Cari detail aktivitas"
+                placeholder="Search activity details"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
@@ -141,7 +142,7 @@ const TableAvtivity = () => {
                 <button
                   type="button"
                   onClick={clearSearch}
-                  aria-label="Hapus pencarian"
+                  aria-label="Clear search"
                   className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[#50688C] transition hover:bg-[#DBE2EF] hover:text-[#112D4E]"
                 >
                   <X size={15} />
@@ -152,7 +153,7 @@ const TableAvtivity = () => {
               disabled={loading}
               className="h-11 rounded-lg bg-[#112D4E] px-5 text-white transition hover:bg-[#0B2240] disabled:opacity-60"
             >
-              Cari
+              Search
             </Button>
           </form>
 
@@ -168,9 +169,9 @@ const TableAvtivity = () => {
                   setPage(1);
                 }}
                 className={dateClass}
-                aria-label="Tanggal mulai"
+                aria-label="Start date"
               />
-              <span className="hidden text-sm text-[#50688C] min-[420px]:block">s/d</span>
+              <span className="hidden text-sm text-[#50688C] min-[420px]:block">to</span>
               <input
                 type="date"
                 value={endDate}
@@ -180,7 +181,7 @@ const TableAvtivity = () => {
                   setPage(1);
                 }}
                 className={dateClass}
-                aria-label="Tanggal akhir"
+                aria-label="End date"
               />
             </div>
             {(startDate || endDate) && (
@@ -246,8 +247,8 @@ const TableAvtivity = () => {
           <div className="grid h-16 w-16 place-items-center rounded-xl bg-[#DBE2EF]">
             <Search size={28} className="text-[#3F72AF]" />
           </div>
-          <p className="font-semibold text-[#112D4E]">Aktivitas tidak ditemukan</p>
-          <p className="text-sm text-[#50688C]">Coba gunakan kata kunci atau filter lain</p>
+          <p className="font-semibold text-[#112D4E]">No activities found</p>
+          <p className="text-sm text-[#50688C]">Try a different keyword or filter</p>
         </div>
       )}
 
@@ -277,7 +278,7 @@ const TableAvtivity = () => {
                         #{(page - 1) * perPage + index + 1}
                       </span>
                     </div>
-                    <p className="mt-1.5 break-words text-sm text-[#112D4E]">{activity.detail ?? "-"}</p>
+                    <p className="mt-1.5 break-words text-sm text-[#112D4E]">{translateActivityDetail(activity.detail) || "-"}</p>
                     <p className="mt-1 text-xs font-medium text-[#50688C]">{activity.date}</p>
                   </div>
                 </li>
@@ -291,10 +292,10 @@ const TableAvtivity = () => {
               <TableHeader>
                 <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">No</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Tanggal - Waktu</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Date - Time</TableHead>
                   {/* kalau API punya field khusus nama aktivitas, ganti di kolom ini */}
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Aktivitas</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Jenis</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Activity</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Type</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Detail</TableHead>
                 </TableRow>
               </TableHeader>
@@ -310,7 +311,7 @@ const TableAvtivity = () => {
                       <TableCell className="whitespace-nowrap px-4 py-4 font-medium text-[#112D4E] lg:px-6">
                         {activity.date}
                       </TableCell>
-                      <TableCell className="px-4 py-4 text-[#112D4E] lg:px-6">{activity.type ?? "-"}</TableCell>
+                      <TableCell className="px-4 py-4 text-[#112D4E] lg:px-6">{translateActivityName(activity.activity) || activity.type || "-"}</TableCell>
                       <TableCell className="px-4 py-4 lg:px-6">
                         {activity.type ? (
                           <span
@@ -323,7 +324,7 @@ const TableAvtivity = () => {
                         )}
                       </TableCell>
                       <TableCell className="max-w-xs whitespace-normal break-words px-4 py-4 text-[#50688C] lg:px-6">
-                        {activity.detail ?? "-"}
+                        {translateActivityDetail(activity.detail) || "-"}
                       </TableCell>
                     </TableRow>
                   );
@@ -335,7 +336,7 @@ const TableAvtivity = () => {
           {/* ================= PAGINATION ================= */}
           <div className="flex items-center justify-between gap-3 border-t border-[#DBE2EF] bg-[#F9F7F7] p-4">
             <span className="text-sm text-[#50688C]">
-              Hal. <b className="text-[#112D4E]">{page}</b> dari <b className="text-[#112D4E]">{lastPage}</b>
+              Page <b className="text-[#112D4E]">{page}</b> of <b className="text-[#112D4E]">{lastPage}</b>
             </span>
 
             <div className="flex gap-2">
@@ -344,19 +345,19 @@ const TableAvtivity = () => {
                 className={pageBtnClass}
                 disabled={page <= 1 || loading}
                 onClick={() => setPage((p) => p - 1)}
-                aria-label="Halaman sebelumnya"
+                aria-label="Previous page"
               >
                 <ChevronLeft size={16} />
-                <span className="hidden sm:inline">Sebelumnya</span>
+                <span className="hidden sm:inline">Previous</span>
               </Button>
               <Button
                 variant="outline"
                 className={pageBtnClass}
                 disabled={page >= lastPage || loading}
                 onClick={() => setPage((p) => p + 1)}
-                aria-label="Halaman berikutnya"
+                aria-label="Next page"
               >
-                <span className="hidden sm:inline">Berikutnya</span>
+                <span className="hidden sm:inline">Next</span>
                 <ChevronRight size={16} />
               </Button>
             </div>

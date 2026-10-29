@@ -52,7 +52,7 @@ export const useMcuList = (params: { search: string; page: number }, refreshKey:
       return { items: res.data.data as Mcu[], meta: res.data.meta as PageMeta };
     },
     [params.search, params.page, refreshKey],
-    { errorMessage: "Gagal mengambil data MCU" },
+    { errorMessage: "Failed to load MCU data" },
   );
 
   return { data: data?.items ?? [], meta: data?.meta ?? null, loading, error, isFetching };
@@ -89,7 +89,7 @@ export const useMcuActions = () => {
       }
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal menyimpan data MCU");
+      return getErrorMessage(e, "Failed to save MCU data");
     } finally {
       setSaving(false);
     }
@@ -100,7 +100,7 @@ export const useMcuActions = () => {
       await AxiosInstance.delete(`/mcus/${id}`);
       return null;
     } catch (e) {
-      return getErrorMessage(e, "Gagal menghapus data MCU");
+      return getErrorMessage(e, "Failed to delete MCU data");
     }
   };
 
@@ -131,7 +131,7 @@ export const useEmployeeOptions = () => {
 
       return all
         .map((e): EmployeeOption => ({ id: e.id, id_number: e.id_number, name: e.user?.name ?? "-" }))
-        .sort((a, b) => a.name.localeCompare(b.name, "id"));
+        .sort((a, b) => a.name.localeCompare(b.name, "en"));
     },
     [],
   );

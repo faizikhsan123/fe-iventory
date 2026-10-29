@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { translateServerMessage } from "@/lib/serverMessages";
 
 const UseUpdateItems = () => {
   const Myswal = withReactContent(Swal);
@@ -53,10 +54,10 @@ const UseUpdateItems = () => {
         },
       });
       setData(response.data.data);
-      Myswal.fire("Berhasil!", "Data items berhasil Dirubah.", "success");
+      Myswal.fire("Success!", "Item updated successfully.", "success");
       navigate("/items");
     } catch (error) {
-      let message = "Terjadi kesalahan coba lagi";
+      let message = "Something went wrong, please try again.";
 
       if (isAxiosError(error)) {
         console.log("Validation error response:", error.response?.data);
@@ -64,13 +65,13 @@ const UseUpdateItems = () => {
         const data = error.response?.data;
 
         if (data.errors) {
-          message = Object.values(data.errors).flat().join(", ");
+          message = (Object.values(data.errors).flat() as unknown[]).map((m) => translateServerMessage(String(m))).join(", ");
         } else if (data.message) {
-          message = data.message;
+          message = translateServerMessage(data.message);
         }
       }
       Seterrorcreate(message);
-      Myswal.fire("Gagal!", message, "error");
+      Myswal.fire("Failed!", message, "error");
     } finally {
       Setloadingcreate(false);
     }

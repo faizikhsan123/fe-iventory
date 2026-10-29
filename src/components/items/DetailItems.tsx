@@ -6,6 +6,7 @@ import useItemDetail from "@/hooks/items/detail";
 import { STORAGE_URL } from "@/lib/axios";
 import { formatTanggalIndo } from "@/lib/tanggal";
 import { formatRupiah } from "@/lib/Harga";
+import { formatServerDate } from "@/lib/tanggal";
 
 /*
   Palet:
@@ -64,13 +65,13 @@ const DetailBarang = () => {
           className="mb-3 inline-flex h-10 items-center gap-1.5 rounded-lg border border-[#BFCCE3] bg-white px-3 text-sm font-semibold text-[#112D4E] transition hover:bg-[#DBE2EF] active:scale-[0.98]"
         >
           <ArrowLeft size={16} />
-          Kembali
+          Back
         </button>
 
         <div className="flex min-w-0 items-stretch gap-3">
           <span className="w-1 shrink-0 rounded-full bg-[#3F72AF]" aria-hidden="true" />
           <div className="min-w-0">
-            <h1 className="text-xl font-extrabold tracking-tight text-[#112D4E] sm:text-2xl">Detail Barang</h1>
+            <h1 className="text-xl font-extrabold tracking-tight text-[#112D4E] sm:text-2xl">Item Details</h1>
             <p className="mt-0.5 break-words text-xs leading-5 text-[#50688C] sm:text-sm">
               {item.part_number} — {item.name}
             </p>
@@ -106,11 +107,11 @@ const DetailBarang = () => {
 
             <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3">
               <InfoBox
-                label="Harga Perolehan"
+                label="Acquisition Price"
                 value={formatRupiah(item.price)}
               />
               <InfoBox
-                label="Tipe"
+                label="Type"
                 value={item.type || "-"}
               />
               {/* <InfoBox
@@ -118,20 +119,20 @@ const DetailBarang = () => {
                 value={item.part_number || "-"}
               /> */}
               <InfoBox
-                label="Satuan"
+                label="Unit"
                 value={item.unit}
               />
               <InfoBox
-                label="Stok Saat Ini"
+                label="Current Stock"
                 value={`${item.current_stock} unit`}
                 highlight
               />
               <InfoBox
-                label="Stok Minimum"
+                label="Minimum Stock"
                 value={`${item.min_stock} unit`}
               />
               <InfoBox
-                label="part Number"
+                label="Part Number"
                 value={`${item.part_number}`}
               />
             </div>
@@ -142,23 +143,23 @@ const DetailBarang = () => {
       {/* Grid: Informasi Barang + Statistik */}
       <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Informasi Barang */}
-        <Panel title="Informasi Barang">
+        <Panel title="Item Information">
           <div className="space-y-3 text-sm">
             <InfoRow
-              label="Deskripsi"
+              label="Description"
               value={item.description || "-"}
             />
             <InfoRow
-              label="Tanggal Terakhir Masuk"
-              value={statistik.tanggal_terakhir_masuk || "-"}
+              label="Last Stock In Date"
+              value={formatServerDate(statistik.tanggal_terakhir_masuk) || "-"}
             />
           </div>
         </Panel>
 
         {/* Statistik Penggunaan */}
-        <Panel title="Statistik Penggunaan">
+        <Panel title="Usage Statistics">
           <StatBar
-            label="Total Diberikan"
+            label="Total Issued"
             value={statistik.total_diberikan}
             color="bg-[#3F72AF]"
           />
@@ -167,7 +168,7 @@ const DetailBarang = () => {
 
       {/* Riwayat Stok */}
       <Panel
-        title="Riwayat Stok"
+        title="Stock History"
         flush
       >
         <TabelRiwayatStok data={riwayat_stok} />
@@ -175,7 +176,7 @@ const DetailBarang = () => {
 
       {/* Riwayat Pemberian */}
       <Panel
-        title="Riwayat Pemberian"
+        title="Issue History"
         flush
       >
         <TabelRiwayatPemberian data={riwayat_pemberian} />
@@ -284,7 +285,7 @@ function BadgeTipe({ isIn }: { isIn: boolean }) {
 
 function TabelRiwayatStok({ data }: { data: RiwayatStokItem[] }) {
   if (data.length === 0) {
-    return <Kosong text="Belum ada riwayat stok" />;
+    return <Kosong text="No stock history yet" />;
   }
 
   return (
@@ -318,7 +319,7 @@ function TabelRiwayatStok({ data }: { data: RiwayatStokItem[] }) {
                   <dd className="min-w-0 break-words text-right font-medium text-[#112D4E]">{row.user_name}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="text-[#50688C]">Catatan</dt>
+                  <dt className="text-[#50688C]">Notes</dt>
                   <dd className="min-w-0 break-words text-right font-medium text-[#112D4E]">{row.note || "-"}</dd>
                 </div>
               </dl>
@@ -332,11 +333,11 @@ function TabelRiwayatStok({ data }: { data: RiwayatStokItem[] }) {
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className="bg-[#F9F7F7] text-xs uppercase tracking-wide text-[#50688C]">
-              <th className="px-6 py-3 font-semibold">Tanggal</th>
-              <th className="px-3 py-3 font-semibold">Tipe</th>
+              <th className="px-6 py-3 font-semibold">Date</th>
+              <th className="px-3 py-3 font-semibold">Type</th>
               <th className="px-3 py-3 font-semibold">Qty</th>
               <th className="px-3 py-3 font-semibold">Supplier</th>
-              <th className="px-3 py-3 font-semibold">Catatan</th>
+              <th className="px-3 py-3 font-semibold">Notes</th>
               <th className="px-6 py-3 font-semibold">User</th>
             </tr>
           </thead>
@@ -383,7 +384,7 @@ interface RiwayatPemberianItem {
 
 function TabelRiwayatPemberian({ data }: { data: RiwayatPemberianItem[] }) {
   if (data.length === 0) {
-    return <Kosong text="Belum ada riwayat pemberian" />;
+    return <Kosong text="No issue history yet" />;
   }
 
   return (
@@ -411,11 +412,11 @@ function TabelRiwayatPemberian({ data }: { data: RiwayatPemberianItem[] }) {
         <table className="w-full min-w-[560px] text-left text-sm">
           <thead>
             <tr className="bg-[#F9F7F7] text-xs uppercase tracking-wide text-[#50688C]">
-              <th className="px-6 py-3 font-semibold">No. Transaksi</th>
-              <th className="px-3 py-3 font-semibold">Tanggal</th>
+              <th className="px-6 py-3 font-semibold">Transaction No.</th>
+              <th className="px-3 py-3 font-semibold">Date</th>
               <th className="px-3 py-3 font-semibold">Qty</th>
-              <th className="px-3 py-3 font-semibold">Karyawan</th>
-              <th className="px-6 py-3 font-semibold">Catatan</th>
+              <th className="px-3 py-3 font-semibold">Employee</th>
+              <th className="px-6 py-3 font-semibold">Notes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#DBE2EF]">

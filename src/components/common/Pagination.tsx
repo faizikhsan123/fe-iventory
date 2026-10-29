@@ -19,7 +19,7 @@ const Pagination = ({
   return (
     <div className="flex items-center justify-between gap-3 border-t border-[#DBE2EF] px-4 py-3 text-sm text-[#50688C]">
       <span>
-        Halaman {meta.current_page} dari {meta.last_page} · {meta.total} {unit}
+        Page {meta.current_page} of {meta.last_page} · {meta.total} {unit}
       </span>
       <div className="flex gap-2">
         <Button
@@ -28,7 +28,7 @@ const Pagination = ({
           className={btn}
           disabled={meta.current_page <= 1}
           onClick={() => onChange(meta.current_page - 1)}
-          aria-label="Halaman sebelumnya"
+          aria-label="Previous page"
         >
           <ChevronLeft size={16} />
         </Button>
@@ -38,7 +38,7 @@ const Pagination = ({
           className={btn}
           disabled={meta.current_page >= meta.last_page}
           onClick={() => onChange(meta.current_page + 1)}
-          aria-label="Halaman berikutnya"
+          aria-label="Next page"
         >
           <ChevronRight size={16} />
         </Button>

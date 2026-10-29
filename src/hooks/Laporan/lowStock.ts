@@ -48,7 +48,7 @@ const useLowStock = () => {
       setData(response.data.data);
       setMeta(response.data.meta ?? null);
     } catch (err) {
-      setError("Gagal mengambil data stok kritis");
+      setError("Failed to load low stock data");
     }
 
     setLoading(false);

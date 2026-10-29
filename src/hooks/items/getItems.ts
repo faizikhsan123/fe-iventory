@@ -35,7 +35,7 @@ const UsegetItems = () => {
       setData(response.data.data);
       Setmeta(response.data.meta);
     } catch {
-      SetError("gagal mengambil data items");
+      SetError("Failed to load items");
     } finally {
       Setloading(false);
     }
@@ -69,7 +69,7 @@ const UsegetItems = () => {
       all.sort((a, b) => a.name.localeCompare(b.name, "id"));
       setData(all);
     } catch {
-      SetError("gagal mengambil data items");
+      SetError("Failed to load items");
     } finally {
       Setloading(false);
     }
