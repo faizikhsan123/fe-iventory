@@ -83,7 +83,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
               <TableHead className="font-bold text-[#112D4E]">Division</TableHead>
               <TableHead className="font-bold text-[#112D4E]">By</TableHead>
               {/* <TableHead className="font-bold text-[#112D4E]">Tanggal</TableHead> */}
-              <TableHead className="text-right font-bold text-[#112D4E]">Action</TableHead>
+              <TableHead className="text-right font-bold text-[#112D4E] text-center">Edit</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -112,7 +112,7 @@ const TableTraining = ({ refreshKey, onEdit, onDelete }: Props) => {
                   <TableCell className="text-[#50688C]">{t.by}</TableCell>
                   {/* <TableCell className="whitespace-nowrap text-[#50688C]">{t.date}</TableCell> */}
                   <TableCell>
-                    <div className="flex justify-end gap-1">
+                    <div className="flex justify-center items-center">
                       <Button
                         type="button"
                         size="icon"

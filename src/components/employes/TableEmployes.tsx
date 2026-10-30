@@ -123,7 +123,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
   };
 
   const renderAksi = (emp: employes) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 items-center justify-center">
       <Button
         size="icon"
         variant="outline"
@@ -331,7 +331,7 @@ const TableEmployes = ({ refreshKey = 0 }: TableEmployesProps) => {
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Division</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Position</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Status</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Action</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6 text-center">Edit</TableHead>
                 </TableRow>
               </TableHeader>
 

@@ -380,7 +380,7 @@ const TableItems = () => {
                     <TableHead className="px-4 text-center font-bold text-[#112D4E]">Min Stock</TableHead>
                     <TableHead className="px-4 text-center font-bold text-[#112D4E]">Current Stock</TableHead>
                     <TableHead className="px-4 font-bold text-[#112D4E]">Status</TableHead>
-                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Action</TableHead>
+                    <TableHead className="px-4 text-center font-bold text-[#112D4E]">Edit</TableHead>
                   </TableRow>
                 </TableHeader>
 

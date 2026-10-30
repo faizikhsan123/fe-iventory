@@ -146,7 +146,7 @@ const TableContract = () => {
                   <TableHead className={th}>Renewals</TableHead>
                   <TableHead className={th}>Performance Review</TableHead>
                   <TableHead className={th}>Average Score</TableHead>
-                  <TableHead className={th}>Action</TableHead>
+                  <TableHead className={th}>Edit</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

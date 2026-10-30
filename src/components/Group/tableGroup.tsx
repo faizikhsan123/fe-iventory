@@ -272,7 +272,7 @@ const TableGroups = ({ refreshKey = 0, onEdit, onDelete }: TableGroupsProps) => 
                     <TableHead className="px-4 text-center font-bold text-[#112D4E]">Performance</TableHead>
                     <TableHead className="px-4 text-center font-bold text-[#112D4E]">Count</TableHead>
                     {hasActions && (
-                      <TableHead className="px-4 text-center font-bold text-[#112D4E]">Action</TableHead>
+                      <TableHead className="px-4 text-center font-bold text-[#112D4E]">Edit</TableHead>
                     )}
                   </TableRow>
                 </TableHeader>

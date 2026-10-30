@@ -41,9 +41,7 @@ const Navbar = ({ title }: NavbarProps) => {
             <h1 className="text-2xl font-extrabold tracking-tight text-[#112D4E] sm:text-3xl">
               {title}
             </h1>
-            <p className="mt-1 text-xs leading-5 text-[#50688C] sm:text-sm">
-              Inventory Management, PT Vando Teknik Solusi
-            </p>
+           
           </div>
         </div>
 

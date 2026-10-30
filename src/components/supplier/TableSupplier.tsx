@@ -152,7 +152,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
 
   // tombol aksi (dipakai di kartu mobile & tabel)
   const renderActions = (supplier: Supplier): ReactNode => (
-    <div className="flex gap-2">
+    <div className="flex gap-2 items-center justify-center">
       <Button
         size="icon"
         variant="outline"
@@ -332,7 +332,7 @@ const TableSupplier = ({ refreshKey = 0 }: TableSupplierProps) => {
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Email</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Address</TableHead>
                   <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">Status</TableHead>
-                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6">{isAdmin ? "AKSI" : null}</TableHead>
+                  <TableHead className="px-4 font-bold text-[#112D4E] lg:px-6 text-center">{isAdmin ? "Edit" : null}</TableHead>
                 </TableRow>
               </TableHeader>
 
