@@ -45,7 +45,7 @@ const mainMenu: MenuItem[] = [
   { to: "/employes", label: "Master Employees", icon: UserStar },
   { to: "/groups", label: "Master Groups", icon: UsersRound },
   { to: "/trainings", label: "Master Training", icon: GraduationCap },
-  { to: "/contracts", label: "Contract", icon: FileClock },
+  { to: "/contracts", label: "Employees Contract", icon: FileClock },
   { to: "/mcu", label: "Master MCU", icon: Stethoscope },
   { to: "/invoices", label: "Invoice", icon: Receipt },
 ];
@@ -184,7 +184,7 @@ const SidebarComponent = () => {
         <div className="flex shrink-0 items-center justify-between border-b border-[#25476F] px-4 py-4">
           <Link to="/dashboard" className="flex min-w-0 items-center gap-3">
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#F9F7F7]">
-            <img src="../../public/vando1.webp" alt="" />
+            <img src="vando1.webp" alt="" />
             </div>
             <span className="min-w-0 leading-tight">
               <span className="block truncate text-md font-extrabold text-white mt-2">PT. Vando Teknik Solusi</span>
