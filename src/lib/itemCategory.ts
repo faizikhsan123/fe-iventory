@@ -1,8 +1,8 @@
 // Sumber tunggal kategori barang. Urutan = urutan tampil di dropdown.
 export const ITEM_CATEGORIES = [
-  { value: "apd", label: "APD" },
+  { value: "apd", label: "PPE" },
   { value: "tools", label: "Tools" },
-  { value: "atk", label: "ATK" },
+  { value: "atk", label: "Stationery" },
   { value: "others", label: "Others" },
 ] as const;
 
