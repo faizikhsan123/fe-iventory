@@ -53,6 +53,7 @@ export type InvoiceFilters = {
   division: string;
   status: string;
   sort_status: SortDirection | "";
+  sort: SortDirection; // Invoice Submitted Date, default asc
   page: number;
 };
 
@@ -67,6 +68,7 @@ export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
           division: filters.division || undefined,
           status: filters.status || undefined,
           sort_status: filters.sort_status || undefined,
+          sort: filters.sort,
           page: filters.page,
         },
         signal,
@@ -77,7 +79,7 @@ export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
         summary: res.data.summary as InvoiceSummary,
       };
     },
-    [filters.search, filters.division, filters.status, filters.sort_status, filters.page, refreshKey],
+    [filters.search, filters.division, filters.status, filters.sort_status, filters.sort, filters.page, refreshKey],
     { errorMessage: "Failed to load invoice data" },
   );
 

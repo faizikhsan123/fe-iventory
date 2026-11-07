@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Receipt, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -29,6 +29,12 @@ function SortIcon({ sort }: { sort: SortDirection | "" }) {
 
 const sortLabel = (s: SortDirection | "") =>
   s === "asc" ? "Sorted by status: earliest stage first" : s === "desc" ? "Sorted by status: latest stage first" : "Sort by status";
+
+const dateSortLabel = (s: SortDirection) => (s === "asc" ? "Sort descending" : "Sort ascending");
+
+function DateSortIcon({ sort }: { sort: SortDirection }) {
+  return sort === "asc" ? <ArrowUp size={14} aria-hidden="true" /> : <ArrowDown size={14} aria-hidden="true" />;
+}
 
 const th = "px-4 text-center font-bold text-[#112D4E]";
 const td = "px-4 py-4 text-center align-middle";
@@ -124,21 +130,9 @@ const InvoiceRow = memo(function InvoiceRow({
 });
 
 const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => {
-  const [filters, setFilters] = useState<InvoiceFilters>({ search: "", division: "", status: "", sort_status: "", page: 1 });
+  const [filters, setFilters] = useState<InvoiceFilters>({ search: "", division: "", status: "", sort_status: "", sort: "asc", page: 1 });
   const { data, meta, summary, loading, error, isFetching } = useInvoiceList(filters, refreshKey);
   const offset = ((meta?.current_page ?? 1) - 1) * (meta?.per_page ?? 10);
-
-  // Newest Invoice Submitted Date first. Client-side, so only within the current page (server paginates).
-  // Skipped while the status sort is active so that sort is not overridden. Rows without a date go last.
-  const rows = useMemo(() => {
-    if (filters.sort_status) return data;
-    return [...data].sort((a, b) => {
-      if (!a.invoice_date && !b.invoice_date) return 0;
-      if (!a.invoice_date) return 1;
-      if (!b.invoice_date) return -1;
-      return a.invoice_date < b.invoice_date ? 1 : a.invoice_date > b.invoice_date ? -1 : 0;
-    });
-  }, [data, filters.sort_status]);
 
   // setiap filter berubah, kembali ke halaman 1
   const patch = (p: Partial<typeof filters>) => setFilters((f) => ({ ...f, ...p, page: 1 }));
@@ -198,6 +192,16 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
             <SortIcon sort={filters.sort_status} /> {sortLabel(filters.sort_status)}
           </button>
 
+          <button
+            type="button"
+            onClick={() => patch({ sort: filters.sort === "asc" ? "desc" : "asc" })}
+            aria-label={dateSortLabel(filters.sort)}
+            title={dateSortLabel(filters.sort)}
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#BFCCE3] bg-white px-4 text-sm font-semibold text-[#112D4E] hover:bg-[#F9F7F7] md:hidden"
+          >
+            Submitted date <DateSortIcon sort={filters.sort} />
+          </button>
+
           <SearchBar
             placeholder="Search invoice no, service, or client..."
             busy={isFetching}
@@ -220,7 +224,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
           <div className={isFetching ? "opacity-60 transition-opacity" : "transition-opacity"}>
             {/* Mobile: kartu */}
             <ul className="divide-y divide-[#DBE2EF] md:hidden">
-              {rows.map((inv) => (
+              {data.map((inv) => (
                 <li key={inv.id} className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
@@ -259,7 +263,17 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                     <TableHead className={th}>Division</TableHead>
                     <TableHead className={th}>Client</TableHead>
                     <TableHead className={th}>Amount</TableHead>
-                    <TableHead className={th}>Invoice Submitted Date</TableHead>
+                    <TableHead className={th} aria-sort={filters.sort === "asc" ? "ascending" : "descending"}>
+                      <button
+                        type="button"
+                        onClick={() => patch({ sort: filters.sort === "asc" ? "desc" : "asc" })}
+                        aria-label={dateSortLabel(filters.sort)}
+                        title={dateSortLabel(filters.sort)}
+                        className="inline-flex items-center gap-1.5 rounded px-1 font-bold hover:text-[#3F72AF] focus-visible:outline-2 focus-visible:outline-[#3F72AF]"
+                      >
+                        Invoice Submitted Date <DateSortIcon sort={filters.sort} />
+                      </button>
+                    </TableHead>
                     <TableHead
                       className={th}
                       aria-sort={
@@ -279,7 +293,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rows.map((inv, i) => (
+                  {data.map((inv, i) => (
                     <InvoiceRow
                       key={inv.id}
                       invoice={inv}
