@@ -30,9 +30,10 @@ function SortIcon({ sort }: { sort: SortDirection | "" }) {
 const sortLabel = (s: SortDirection | "") =>
   s === "asc" ? "Sorted by status: earliest stage first" : s === "desc" ? "Sorted by status: latest stage first" : "Sort by status";
 
-const dateSortLabel = (s: SortDirection) => (s === "asc" ? "Sort descending" : "Sort ascending");
+const serviceDateSortLabel = (s: SortDirection) =>
+  `Sort by service date: ${s === "asc" ? "currently ascending, click to sort descending" : "currently descending, click to sort ascending"}`;
 
-function DateSortIcon({ sort }: { sort: SortDirection }) {
+function ServiceDateSortIcon({ sort }: { sort: SortDirection }) {
   return sort === "asc" ? <ArrowUp size={14} aria-hidden="true" /> : <ArrowDown size={14} aria-hidden="true" />;
 }
 
@@ -195,11 +196,11 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
           <button
             type="button"
             onClick={() => patch({ sort: filters.sort === "asc" ? "desc" : "asc" })}
-            aria-label={dateSortLabel(filters.sort)}
-            title={dateSortLabel(filters.sort)}
+            aria-label={serviceDateSortLabel(filters.sort)}
+            title={serviceDateSortLabel(filters.sort)}
             className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#BFCCE3] bg-white px-4 text-sm font-semibold text-[#112D4E] hover:bg-[#F9F7F7] md:hidden"
           >
-            Submitted date <DateSortIcon sort={filters.sort} />
+            Service date <ServiceDateSortIcon sort={filters.sort} />
           </button>
 
           <SearchBar
@@ -258,22 +259,22 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                 <TableHeader>
                   <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                     <TableHead className={`${th} w-12`}>No</TableHead>
-                    <TableHead className={th}>Service Description</TableHead>
-                    <TableHead className={th}>Invoice No</TableHead>
-                    <TableHead className={th}>Division</TableHead>
-                    <TableHead className={th}>Client</TableHead>
-                    <TableHead className={th}>Amount</TableHead>
                     <TableHead className={th} aria-sort={filters.sort === "asc" ? "ascending" : "descending"}>
                       <button
                         type="button"
                         onClick={() => patch({ sort: filters.sort === "asc" ? "desc" : "asc" })}
-                        aria-label={dateSortLabel(filters.sort)}
-                        title={dateSortLabel(filters.sort)}
+                        aria-label={serviceDateSortLabel(filters.sort)}
+                        title={serviceDateSortLabel(filters.sort)}
                         className="inline-flex items-center gap-1.5 rounded px-1 font-bold hover:text-[#3F72AF] focus-visible:outline-2 focus-visible:outline-[#3F72AF]"
                       >
-                        Invoice Submitted Date <DateSortIcon sort={filters.sort} />
+                        Service Description <ServiceDateSortIcon sort={filters.sort} />
                       </button>
                     </TableHead>
+                    <TableHead className={th}>Invoice No</TableHead>
+                    <TableHead className={th}>Division</TableHead>
+                    <TableHead className={th}>Client</TableHead>
+                    <TableHead className={th}>Amount</TableHead>
+                    <TableHead className={th}>Invoice Submitted Date</TableHead>
                     <TableHead
                       className={th}
                       aria-sort={

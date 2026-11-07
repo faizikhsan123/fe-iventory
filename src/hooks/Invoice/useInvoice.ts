@@ -53,7 +53,7 @@ export type InvoiceFilters = {
   division: string;
   status: string;
   sort_status: SortDirection | "";
-  sort: SortDirection; // Invoice Submitted Date, default asc
+  sort: SortDirection; // service_date, default asc
   page: number;
 };
 
