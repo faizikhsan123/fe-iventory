@@ -21,10 +21,7 @@ export type Invoice = {
   invoice_number: string | null;
   service_name: string;
   service_date: string | null;
-  contract_number: string | null;
-  work_period_start: string | null;
-  work_period_end: string | null;
-  week_number: number | null;
+  sort_order: number | null;
   service_description: string | null;
   division: string;
   client: string | null;
@@ -45,10 +42,7 @@ export type InvoiceForm = {
   invoice_number: string;
   service_name: string;
   service_date: string;
-  contract_number: string;
-  work_period_start: string;
-  work_period_end: string;
-  week_number: string;
+  sort_order: string;
   division: string;
   client: string;
   amount: string;
@@ -58,11 +52,10 @@ export type InvoiceForm = {
 
 export type InvoiceFilters = {
   search: string;
-  contract_number: string;
   division: string;
   status: string;
   sort_status: SortDirection | "";
-  sort: SortDirection; // work period within each contract, default asc
+  sort: SortDirection; // manual Order first; service_date for ties/unassigned
   page: number;
 };
 
@@ -73,7 +66,6 @@ export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
       const res = await AxiosInstance.get("/invoices", {
         params: {
           per_page: 10,
-          contract_number: filters.contract_number || undefined,
           search: filters.search || undefined,
           division: filters.division || undefined,
           status: filters.status || undefined,
@@ -89,7 +81,7 @@ export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
         summary: res.data.summary as InvoiceSummary,
       };
     },
-    [filters.search, filters.contract_number, filters.division, filters.status, filters.sort_status, filters.sort, filters.page, refreshKey],
+    [filters.search, filters.division, filters.status, filters.sort_status, filters.sort, filters.page, refreshKey],
     { errorMessage: "Failed to load invoice data" },
   );
 
@@ -104,14 +96,6 @@ export const useInvoiceList = (filters: InvoiceFilters, refreshKey: number) => {
 };
 
 // ---------- detail (dialog) ----------
-export const useInvoiceContracts = (refreshKey = 0) => {
-  const { data, loading, error } = useAsyncData(async (signal) => {
-    const res = await AxiosInstance.get('/invoices/contracts', { signal });
-    return res.data.data as string[];
-  }, [refreshKey], { errorMessage: 'Failed to load invoice contracts' });
-  return { contracts: data ?? [], loading, error };
-};
-
 export const useInvoiceDetail = (id: number | null) => {
   const { data, loading, error, reload } = useAsyncData(
     async (signal) => {
@@ -133,10 +117,7 @@ export const useInvoiceActions = () => {
     invoice_number: f.invoice_number.trim() || null,
     service_name: f.service_name.trim(),
     service_date: f.service_date || null,
-    contract_number: f.contract_number.trim() || null,
-    work_period_start: f.work_period_start || null,
-    work_period_end: f.work_period_end || null,
-    week_number: f.week_number === '' ? null : Number(f.week_number),
+    sort_order: f.sort_order === "" ? null : Number(f.sort_order),
     division: f.division,
     client: f.client.trim() || null,
     amount: f.amount === "" ? null : Number(f.amount),

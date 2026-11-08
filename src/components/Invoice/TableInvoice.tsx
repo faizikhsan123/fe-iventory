@@ -6,8 +6,8 @@ import SearchBar from "../common/SearchBar";
 import Pagination from "../common/Pagination";
 import { ListEmpty, ListError, ListSkeleton } from "../common/ListStates";
 import InvoiceStepper from "./InvoiceStepper";
-import { useInvoiceContracts, useInvoiceList, type Invoice, type InvoiceFilters } from "@/hooks/Invoice/useInvoice";
-import { INVOICE_DIVISIONS, INVOICE_STATUSES, invoiceWorkMonth, invoiceWorkPeriod, rupiah, statusBadgeClass, statusLabel, type SortDirection } from "@/lib/invoice";
+import { useInvoiceList, type Invoice, type InvoiceFilters } from "@/hooks/Invoice/useInvoice";
+import { INVOICE_DIVISIONS, INVOICE_STATUSES, rupiah, statusBadgeClass, statusLabel, type SortDirection } from "@/lib/invoice";
 import { formatTanggalIndo } from "@/lib/tanggal";
 import { dangerIconButtonClass, iconButtonClass } from "@/lib/formStyles";
 
@@ -30,10 +30,10 @@ function SortIcon({ sort }: { sort: SortDirection | "" }) {
 const sortLabel = (s: SortDirection | "") =>
   s === "asc" ? "Sorted by status: earliest stage first" : s === "desc" ? "Sorted by status: latest stage first" : "Sort by status";
 
-const serviceDateSortLabel = (s: SortDirection) =>
-  `Sort by work period within each contract: ${s === "asc" ? "currently ascending, click to sort descending" : "currently descending, click to sort ascending"}`;
+const orderSortLabel = (s: SortDirection) =>
+  `Sort by Order: ${s === "asc" ? "currently ascending, click to sort descending" : "currently descending, click to sort ascending"}`;
 
-function ServiceDateSortIcon({ sort }: { sort: SortDirection }) {
+function OrderSortIcon({ sort }: { sort: SortDirection }) {
   return sort === "asc" ? <ArrowUp size={14} aria-hidden="true" /> : <ArrowDown size={14} aria-hidden="true" />;
 }
 
@@ -98,15 +98,10 @@ const InvoiceRow = memo(function InvoiceRow({
   return (
     <TableRow className="border-[#DBE2EF] text-[#112D4E] transition-colors hover:bg-[#F9F7F7]">
       <TableCell className={`${td} text-[#50688C]`}>{number}</TableCell>
-      <TableCell className={`${td} max-w-48 whitespace-normal break-words font-semibold`}>{inv.contract_number || "Unassigned"}</TableCell>
       <TableCell className={`${td} max-w-60 whitespace-normal break-words font-medium`}>{inv.service_name}
-      </TableCell>
-      <TableCell className={`${td} min-w-48 whitespace-normal`}>
-        {inv.work_period_start ? <>
-          <span className="block font-semibold">{invoiceWorkMonth(inv.work_period_start, inv.work_period_end)}</span>
-          <span className="block text-xs text-[#50688C]">{invoiceWorkPeriod(inv.work_period_start, inv.work_period_end)}</span>
-        </> : <span className="text-xs text-[#50688C]">{inv.service_date ? `Service ${formatTanggalIndo(inv.service_date)}` : "Period not set"}</span>}
-        {inv.week_number != null && <span className="block text-xs font-semibold">W{inv.week_number}</span>}
+        {inv.service_date && (
+          <span className="block text-xs font-normal text-[#50688C]">{formatTanggalIndo(inv.service_date)}</span>
+        )}
       </TableCell>
       <TableCell className={td}>
         {inv.invoice_number || "-"}
@@ -117,6 +112,7 @@ const InvoiceRow = memo(function InvoiceRow({
         )}
       </TableCell>
       <TableCell className={td}>{inv.division}</TableCell>
+      <TableCell className={`${td} font-semibold tabular-nums`}>{inv.sort_order ?? "-"}</TableCell>
       <TableCell className={td}>{inv.client || "-"}</TableCell>
       <TableCell className={`${td} whitespace-nowrap`}>{rupiah(inv.amount)}</TableCell>
       <TableCell className={`${td} whitespace-nowrap`}>
@@ -136,8 +132,7 @@ const InvoiceRow = memo(function InvoiceRow({
 });
 
 const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => {
-  const [filters, setFilters] = useState<InvoiceFilters>({ search: "", contract_number: "", division: "", status: "", sort_status: "", sort: "asc", page: 1 });
-  const { contracts, error: contractsError } = useInvoiceContracts(refreshKey);
+  const [filters, setFilters] = useState<InvoiceFilters>({ search: "", division: "", status: "", sort_status: "", sort: "asc", page: 1 });
   const { data, meta, summary, loading, error, isFetching } = useInvoiceList(filters, refreshKey);
   const offset = ((meta?.current_page ?? 1) - 1) * (meta?.per_page ?? 10);
 
@@ -172,16 +167,6 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
 
       <div className="overflow-hidden rounded-lg border border-[#DBE2EF] bg-white shadow-[0_2px_10px_rgb(17,45,78,0.06)] sm:rounded-xl">
         <div className="space-y-3 border-b border-[#BFCCE3] bg-[#DBE2EF] p-4">
-          <label className="flex flex-wrap items-center gap-2 text-sm font-semibold text-[#112D4E]">
-            Contract / PO
-            <select className="h-10 max-w-full rounded-lg border border-[#BFCCE3] bg-white px-3"
-              value={filters.contract_number} onChange={(e) => patch({ contract_number: e.target.value })}>
-              <option value="">All contracts</option>
-              {contracts.map((contract) => <option key={contract} value={contract}>{contract}</option>)}
-            </select>
-          </label>
-          {contractsError && <p role="alert" className="text-xs text-[#B3261E]">{contractsError}</p>}
-          <p className="text-xs text-[#50688C]">Grouped by contract, then ordered by work period. Invoices without a contract appear last.</p>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by division">
             {["", ...INVOICE_DIVISIONS].map((d) => (
               <button
@@ -212,18 +197,19 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
           <button
             type="button"
             onClick={() => patch({ sort: filters.sort === "asc" ? "desc" : "asc" })}
-            aria-label={serviceDateSortLabel(filters.sort)}
-            title={serviceDateSortLabel(filters.sort)}
+            aria-label={orderSortLabel(filters.sort)}
+            title={orderSortLabel(filters.sort)}
             className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#BFCCE3] bg-white px-4 text-sm font-semibold text-[#112D4E] hover:bg-[#F9F7F7] md:hidden"
           >
-            Work period <ServiceDateSortIcon sort={filters.sort} />
+            Order <OrderSortIcon sort={filters.sort} />
           </button>
 
           <SearchBar
-            placeholder="Search contract, invoice no, service, or client..."
+            placeholder="Search invoice no, service, or client..."
             busy={isFetching}
             onSearch={(search) => patch({ search })}
           />
+          <p className="text-xs text-[#50688C]">Set Order in Add / Edit Invoice. Smaller numbers appear first; invoices without Order appear last.</p>
         </div>
 
         {loading && <ListSkeleton />}
@@ -243,10 +229,10 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
             <ul className="divide-y divide-[#DBE2EF] md:hidden">
               {data.map((inv) => (
                 <li key={inv.id} className="p-4">
-                  <p className="mb-1 break-words text-xs font-bold text-[#3F72AF]">Contract: {inv.contract_number || "Unassigned"}</p>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="break-words text-sm font-bold text-[#112D4E]">{inv.service_name}</p>
+                      <p className="text-xs font-semibold text-[#50688C]">Order: {inv.sort_order ?? "-"}</p>
                       <p className="text-xs text-[#50688C]">
                         {inv.division}
                         {inv.invoice_number ? ` · ${inv.invoice_number}` : ""}
@@ -258,11 +244,6 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                   <div className="mt-3">
                     <InvoiceStepper status={inv.status} compact />
                   </div>
-                  <p className="mt-2 text-xs text-[#50688C]">
-                    {invoiceWorkMonth(inv.work_period_start, inv.work_period_end)}
-                    {inv.week_number != null ? ` / W${inv.week_number}` : ""}
-                    {inv.work_period_start && <span className="block">{invoiceWorkPeriod(inv.work_period_start, inv.work_period_end)}</span>}
-                  </p>
                   <p className="mt-2 text-xs text-[#50688C]">
                     {rupiah(inv.amount)}
                     {inv.service_date ? ` · Service ${formatTanggalIndo(inv.service_date)}` : ""}
@@ -281,21 +262,16 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                 <TableHeader>
                   <TableRow className="bg-[#DBE2EF] hover:bg-[#DBE2EF]">
                     <TableHead className={`${th} w-12`}>No</TableHead>
-                    <TableHead className={th}>Contract / PO</TableHead>
                     <TableHead className={th}>Service Description</TableHead>
-                    <TableHead className={th} aria-sort={filters.sort === "asc" ? "ascending" : "descending"}>
-                      <button
-                        type="button"
-                        onClick={() => patch({ sort: filters.sort === "asc" ? "desc" : "asc" })}
-                        aria-label={serviceDateSortLabel(filters.sort)}
-                        title={serviceDateSortLabel(filters.sort)}
-                        className="inline-flex items-center gap-1.5 rounded px-1 font-bold hover:text-[#3F72AF] focus-visible:outline-2 focus-visible:outline-[#3F72AF]"
-                      >
-                        Work Period <ServiceDateSortIcon sort={filters.sort} />
-                      </button>
-                    </TableHead>
                     <TableHead className={th}>Invoice No</TableHead>
                     <TableHead className={th}>Division</TableHead>
+                    <TableHead className={th} aria-sort={filters.sort === "asc" ? "ascending" : "descending"}>
+                      <button type="button" onClick={() => patch({ sort: filters.sort === "asc" ? "desc" : "asc" })}
+                        aria-label={orderSortLabel(filters.sort)} title={orderSortLabel(filters.sort)}
+                        className="inline-flex items-center gap-1.5 rounded px-1 font-bold hover:text-[#3F72AF] focus-visible:outline-2 focus-visible:outline-[#3F72AF]">
+                        Order <OrderSortIcon sort={filters.sort} />
+                      </button>
+                    </TableHead>
                     <TableHead className={th}>Client</TableHead>
                     <TableHead className={th}>Amount</TableHead>
                     <TableHead className={th}>Invoice Submitted Date</TableHead>
