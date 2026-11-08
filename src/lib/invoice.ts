@@ -17,6 +17,23 @@ export type InvoiceDivision = (typeof INVOICE_DIVISIONS)[number];
 
 export type SortDirection = "asc" | "desc";
 
+// Dates are calendar dates, so format at local midnight rather than parsing as UTC.
+export const invoiceWorkMonth = (start?: string | null, end?: string | null): string => {
+  if (!start) return "-";
+  const format = (date: string) => new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric" })
+    .format(new Date(`${date}T00:00:00`));
+  const first = format(start);
+  const last = end ? format(end) : first;
+  return first === last ? first : `${first} / ${last}`;
+};
+
+export const invoiceWorkPeriod = (start?: string | null, end?: string | null): string => {
+  if (!start) return "-";
+  const format = (date: string) => new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" })
+    .format(new Date(`${date}T00:00:00`));
+  return end && end !== start ? `${format(start)} s.d. ${format(end)}` : format(start);
+};
+
 export const statusIndex = (s: string) => INVOICE_STATUSES.findIndex((x) => x.value === s);
 export const statusLabel = (s: string) => INVOICE_STATUSES.find((x) => x.value === s)?.label ?? s;
 

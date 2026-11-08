@@ -11,6 +11,8 @@ import {
   INVOICE_DOC_ACCEPT,
   INVOICE_DOC_TYPES,
   INVOICE_STATUSES,
+  invoiceWorkMonth,
+  invoiceWorkPeriod,
   rupiah,
   statusLabel,
   validateInvoiceDoc,
@@ -229,6 +231,10 @@ function DetailBody({ invoiceId, canEdit, onChanged }: Omit<Props, "open" | "onO
             <dl className="grid grid-cols-2 gap-3 text-sm">
               {[
                 ["Status", statusLabel(invoice.status)],
+                ["Contract / PO", invoice.contract_number || "Unassigned"],
+                ["Work Month", invoiceWorkMonth(invoice.work_period_start, invoice.work_period_end)],
+                ["Work Period", invoiceWorkPeriod(invoice.work_period_start, invoice.work_period_end)],
+                ["Week", invoice.week_number == null ? "-" : `W${invoice.week_number}`],
                 ["Client", invoice.client || "-"],
                 ["Amount", rupiah(invoice.amount)],
                 ["Service Date", invoice.service_date ? formatTanggalIndo(invoice.service_date) : "-"],

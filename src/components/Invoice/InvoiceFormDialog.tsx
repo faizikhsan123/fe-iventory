@@ -5,14 +5,18 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { CurrencyInput } from "../ui/currency-input";
 import FormAlert from "../common/FormAlert";
-import { useInvoiceActions, type Invoice, type InvoiceForm } from "@/hooks/Invoice/useInvoice";
-import { INVOICE_DIVISIONS } from "@/lib/invoice";
+import { useInvoiceActions, useInvoiceContracts, type Invoice, type InvoiceForm } from "@/hooks/Invoice/useInvoice";
+import { INVOICE_DIVISIONS, invoiceWorkMonth } from "@/lib/invoice";
 import { fieldBase, inputClass, labelClass, selectClass } from "@/lib/formStyles";
 
 const emptyForm: InvoiceForm = {
   invoice_number: "",
   service_name: "",
   service_date: "",
+  contract_number: "",
+  work_period_start: "",
+  work_period_end: "",
+  week_number: "",
   division: "",
   client: "",
   amount: "",
@@ -26,6 +30,10 @@ const toForm = (invoice: Invoice | null): InvoiceForm =>
         invoice_number: invoice.invoice_number ?? "",
         service_name: invoice.service_name,
         service_date: invoice.service_date ?? "",
+        contract_number: invoice.contract_number ?? "",
+        work_period_start: invoice.work_period_start ?? "",
+        work_period_end: invoice.work_period_end ?? "",
+        week_number: invoice.week_number == null ? "" : String(invoice.week_number),
         division: invoice.division,
         client: invoice.client ?? "",
         amount: invoice.amount != null ? String(invoice.amount) : "",
@@ -53,6 +61,7 @@ function InvoiceFormBody({
 }) {
   const isEdit = invoice !== null;
   const { saving, save } = useInvoiceActions();
+  const { contracts, error: contractsError } = useInvoiceContracts();
   const [form, setForm] = useState<InvoiceForm>(() => toForm(invoice));
   const [error, setError] = useState("");
 
@@ -62,6 +71,15 @@ function InvoiceFormBody({
     e.preventDefault();
     if (!form.service_name.trim() || !form.division) {
       setError("Service description and division are required");
+      return;
+    }
+    if ((form.work_period_start || form.work_period_end || form.week_number) &&
+        (!form.contract_number.trim() || !form.work_period_start || !form.work_period_end)) {
+      setError("Fill in the contract number and both work period dates");
+      return;
+    }
+    if (form.work_period_start && form.work_period_end < form.work_period_start) {
+      setError("Work period end cannot be before the start");
       return;
     }
     setError("");
@@ -93,6 +111,39 @@ function InvoiceFormBody({
       <form onSubmit={submit} className="flex min-h-0 flex-1 flex-col">
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label className="space-y-2 sm:col-span-2">
+              <span className={labelClass}>Contract / PO No</span>
+              <Input className={inputClass} value={form.contract_number}
+                onChange={(e) => set("contract_number", e.target.value)}
+                list="invoice-contract-options" maxLength={150} disabled={saving}
+                placeholder="Select an existing contract or enter a new number" />
+              <datalist id="invoice-contract-options">
+                {contracts.map((contract) => <option key={contract} value={contract} />)}
+              </datalist>
+              <span className="block text-xs text-[#50688C]">Use the same contract number for all invoices under that contract.</span>
+              {contractsError && <span role="alert" className="block text-xs text-[#B3261E]">{contractsError}. You can still enter the number manually.</span>}
+            </label>
+            <label className="space-y-2">
+              <span className={labelClass}>Work Period Start</span>
+              <Input type="date" className={inputClass} value={form.work_period_start}
+                onChange={(e) => set("work_period_start", e.target.value)} disabled={saving} />
+            </label>
+            <label className="space-y-2">
+              <span className={labelClass}>Work Period End</span>
+              <Input type="date" className={inputClass} value={form.work_period_end}
+                min={form.work_period_start || undefined}
+                onChange={(e) => set("work_period_end", e.target.value)} disabled={saving} />
+            </label>
+            <label className="space-y-2">
+              <span className={labelClass}>Week No (optional)</span>
+              <Input type="number" min={1} max={53} step={1} className={inputClass} value={form.week_number}
+                onChange={(e) => set("week_number", e.target.value)} placeholder="e.g. 18" disabled={saving} />
+            </label>
+            <div className="space-y-2">
+              <p className={labelClass}>Work Month (automatic)</p>
+              <p role="status" className="text-sm text-[#112D4E]">{invoiceWorkMonth(form.work_period_start, form.work_period_end)}</p>
+            </div>
+            <p className="text-xs text-[#50688C] sm:col-span-2">Invoices are grouped by contract and ordered by work period, even when entered later. Submitted date is recorded separately.</p>
             <label className="space-y-2 sm:col-span-2">
               <span className={labelClass}>
                 Service Description <span className="text-[#B3261E]">*</span>
