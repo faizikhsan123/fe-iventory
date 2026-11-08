@@ -111,8 +111,8 @@ const InvoiceRow = memo(function InvoiceRow({
           </span>
         )}
       </TableCell>
-      <TableCell className={td}>{inv.division}</TableCell>
       <TableCell className={`${td} font-semibold tabular-nums`}>{inv.sort_order ?? "-"}</TableCell>
+      <TableCell className={td}>{inv.division}</TableCell>
       <TableCell className={td}>{inv.client || "-"}</TableCell>
       <TableCell className={`${td} whitespace-nowrap`}>{rupiah(inv.amount)}</TableCell>
       <TableCell className={`${td} whitespace-nowrap`}>
@@ -264,7 +264,6 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                     <TableHead className={`${th} w-12`}>No</TableHead>
                     <TableHead className={th}>Service Description</TableHead>
                     <TableHead className={th}>Invoice No</TableHead>
-                    <TableHead className={th}>Division</TableHead>
                     <TableHead className={th} aria-sort={filters.sort === "asc" ? "ascending" : "descending"}>
                       <button type="button" onClick={() => patch({ sort: filters.sort === "asc" ? "desc" : "asc" })}
                         aria-label={orderSortLabel(filters.sort)} title={orderSortLabel(filters.sort)}
@@ -272,6 +271,7 @@ const TableInvoice = ({ refreshKey = 0, onDetail, onEdit, onDelete }: Props) => 
                         Order <OrderSortIcon sort={filters.sort} />
                       </button>
                     </TableHead>
+                    <TableHead className={th}>Division</TableHead>
                     <TableHead className={th}>Client</TableHead>
                     <TableHead className={th}>Amount</TableHead>
                     <TableHead className={th}>Invoice Submitted Date</TableHead>
